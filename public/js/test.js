@@ -1,1 +1,4 @@
-var socket = io();
+(function() {
+	const socket = io.connect();
+
+})()
