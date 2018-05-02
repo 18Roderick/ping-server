@@ -4,6 +4,7 @@ class Pinging {
 	constructor() {
 
 		this.ping = require('ping');
+		this.io = require('../server');
 		this.models = require('../models/index');
 		this.startPinging();
 
@@ -17,8 +18,8 @@ class Pinging {
 		try {
 
 			const res = await this.ping.promise.probe(host);
-
-			console.log(res);
+			this.io.emit('this', res);
+			//console.log(res);
 
 			setTimeout(() => this.startPinging() , 1000);
 			
@@ -31,4 +32,4 @@ class Pinging {
 }
 
 
-const pin = new Pinging();
+module.exports = Pinging;

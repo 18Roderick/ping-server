@@ -1,4 +1,8 @@
 (function() {
-	const socket = io.connect();
+	var socket = io.connect();
+  socket.on('this', function (data) {
+    console.log(data);
+    
+  });
 
 })()
