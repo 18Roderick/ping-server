@@ -21,8 +21,8 @@ class Pinging {
 			this.io.emit('this', res);
 			//console.log(res);
 
-			setTimeout(() => this.startPinging() , 1000);
-			
+			setTimeout(() => this.startPinging(), 1000);
+
 
 		} catch (error) {
 			console.log(error);
