@@ -17,9 +17,9 @@ module.exports = (sequelize, DataTypes) => {
 			}
 		},
 
-		fechaNacimiento:{
+		fechaNacimiento: {
 			type: DataTypes.DATE,
-			validate:{
+			validate: {
 				msg: "Falta fecha de nacimiento"
 			}
 		},
@@ -56,10 +56,10 @@ module.exports = (sequelize, DataTypes) => {
 			}
 		}
 
-	},
-	{
+	}, {
+
 		freezeTableName: true,
 		comment: "Tabla de usuarios del proyecto Ping Ring"
-	}
-	)
+		
+	})
 }

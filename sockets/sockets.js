@@ -1,7 +1,2 @@
-const app = require('../app');
-const server = require('http').Server(app);
-const io = require('socket.io')(server);
+const io = require('../server');
 
-io.on('connection', (socket) => {
-	console.log('Nuevo usuario conectado')
-});

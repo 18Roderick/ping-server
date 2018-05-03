@@ -16,12 +16,6 @@ const nodePublicDir = express.static(`${__dirname}/node_modules`);
 const viewDir = `${__dirname}/views` ;
 const port = (process.env.PORT || 3000);
 
-const http = require('http').Server(app);
-const io = require('socket.io')(http);
-
-io.on('connection', (socket) => {
-	console.log('Nuevo usuario conectado')
-});
 
 app.set('views', viewDir);
 
@@ -63,6 +57,7 @@ function error404(req, res, next) {
 	next();
 
 }
+
 
 
 module.exports = app;

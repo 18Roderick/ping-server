@@ -1,8 +1,7 @@
 extends layout
 
 block content
-	script(src='/socket.io/socket.io.js')
-		script.
-			var socket = io.connect('http://localhost:3000');
-  h1= title
-  p Welcome to #{title}
+	script(type='text/javascript', src='/socket.io/socket.io.js')
+	script(type='text/javascript', src='js/test.js')
+	h1= title
+	p Welcome to #{title}
