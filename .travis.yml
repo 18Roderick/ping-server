@@ -1,4 +1,10 @@
 language: node_js
-node_js:
-  - "iojs"
-  - "7"
+env:
+  - DB=ping
+  - SH=bash
+  - PACKAGE_VERSION="1.0.*"
+services:
+  - mysql
+before_install:
+  - mysql -e 'CREATE DATABASE IF NOT EXISTS ping;'
+
