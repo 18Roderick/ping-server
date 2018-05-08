@@ -29,6 +29,11 @@ class Pinging {
 		}
 
 	}
+
+
+	static findServer(){
+
+	}
 }
 
 

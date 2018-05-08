@@ -6,31 +6,37 @@ module.exports = (sequelize, DataTypes) => {
 		nombre: {
 			type: DataTypes.STRING,
 			validate: {
-				msg: "Falta Nombre"
+				notEmpty:{
+					msg: "Falta Nombre"
+				}
 			}
 		},
 
 		apellido: {
 			type: DataTypes.STRING,
 			validate: {
-				msg: "Falta Apellido"
+				notEmpty:{
+					msg: "Falta Apellido"
+				}
 			}
 		},
 
-		fechaNacimiento: {
+		nacimiento: {
 			type: DataTypes.DATE,
 			validate: {
-				msg: "Falta fecha de nacimiento"
+				notEmpty:{
+					msg: "Falta fecha de nacimiento"
+				}
 			}
 		},
 
-		username: {
+		email: {
 			type: DataTypes.STRING,
-			allowNull: false,
 			unique: true,
 			validate: {
+				isEmail: true,
 				notEmpty: {
-					msg: "Falta username"
+					msg: "Falta correo"
 				}
 			}
 		},
@@ -43,23 +49,14 @@ module.exports = (sequelize, DataTypes) => {
 					msg: "Falta password"
 				}
 			}
-		},
-
-		email: {
-			type: DataTypes.STRING,
-			unique: true,
-			valide: {
-				isEmail: true,
-				notEmpty: {
-					msg: "Falta correo"
-				}
-			}
 		}
+
+
 
 	}, {
 
 		freezeTableName: true,
 		comment: "Tabla de usuarios del proyecto Ping Ring"
-		
+
 	})
 }
