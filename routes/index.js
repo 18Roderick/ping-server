@@ -26,7 +26,6 @@ router.get('/registar', (req, res, next) => {
 
 router.post('/crear-usuario', (req, res, next) => {
 	
-	console.log(req.body);
 	const password = encrypt(req.body.password);
 	const userInfo = {
 		nombre: req.body.nombre,
@@ -51,6 +50,19 @@ router.post('/crear-usuario', (req, res, next) => {
 	res.redirect('/');
 
 
+});
+
+
+router.post('/login', (req, res, next) => {
+	
+	User.findOne({where: {email: req.params.text}})
+		.then( user => {
+			let msg ={ disponible: false}
+			if(!user){
+				msg.disponible = true;
+			}
+			res.json(msg);
+		})
 });
 
 

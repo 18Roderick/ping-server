@@ -1,4 +1,6 @@
-form(method='POST' action='/login' class='form-create')
+extends layout
+block content
+	form(method='POST' action='/login' class='form-create')
 
 	label(for='email' class='label-form') Correo electronico:
 	input(type='email' id='email' name='email' required placeholder='Escriba su email'  class='input-form' onkeyup='validateEmail(this.value)')
@@ -9,6 +11,6 @@ form(method='POST' action='/login' class='form-create')
 	input(type='submit' value='Enviar' class='button')
 
 
-p(align='center')
-	| Disponibilidad de #[span(id='correo')]
-p(align='center' id='disponible')
+	p(align='center')
+		| Disponibilidad de #[span(id='correo')]
+	p(align='center' id='disponible')

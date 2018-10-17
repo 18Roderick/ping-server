@@ -18,7 +18,7 @@ const app = express();
 
 const publicDir = express.static(`${__dirname}/public`);
 const viewDir = `${__dirname}/views`;
-const port = (process.env.PORT || 8000);
+const port = (process.env.PORT || 3000);
 
 
 app.set('views', viewDir);
@@ -37,7 +37,7 @@ app.use(bodyParser.urlencoded({
 app.use(cookieParser());
 
 app.use(session({
-	secret: "Your secret key",
+	secret: "abc 234 55",
 	resave: false,
 	saveUninitialized:false
 }));
@@ -83,7 +83,7 @@ function checkSession(req, res, next) {
 
 const server = app.listen(app.get('port'), () => {
 	console.log(`Iniciando express en el puerto ${app.get('port')}`);
-	//const p = new Pinging();
+	const p = new Pinging();
 });
 
 
