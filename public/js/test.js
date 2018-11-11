@@ -10,7 +10,7 @@
 
 
 function validateEmail(text) {
-	const url = `http://localhost:8000/validar-correo/${text}`;
+	const url = `/validar-correo/${text}`;
 	const emailRegex = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 
 	if (emailRegex.test(text)) {

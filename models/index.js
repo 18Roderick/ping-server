@@ -1,73 +1,49 @@
-const Sequelize = require('sequelize');
+'use strict';
 
+var fs = require('fs');
+var path = require('path');
+var Sequelize = require('sequelize');
+var basename = path.basename(__filename);
+var env = process.env.NODE_ENV || 'development';
+var config = require(__dirname + '/../config/config.json')[env];
+var operatorsAliases = require('../config/Alias')(Sequelize)
 
-const config = require('../config/config.json');
-const Alias = require('./alias');
+var db = {};
 
+config = Object.assign(config, {
+  operatorsAliases
+})
 
-const crypto = require('crypto');
-const userKey = '154147';
-const algorithm = 'aes192';
+if (config.use_env_variable) {
+  var sequelize = new Sequelize(process.env[config.use_env_variable], config);
+} else {
+  var sequelize = new Sequelize(config.database, config.username, config.password, config);
+}
 
+fs
+  .readdirSync(__dirname)
+  .filter(file => {
+    return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
+  })
+  .forEach(file => {
+    var model = sequelize['import'](path.join(__dirname, file));
+    db[model.name] = model;
+  });
 
-const operatorsAliases = new Alias(Sequelize).getAlias();
-
-const sequelize = new Sequelize(config.dbName, config.dbUser, config.dbPassword, {
-	host: config.dbHost,
-	dialect: 'mysql',
-	logging: false,
-	operatorsAliases,
+Object.keys(db).forEach(modelName => {
+  if (db[modelName].associate) {
+    db[modelName].associate(db);
+  }
 });
 
+/*  sequelize.sync({
+    force: true
+  })
+  .then(() => {
+    console.log('Conexion exitosa');
+  })   */ 
+ 
+db.sequelize = sequelize;
+db.Sequelize = Sequelize;
 
-const user = sequelize.import(`${__dirname}/User`);
-const server = sequelize.import(`${__dirname}/Server`);
-
-
-user.hasMany(server, {
-	foreignKey: "AutorId"
-});
-server.belongsTo(user, {
-	as: 'Author',
-	foreignKey: 'AutorId'
-});
-
-
-sequelize.sync({
-		force: true
-	})
-	.then(() => {
-		console.log('Conexion exitosa');
-
-		function encrypt(text) {
-			let cipher = crypto.createCipher(algorithm, userKey)
-			let crypted = cipher.update(text, 'utf8', 'hex')
-			crypted += cipher.final('hex');
-			return crypted;
-		}
-		const password = encrypt('09roderick');
-		const userInfo = {
-			nombre: 'Roderick',
-			apellido: 'Romero',
-			nacimiento: '1996-09-21 00:00:00',
-			email: 'rjrr507@gmail.com',
-			password
-		}
-
-
-		user
-			.findOrCreate({
-				where: userInfo
-			})
-			.spread((user, created) => {
-
-				if (created) {
-					console.log('usuario creado');
-				}
-
-			})
-	})
-
-
-exports.user = user;
-exports.server = server;
+module.exports = db;

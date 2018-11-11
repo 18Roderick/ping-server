@@ -1,30 +1,29 @@
 const express = require('express');
-const crypto = require('crypto');
 
-const User = require('../models/index').user;
+const User = require('../models/index').User;
 
+const {encrypt} =  require('../services/crypt')
 const router = express.Router();
 
 
-const userKey = '154147';
-const algorithm = 'aes192';
+router.get('/', (req, res) => {
 
-
-router.get('/', (req, res, next) => {
+	console.log(req.session)
 	res.render('index', {
 		title: 'Ping Dong'
 	});
 });
 
 
-router.get('/registar', (req, res, next) => {
-	res.render('registar', {
+router.get('/registrar', (req, res) => {
+	console.info(req.session)
+	res.render('registrar', {
 		title: 'Registrar'
 	});
 });
 
 
-router.post('/crear-usuario', (req, res, next) => {
+router.post('/crear-usuario', (req, res) => {
 	
 	const password = encrypt(req.body.password);
 	const userInfo = {
@@ -32,7 +31,7 @@ router.post('/crear-usuario', (req, res, next) => {
 		apellido: req.body.apellido,
 		nacimiento: req.body.nacimiento,
 		email: req.body.email,
-		password
+		password,
 	}
 
 
@@ -47,21 +46,31 @@ router.post('/crear-usuario', (req, res, next) => {
 			}
 
 		})
+		.catch(error => {
+			console.error(`falla al relizar proceso ${error}`)
+		})
 	res.redirect('/');
 
 
 });
 
+router.get('/login', (req, res ) => {
+	res.render('login')
+})
 
 router.post('/login', (req, res, next) => {
-	
-	User.findOne({where: {email: req.params.text}})
+	const { email, password } = {...req.body, password: encrypt(req.body.password) }
+
+	User.findOne({where: {email, password }})
 		.then( user => {
-			let msg ={ disponible: false}
-			if(!user){
-				msg.disponible = true;
+			req.session.user = {
+				id: user.dataValues.id
 			}
-			res.json(msg);
+			res.render('index', {logged: true})
+		})
+		.catch( error => {
+			console.error(error)
+			res.redirect('/')
 		})
 });
 
@@ -79,19 +88,6 @@ router.get('/validar-correo/:text', (req, res) => {
 
 })
 
-function encrypt(text) {
-	let cipher = crypto.createCipher(algorithm, userKey)
-	let crypted = cipher.update(text, 'utf8', 'hex')
-	crypted += cipher.final('hex');
-	return crypted;
-}
-
-function decrypt(text) {
-	let decipher = crypto.createDecipher(algorithm, userKey)
-	let dec = decipher.update(text, 'hex', 'utf8')
-	dec += decipher.final('utf8');
-	return dec;
-}
 
 
 module.exports = router;

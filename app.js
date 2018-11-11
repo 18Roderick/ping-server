@@ -4,20 +4,28 @@ const logger = require('morgan');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
-
+const path = require('path');
+const SequelizeStore = require('connect-session-sequelize')(session.Store);
 
 const User = require('./models/index');
 const index = require('./routes/index');
 const user = require('./routes/users');
 const api = require('./routes/api');
-const Pinging = require('./ping/pinging');
+const { sequelize } = require('./models');
+const isAuth = require('./middlewares/isAuth');
+const extendedDefaultFields = require('./services/extendedDefaultFields');
+//const Pinging = require('./ping/pinging');
 
 
 const app = express();
 
-
-const publicDir = express.static(`${__dirname}/public`);
-const viewDir = `${__dirname}/views`;
+const store = new SequelizeStore({
+	db: sequelize,
+	table: 'Session',
+	extendedDefaultFields,
+})
+const publicDir = express.static(path.join(__dirname, 'public'));
+const viewDir = path.join(__dirname, 'views');
 const port = (process.env.PORT || 3000);
 
 
@@ -38,8 +46,9 @@ app.use(cookieParser());
 
 app.use(session({
 	secret: "abc 234 55",
+	store: store,
 	resave: false,
-	saveUninitialized:false
+	saveUninitialized: false,
 }));
 
 app.use(logger('dev'));
@@ -48,9 +57,9 @@ app.use(publicDir);
 
 app.use('/', index);
 
-app.use('/api', api);
+app.use(isAuth);
 
-app.use(checkSession);
+app.use('/api', api);
 
 app.use('/users', user);
 
@@ -70,20 +79,10 @@ app.use(function(err, req, res, next) {
 });
 
 
-function checkSession(req, res, next) {
-	if (req.session.user) {
-		next(); //If session exists, proceed to page
-	} else {
-		var err = new Error("No tiene acceso por favor crear cuenta");
-		console.log(req.session.user);
-		next(err); //Error, trying to access unauthorized page!
-	}
-}
-
 
 const server = app.listen(app.get('port'), () => {
 	console.log(`Iniciando express en el puerto ${app.get('port')}`);
-	const p = new Pinging();
+	//const p = new Pinging();
 });
 
 
