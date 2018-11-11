@@ -1,27 +1,40 @@
-'use strict'
+"use strict";
 module.exports = (sequelize, DataTypes) => {
+  let Server = sequelize.define( "Server", {
+      id:{
+        type: DataTypes.UUID,
+        primaryKey: true,
+        defaultValue: DataTypes.UUIDV4,
+      },
+      serverName: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate:{
+          notEmpty:{
+            msg: 'falta nombre del servidor'
+          }
+        }
+      },
 
-	return sequelize.define('Server', {
+      ip: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate:{
+          notEmpty:{
+            msg: 'falta IP del servidor'
+          }
+        }
+      },
 
-			serverName: {
-				type: DataTypes.STRING,
-				allowNull: false
-			},
+      ping: {
+        type: DataTypes.FLOAT
+      }
+    },
 
-			ip: {
-				type: DataTypes.STRING,
-				allowNull: false
-			},
+    {
+      freezeTableName: true
+    }
+  );
 
-			ping: {
-				type: DataTypes.FLOAT
-			}
-		},
-
-		{
-			freezeTableName: true
-		}
-
-	)
-
-}
+  return Server
+};

@@ -2,6 +2,17 @@ doctype html
 html(lang="es")
 	head
 		title= title
+		link(rel='stylesheet'  href='/css/main.css')
+		link(rel='stylesheet' href='/css/form.css')
+		script(type='text/javascript', src='/socket.io/socket.io.js')
+	
 	body
+		div(class='header')
+			a(href='/') Home
+			a(href='/users/servers') Mis servidores
+			a(href='/users/estadisticas') Estadisticas
+			a(href='/users/perfil') MI Perfil
+			a(href='/registrar' style='float: rigth;') Registrarse
 
 block content
+	

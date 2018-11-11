@@ -1,0 +1,16 @@
+extends layout
+block content
+	form(method='POST' action='/login' class='form-create')
+
+		label(for='email' class='label-form') Correo electronico:
+		input(type='email' id='email' name='email' required placeholder='Escriba su email'  class='input-form')
+
+		label(for='password' class='label-form' onkeyup='validarContenido(this.value)') Contraseña
+		input(type='password' id='password' name='password' required placeholder='Escriba su contraseña' class='input-form')
+
+		input(type='submit' value='Enviar' class='button')
+
+
+	p(align='center')
+		| Disponibilidad de #[span(id='correo')]
+	p(align='center' id='disponible')

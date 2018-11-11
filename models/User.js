@@ -2,35 +2,35 @@
 
 module.exports = (sequelize, DataTypes) => {
 
-	return sequelize.define('User', {
+	let User = sequelize.define('User', {
+		id:{
+			type: DataTypes.UUID,
+			primaryKey: true,
+			defaultValue: DataTypes.UUIDV4,
+		},
 		nombre: {
 			type: DataTypes.STRING,
 			validate: {
-				msg: "Falta Nombre"
+				notEmpty:{
+					msg: "Falta Nombre"
+				}
 			}
 		},
 
 		apellido: {
 			type: DataTypes.STRING,
 			validate: {
-				msg: "Falta Apellido"
+				notEmpty:{
+					msg: "Falta apellido"
+				}
 			}
 		},
 
-		fechaNacimiento: {
+		nacimiento: {
 			type: DataTypes.DATE,
 			validate: {
-				msg: "Falta fecha de nacimiento"
-			}
-		},
-
-		username: {
-			type: DataTypes.STRING,
-			allowNull: false,
-			unique: true,
-			validate: {
-				notEmpty: {
-					msg: "Falta username"
+				notEmpty:{
+					msg: "Falta fecha de nacimiento"
 				}
 			}
 		},
@@ -62,4 +62,10 @@ module.exports = (sequelize, DataTypes) => {
 		comment: "Tabla de usuarios del proyecto Ping Ring"
 		
 	})
+
+	User.associate = function(models){
+		User.hasMany(models.Server,{onDelete: 'CASCADE', as:'owner'})
+	}
+
+	return User
 }

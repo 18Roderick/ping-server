@@ -1,0 +1,17 @@
+extends layout
+
+block content
+	div(class='container-add' id='addServer')
+		div(class='half')
+	table()
+		tr
+			th id
+			th nombre
+			th ip	
+		each server, index in dataServer.length ? dataServer : ['no hay datos disponibles']
+			tr
+				td=index+1 
+				td=server.serverName
+				td=server.ip
+
+	script(src="/js/server.js")

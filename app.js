@@ -1,19 +1,31 @@
+const createError = require('http-errors');
 const express = require('express');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
-
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
+const path = require('path');
+const SequelizeStore = require('connect-session-sequelize')(session.Store);
 
 const User = require('./models/index');
 const index = require('./routes/index');
 const user = require('./routes/users');
+const api = require('./routes/api');
+const { sequelize } = require('./models');
+const isAuth = require('./middlewares/isAuth');
+const extendedDefaultFields = require('./services/extendedDefaultFields');
+//const Pinging = require('./ping/pinging');
 
 
 const app = express();
 
-
-const publicDir = express.static(`${__dirname}/public`);
-const nodePublicDir = express.static(`${__dirname}/node_modules`);
-const viewDir = `${__dirname}/views` ;
+const store = new SequelizeStore({
+	db: sequelize,
+	table: 'Session',
+	extendedDefaultFields,
+})
+const publicDir = express.static(path.join(__dirname, 'public'));
+const viewDir = path.join(__dirname, 'views');
 const port = (process.env.PORT || 3000);
 
 
@@ -30,34 +42,49 @@ app.use(bodyParser.urlencoded({
 	extended: false
 }));
 
+app.use(cookieParser());
+
+app.use(session({
+	secret: "abc 234 55",
+	store: store,
+	resave: false,
+	saveUninitialized: false,
+}));
+
 app.use(logger('dev'));
 
 app.use(publicDir);
 
-app.use(nodePublicDir);
-
 app.use('/', index);
+
+app.use(isAuth);
+
+app.use('/api', api);
 
 app.use('/users', user);
 
-app.use(error404);
+app.use(function(req, res, next) {
+  next(createError(404));
+});
 
+// error handler
+app.use(function(err, req, res, next) {
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-function error404(req, res, next) {
-	let error = new Error(),
-		locals = {
-			title: 'error 404',
-			description: 'Recurso no encontrado',
-			error: error
-		}
-	error.status = 404;
-	//res.render('error', locals)
-	console.log(error);
-
-	next();
-
-}
+  // render the error page
+  res.status(err.status || 500);
+  res.render('error');
+});
 
 
 
-module.exports = app;
+const server = app.listen(app.get('port'), () => {
+	console.log(`Iniciando express en el puerto ${app.get('port')}`);
+	//const p = new Pinging();
+});
+
+
+//module.exports = app;
+module.exports = server;
