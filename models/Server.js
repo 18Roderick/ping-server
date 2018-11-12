@@ -19,6 +19,7 @@ module.exports = (sequelize, DataTypes) => {
       ip: {
         type: DataTypes.STRING,
         allowNull: false,
+        unique: true,
         validate:{
           notEmpty:{
             msg: 'falta IP del servidor'

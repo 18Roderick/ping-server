@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const path = require('path');
+const favicon = require('serve-favicon');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
 
 const User = require('./models/index');
@@ -24,7 +25,10 @@ const store = new SequelizeStore({
 	table: 'Session',
 	extendedDefaultFields,
 })
-const publicDir = express.static(path.join(__dirname, 'public'));
+
+const publicDir = path.join(__dirname, 'public');
+const bulmaDir = path.join(path.join(__dirname, 'node_modules'),'bulma' );
+const favionUrl = path.join(publicDir, 'image', 'favicon.ico')
 const viewDir = path.join(__dirname, 'views');
 const port = (process.env.PORT || 3000);
 
@@ -35,6 +39,7 @@ app.set('view engine', 'pug');
 
 app.set('port', port);
 
+app.use(favicon(favionUrl));
 
 app.use(bodyParser.json());
 
@@ -53,7 +58,9 @@ app.use(session({
 
 app.use(logger('dev'));
 
-app.use(publicDir);
+app.use(express.static(publicDir));
+
+app.use(express.static(bulmaDir));
 
 app.use('/', index);
 
