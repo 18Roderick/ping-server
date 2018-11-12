@@ -74,6 +74,11 @@ router.post('/login', (req, res, next) => {
 		})
 });
 
+router.get('/logout', (req, res) => {
+	req.session.destroy()
+	res.redirect('/')
+})
+
 
 router.get('/validar-correo/:text', (req, res) => {
 	

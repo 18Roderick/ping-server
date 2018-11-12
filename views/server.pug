@@ -3,15 +3,26 @@ extends layout
 block content
 	div(class='container-add' id='addServer')
 		div(class='half')
-	table()
+			.field
+				.control
+					input.input(type="text" placeholder="nombre del servidor" id="serverName" )
+			.field
+				.control
+					input.input(type="text", id="ipNumber" placeholder="numero de ip")
+			button.button( onclick='addServer()') agregar
+	table(id="serverTable" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth")
 		tr
 			th id
 			th nombre
 			th ip	
-		each server, index in dataServer.length ? dataServer : ['no hay datos disponibles']
-			tr
-				td=index+1 
-				td=server.serverName
-				td=server.ip
+		if dataServer.length > 0
+			each server, index in dataServer
+				tr
+					td=index+1 
+					td=server.serverName
+					td=server.ip
+		else 
+			tr 
+				p no hay datos disponibles
 
 	script(src="/js/server.js")

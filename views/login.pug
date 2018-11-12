@@ -2,13 +2,19 @@ extends layout
 block content
 	form(method='POST' action='/login' class='form-create')
 
-		label(for='email' class='label-form') Correo electronico:
-		input(type='email' id='email' name='email' required placeholder='Escriba su email'  class='input-form')
+		.field
+			label(for='email' class='label') Correo electronico:
+				.control
+					input.input(type='email' id='email' name='email' required placeholder='Escriba su email'  )
 
-		label(for='password' class='label-form' onkeyup='validarContenido(this.value)') Contraseña
-		input(type='password' id='password' name='password' required placeholder='Escriba su contraseña' class='input-form')
+		.field
+			label(for='password' class='label' onkeyup='validarContenido(this.value)') Contraseña
+				.control
+					input.input(type='password' id='password' name='password' required placeholder='Escriba su contraseña' )
 
-		input(type='submit' value='Enviar' class='button')
+		.field
+			.control
+					input.input(type='submit' value='Enviar' class='button')
 
 
 	p(align='center')
