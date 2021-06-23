@@ -5,12 +5,14 @@ const morgan = require("morgan");
 const cors = require("cors");
 
 //Archivo con las variables de configuración
-const config = require("./config/config");
+const config = require("./config/configEnv");
+
+//const connection = require('./database/connection');
 
 //routes
 
 //error routes
-const errorController = require("./controllers/errors/errors");
+const errorController = require("./controllers/errors");
 const routes = require("./routes");
 
 const app = express();
