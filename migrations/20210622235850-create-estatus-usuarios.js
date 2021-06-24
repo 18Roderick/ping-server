@@ -1,7 +1,7 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('ESTATUS_USUARIOs', {
+    await queryInterface.createTable('estatusUsuarios', {
       idEstatus: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -21,8 +21,10 @@ module.exports = {
         unique: true,
       },
     });
+
+
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('ESTATUS_USUARIOs');
+    await queryInterface.dropTable('estatusUsuarios');
   }
 };
