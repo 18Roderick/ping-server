@@ -1,14 +1,15 @@
 'use strict';
-
 const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
 const basename = path.basename(__filename);
-const env = process.env.NODE_ENV || 'development';
-const config = require(__dirname + '/../config/config.json')[env];
+const env = "database";
+const config = require(__dirname + '/../config/configEnv')[env];
 const db = {};
 
 let sequelize;
+
+
 if (config.use_env_variable) {
   sequelize = new Sequelize(process.env[config.use_env_variable], config);
 } else {
@@ -36,8 +37,8 @@ db.Sequelize = Sequelize;
 
 module.exports = db;
 
-
-/* const main = async () => {
+/* 
+const main = async () => {
   try {
     await sequelize.sync({ force: true });
     console.log("Sincronización Completa")

@@ -23,11 +23,15 @@
   },
   "homepage": "https://github.com/18Roderick/ping-server#readme",
   "dependencies": {
+    "bcrypt": "^5.0.1",
+    "bull": "^3.22.9",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
     "mysql2": "^2.2.5",
-    "sequelize": "^6.6.2"
+    "redis": "^3.1.2",
+    "sequelize": "^6.6.2",
+    "socket.io": "^4.1.2"
   },
   "devDependencies": {
     "dotenv": "^10.0.0",
