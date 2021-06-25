@@ -1,8 +1,8 @@
-'use strict';
-const {
-  Model,
-  literal
-} = require('sequelize');
+"use strict";
+const { Model, literal, Sequelize } = require("sequelize");
+
+const cipher = require("../utils/cipher");
+
 module.exports = (sequelize, DataTypes) => {
   class Usuarios extends Model {
     /**
@@ -13,72 +13,89 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
     }
-  };
-  Usuarios.init({
-    idUsuario: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      allowNull: false,
-      autoIncrement: true,
-      primaryKey: true,
+  }
+  Usuarios.init(
+    {
+      idUsuario: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+      },
+      estatus: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: "EstatusUsuarios", // Can be both a string representing the table name or a Sequelize model
+          key: "tipo",
+        },
+        defaultValue: 1,
+      },
+      nombre: {
+        type: DataTypes.STRING(50),
+        allowNull: false,
+        validate: {
+          notNull: {
+            msg: "Ingrese su Apellido",
+          },
+        },
+      },
+      apellido: {
+        type: DataTypes.STRING(50),
+        allowNull: false,
+        validate: {
+          notNull: {
+            msg: "Ingrese su Apellido",
+          },
+        },
+      },
+      email: {
+        type: DataTypes.STRING,
+        unique: true,
+        validate: {
+          isEmail: {
+            msg: "El email ingresado no es valido",
+          },
+        },
+      },
+      password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          notNull: {
+            msg: "Ingrese su Contraseña",
+          },
+        },
+      },
+      fechaCreacion: {
+        type: DataTypes.DATE,
+        defaultValue: Sequelize.NOW,
+        allowNull: false,
+      },
+      fechaActualizacion: {
+        type: DataTypes.DATE,
+        defaultValue: Sequelize.NOW,
+      },
     },
-    estatus: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'EstatusUsuarios', // Can be both a string representing the table name or a Sequelize model
-        key: 'tipo'
-      }
-    },
-    nombre:{
-      type: DataTypes.STRING(50),
-      allowNull: false,
-      validate:{
-        notNull: {
-          msg: 'Ingrese su Apellido'
-        }
-      }
-    },
-    apellido:{
-      type: DataTypes.STRING(50),
-      allowNull: false,
-      validate:{
-        notNull: {
-          msg: 'Ingrese su Apellido'
-        }
-      }
-    },
-    email:{
-      type: DataTypes.STRING,
-      unique: true,
-      validate:{
-        isEmail:{
-          msg:'El email ingresado no es valido'
-        }
-      }
-    },
-    password: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate:{
-        notNull: {
-          msg: 'Ingrese su Contraseña'
-        }
-      }
-    },
-    fechaCreacion: {
-      type: DataTypes.DATE,
-      defaultValue: literal('CURRENT_TIMESTAMP'),
-      allowNull: false
-    },
-    fechaActualizacion: {
-      type: DataTypes.DATE,
-      defaultValue: literal("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"),
-    },
-  }, {
-    sequelize,
-    modelName: 'Usuarios',
-    timestamps: false,
+    {
+      sequelize,
+      modelName: "Usuarios",
+      timestamps: false,
+    }
+  );
+
+  //Agregando Hooks
+
+  Usuarios.beforeCreate((user, options) => {
+    return cipher.encrypt(user.password).then((hashedPw) => {
+      user.password = hashedPw;
+    });
   });
+
+  Usuarios.afterUpdate((user, options) => {
+    user.changed("fechaActualizacion", true);
+  });
+
   return Usuarios;
 };

@@ -37,8 +37,8 @@ db.Sequelize = Sequelize;
 
 module.exports = db;
 
-/* 
-const main = async () => {
+
+/*  const main = async () => {
   try {
     await sequelize.sync({ force: true });
     console.log("Sincronización Completa")
@@ -47,4 +47,4 @@ const main = async () => {
   }
 }
 
-main(); */
+main();  */
