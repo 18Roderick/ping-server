@@ -1,5 +1,5 @@
 "use strict";
-const { Model, literal} = require("sequelize");
+const { Model, literal,Sequelize} = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class PingServidores extends Model {
     /**
@@ -53,7 +53,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       fechaPing:{
         type: DataTypes.DATE,
-        defaultValue: literal("CURRENT_TIMESTAMP"),
+        defaultValue: Sequelize.NOW,
         allowNull: false,
       }
     },

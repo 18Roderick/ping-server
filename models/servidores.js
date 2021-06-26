@@ -1,5 +1,5 @@
 "use strict";
-const { Model, literal } = require("sequelize");
+const { Model, literal,Sequelize } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Servidores extends Model {
     /**
@@ -47,12 +47,12 @@ module.exports = (sequelize, DataTypes) => {
       },
       fechaCreacion: {
         type: DataTypes.DATE,
-        defaultValue: literal("CURRENT_TIMESTAMP"),
+        defaultValue: Sequelize.NOW,
         allowNull: false,
       },
       fechaActualizacion: {
         type: DataTypes.DATE,
-        defaultValue: literal("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"),
+        defaultValue: Sequelize.NOW,
       },
     },
     {
