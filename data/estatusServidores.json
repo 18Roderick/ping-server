@@ -1,0 +1,17 @@
+[
+    {
+        "tipo": 1,
+        "titulo": "Servidor Activo",
+        "descripcion": "El servidor activo"
+    },
+    {
+        "tipo": 0,
+        "titulo": "Servidor Desactivado",
+        "descripcion": "Servidor desactivado por el usuario"
+    },
+    {
+        "tipo": 3,
+        "titulo": "Servidor Desactivado",
+        "descripcion": "Servidor desactivado por acumulación de errores"
+    }
+]

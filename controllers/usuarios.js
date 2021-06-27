@@ -27,8 +27,9 @@ module.exports.crearUsuario = async function (req, res) {
       if (typeof user == "object") {
         token = tokenCreator.sign({
           nombre: user.nombre,
+          id: user.publicId
         });
-
+        
         res.json({
           message: "Usuario Creado Con éxito",
           token: token,
@@ -49,7 +50,6 @@ module.exports.login = async function (req, res) {
     const errors = validationResult(req);
     let token = "";
     if (!errors.isEmpty()) {
-      
       let cleanErrors = errors.array().map((d) => ({ msg: d.msg }));
 
       res.status(400).json({
@@ -61,6 +61,7 @@ module.exports.login = async function (req, res) {
 
       token = tokenCreator.sign({
         nombre: user.nombre,
+        id: user.publicId,
       });
 
       res.status(200).json({

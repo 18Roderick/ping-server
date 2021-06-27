@@ -1,5 +1,5 @@
 "use strict";
-const { Model, literal,Sequelize} = require("sequelize");
+const { Model, literal, Sequelize } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class PingServidores extends Model {
     /**
@@ -8,7 +8,10 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      /*    this.belongsTo(models.Servidores, {
+        foreignKey: "idServidor",
+        as: "servidor",
+      }); */
     }
   }
   PingServidores.init(
@@ -19,43 +22,35 @@ module.exports = (sequelize, DataTypes) => {
         autoIncrement: true,
         allowNull: false,
       },
-      idServidor: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-          model: "Servidores",
-          key: "idServidor",
-        },
-      },
-      paquetesEnviados:{
+      paquetesEnviados: {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      paquetesRecibidos:{
+      paquetesRecibidos: {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      paquetesPerdidos:{
+      paquetesPerdidos: {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      tiempoMinimoMs:{
+      tiempoMinimoMs: {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      tiempoMaximoMs:{
+      tiempoMaximoMs: {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      tiempoMedioMs:{
+      tiempoMedioMs: {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      fechaPing:{
+      fechaPing: {
         type: DataTypes.DATE,
         defaultValue: Sequelize.NOW,
         allowNull: false,
-      }
+      },
     },
     {
       sequelize,

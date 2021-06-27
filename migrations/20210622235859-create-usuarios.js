@@ -1,7 +1,7 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('USUARIOs', {
+    await queryInterface.createTable('Usuarios', {
       idUsuario: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -54,16 +54,17 @@ module.exports = {
         }
       },
       fechaCreacion: {
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
-        allowNull: false
+        type: DataTypes.DATE,
+        defaultValue: Sequelize.NOW,
+        allowNull: false,
       },
       fechaActualizacion: {
-        type: 'ON UPDATE CURRENT_TIMESTAMP',      
+        type: DataTypes.DATE,
+        defaultValue: Sequelize.NOW,    
       }
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('USUARIOs');
+    await queryInterface.dropTable('Usuarios');
   }
 };

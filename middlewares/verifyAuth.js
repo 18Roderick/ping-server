@@ -6,8 +6,9 @@ module.exports = async function (req, res, next) {
     if (typeof bearerHeader !== "undefined") {
       let token = bearerHeader.split(" ")[1];
 
-      await tokenJwt.verify(token);
-      req.token = token;
+      let datosToken = await tokenJwt.verify(token);
+
+      req.datosToken = datosToken;
       next();
     } else {
       res.status(403).json({
@@ -15,7 +16,7 @@ module.exports = async function (req, res, next) {
       });
     }
   } catch (err) {
-    res.status(403).json({
+    res.status(500).json({
       message: err.message,
     });
   }

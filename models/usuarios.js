@@ -11,11 +11,19 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      this.hasMany(models.Servidores, {
+        foreignKey: "idServidor",
+        as: "servidores",
+      });
     }
   }
   Usuarios.init(
     {
+      publicId: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        unique: true,
+      },
       idUsuario: {
         type: DataTypes.INTEGER,
         primaryKey: true,

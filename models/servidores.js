@@ -1,5 +1,5 @@
 "use strict";
-const { Model, literal,Sequelize } = require("sequelize");
+const { Model, literal, Sequelize } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Servidores extends Model {
     /**
@@ -8,7 +8,12 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      this.hasMany(models.PingServidores, {
+        as: "pingServidores",
+      });
+      this.belongsTo(models.Usuarios, {
+        foreignKey: "idUsuario",
+      });
     }
   }
   Servidores.init(
@@ -19,13 +24,14 @@ module.exports = (sequelize, DataTypes) => {
         autoIncrement: true,
         allowNull: false,
       },
-      idUsuario: {
+      estatus: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-          model: "Usuarios",
-          key: "idUsuario",
+          model: "EstatusServidores", // Can be both a string representing the table name or a Sequelize model
+          key: "tipo",
         },
+        defaultValue: 1,
       },
       dominio: {
         type: DataTypes.STRING,
