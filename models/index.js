@@ -50,7 +50,7 @@ module.exports = db;
 
 const main = async () => {
   try {
-    await sequelize.sync({ force: true });
+    await sequelize.sync({ force: false });
     console.log("Sincronización Completa");
   } catch (error) {
     console.log(error.message);
