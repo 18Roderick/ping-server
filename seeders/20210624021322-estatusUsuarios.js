@@ -2,10 +2,14 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.bulkInsert(
-      "estatusUsuarios",
-      require("../data/estatusUsuarios.json")
-    );
+    try {
+      await queryInterface.bulkInsert(
+        "estatusUsuarios",
+        require("../data/estatusUsuarios.json")
+      );
+    } catch (error) {
+      console.error(error);
+    }
   },
 
   down: async (queryInterface, Sequelize) => {

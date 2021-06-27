@@ -53,12 +53,12 @@ module.exports = (sequelize, DataTypes) => {
       },
       fechaCreacion: {
         type: DataTypes.DATE,
-        defaultValue: Sequelize.NOW,
+        defaultValue: sequelize.fn("NOW"),
         allowNull: false,
       },
       fechaActualizacion: {
         type: DataTypes.DATE,
-        defaultValue: Sequelize.NOW,
+        defaultValue: sequelize.fn("NOW"),
       },
     },
     {

@@ -48,7 +48,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       fechaPing: {
         type: DataTypes.DATE,
-        defaultValue: Sequelize.NOW,
+        defaultValue: sequelize.fn('NOW'),
         allowNull: false,
       },
     },

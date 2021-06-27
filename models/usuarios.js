@@ -21,7 +21,9 @@ module.exports = (sequelize, DataTypes) => {
     {
       publicId: {
         type: DataTypes.UUID,
+        defaultType: DataTypes.UUIDV4,
         defaultValue: DataTypes.UUIDV4,
+        allowNull: false,
         unique: true,
       },
       idUsuario: {
@@ -78,12 +80,12 @@ module.exports = (sequelize, DataTypes) => {
       },
       fechaCreacion: {
         type: DataTypes.DATE,
-        defaultValue: Sequelize.NOW,
         allowNull: false,
+        defaultValue: sequelize.fn("NOW"),
       },
       fechaActualizacion: {
         type: DataTypes.DATE,
-        defaultValue: Sequelize.NOW,
+        defaultValue: sequelize.fn("NOW"),
       },
     },
     {

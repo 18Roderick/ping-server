@@ -1,7 +1,9 @@
-{
-    "apellido": "roderick",
-    "nombre": "romero",
-    "email": "rjrr507@gmail.com",
-    "password": "@1Roderickr4omero",
-    "estatus": 1
-}
+[
+    {
+        "apellido": "roderick",
+        "nombre": "romero",
+        "email": "rjrr507@gmail.com",
+        "password": "@1Roderickr4omero",
+        "estatus": 1
+    }
+]

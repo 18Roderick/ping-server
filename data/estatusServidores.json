@@ -2,7 +2,7 @@
     {
         "tipo": 1,
         "titulo": "Servidor Activo",
-        "descripcion": "El servidor activo"
+        "descripcion": "Servidor activo"
     },
     {
         "tipo": 0,
@@ -11,7 +11,7 @@
     },
     {
         "tipo": 3,
-        "titulo": "Servidor Desactivado",
+        "titulo": "Servidor Desactivado Por Aplicación",
         "descripcion": "Servidor desactivado por acumulación de errores"
     }
 ]
