@@ -12,12 +12,19 @@ module.exports = (sequelize, DataTypes) => {
         as: "pingServidores",
       });
       this.belongsTo(models.Usuarios, {
-        foreignKey: "idUsuario",
+        foreignKey: "idUsuario", as: "usuario"
       });
     }
   }
   Servidores.init(
     {
+      publicId: {
+        type: DataTypes.UUID,
+        defaultType: DataTypes.UUIDV4,
+        defaultValue: DataTypes.UUIDV4,
+        allowNull: false,
+        unique: true,
+      },
       idServidor: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -46,10 +53,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       IP: {
         type: DataTypes.STRING,
-        allowNull: false,
-        validate: {
-          isIP: true,
-        },
+        allowNull: true,
       },
       fechaCreacion: {
         type: DataTypes.DATE,
@@ -65,7 +69,16 @@ module.exports = (sequelize, DataTypes) => {
       sequelize,
       modelName: "Servidores",
       timestamps: false,
+      name: {
+        singular: 'servidor'
+    }
     }
   );
+
+  Servidores.beforeCreate((servidor, options) => {
+    //Numero default de estatus del servidor
+    servidor.estatus = 1;
+  });
+
   return Servidores;
 };

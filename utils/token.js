@@ -18,7 +18,7 @@ const PUBLIC_KEY = fs.readFileSync(
 
 //configuración de
 const refreshTokenIat = "30d";
-const temporalTokenIat = "1h";
+const temporalTokenIat = "8h";
 
 let token = module.exports;
 

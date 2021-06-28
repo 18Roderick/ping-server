@@ -2,13 +2,15 @@ const router = require("express").Router();
 
 const verifyAuth = require("../../middlewares/verifyAuth");
 
+const validarCrearServidor = require("../../middlewares/validarCrearServidor");
+
 const servidoresController = require("../../controllers/servidores");
 
 router.use(verifyAuth);
 
 router.get("/", servidoresController.getServidores);
-router.get("/page/:page/:cantidad", servidoresController.getServidoresByPage);
-router.post("/", servidoresController.crearServidor);
+router.get("/page", servidoresController.getServidoresByPage);
+router.post("/", validarCrearServidor, servidoresController.crearServidor);
 router.put("/", servidoresController.editarServidor);
 router.delete("/", servidoresController.borrarServidor);
 
