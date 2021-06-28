@@ -12,7 +12,9 @@ module.exports = (sequelize, DataTypes) => {
         as: "pingServidores",
       });
       this.belongsTo(models.Usuarios, {
-        foreignKey: "idUsuario", as: "usuario"
+        foreignKey: "idUsuario",
+        as: "usuario",
+        onDelete: 'NO ACTION'
       });
     }
   }
@@ -51,7 +53,7 @@ module.exports = (sequelize, DataTypes) => {
       descripcion: {
         type: DataTypes.TEXT,
       },
-      IP: {
+      ip: {
         type: DataTypes.STRING,
         allowNull: true,
       },
@@ -69,9 +71,7 @@ module.exports = (sequelize, DataTypes) => {
       sequelize,
       modelName: "Servidores",
       timestamps: false,
-      name: {
-        singular: 'servidor'
-    }
+
     }
   );
 

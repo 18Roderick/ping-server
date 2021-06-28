@@ -6,20 +6,21 @@ module.exports.getServidores = async (req, res, next) => {
   try {
     let datosToken = req.datosToken;
 
-    let user = await Usuarios.findOne({
-      where: { publicId: datosToken.id },
-      attributes: [],
+    let servidores = await Servidores.findAll({
+      where: {},
+      attributes: ["dominio", "ip", "idServidor", "nombre"],
       include: [
         {
-          model: Servidores,
-          as: "servidores",
-          attributes: ["dominio", "ip", "idServidor", "nombre"],
+          model: Usuarios,
+          as: "usuario",
+          where: { publicId: datosToken.id },
+          attributes: [],
         },
       ],
     });
 
     res.json({
-      data: user.servidores,
+      data: servidores,
     });
   } catch (error) {
     console.error(error);
@@ -34,10 +35,14 @@ module.exports.getServidoresByPage = async (req, res, next) => {
     let datosToken = req.datosToken;
     let { limit, offset } = req.query;
 
-    limit = limit || 1;
-    offset = offset || 20;
+    limit = parseInt(limit || 1);
+    offset = parseInt(offset || 20);
+
     let where = {};
-    let servidores = await Servidores.findAll({
+
+    let servidores = await Servidores.findAndCountAll({
+      limit,
+      offset,
       where: where,
       attributes: ["dominio", "ip", "idServidor", "nombre"],
       include: [
@@ -72,16 +77,29 @@ module.exports.crearServidor = async (req, res, next) => {
         where: { publicId: datosToken.id },
         atributes: ["nombre", "apellido"],
       });
+      console.log(user);
 
-      let servidor = await Servidores.create({
-        idUsuario: user.idUsuario,
-        nombre: nombre,
-        ip: ip,
-        dominio: dominio,
-      });
+      let servidor = await Servidores.create(
+        {
+          idUsuario: user.idUsuario,
+          nombre: nombre,
+          ip: ip,
+          dominio: dominio,
+        },
+        {
+          attributes: ["dominio", "ip", "idServidor", "nombre"],
+        }
+      );
 
       res.json({
         message: "Servidor Creado",
+        servidor: {
+          nombre: servidor.nombre,
+          ip: servidor.ip,
+          dominio: servidor.dominio,
+          estatus: servidor.estatus,
+          idServidor: servidor.idServidor,
+        },
       });
     } else {
       res.status(400).json({

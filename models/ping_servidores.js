@@ -8,10 +8,10 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      /*    this.belongsTo(models.Servidores, {
+      this.belongsTo(models.Servidores, {
         foreignKey: "idServidor",
         as: "servidor",
-      }); */
+      });
     }
   }
   PingServidores.init(
@@ -48,7 +48,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       fechaPing: {
         type: DataTypes.DATE,
-        defaultValue: sequelize.fn('NOW'),
+        defaultValue: sequelize.fn("NOW"),
         allowNull: false,
       },
     },
