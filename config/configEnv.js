@@ -4,6 +4,9 @@ module.exports = {
   tokenSecret: process.env.TOKEN_SECRET,
   tokenAlgorithm: process.env.TOKEN_ALGORITHM,
   secretSalt: Number(process.env.SECRET_SALT),
+  redis:{
+    
+  },
   database: {
     host: process.env.DATABASE_HOST || "localhost",
     username: process.env.DATABASE_USER,

@@ -16,8 +16,11 @@ module.exports = async function (req, res, next) {
       });
     }
   } catch (err) {
-    res.status(500).json({
-      message: err.message,
+    console.log(err);
+    const status = err.message == "jwt expired" ? 403 : 500;
+    const message = err.message == "jwt expired" ? "Token ha expirado debe volver a iniciar sesión": "Error Validando usuario"
+    res.status(status).json({
+      message
     });
   }
 };
