@@ -4,17 +4,17 @@ const path = require("path");
 
 const config = require("../config/configEnv");
 
- // keys privados del token
+// keys privados del token
 const PRIVATE_KEY = fs.readFileSync(
-  path.join(__dirname, "./../config/privateTokenKey.key"),
+  path.join(__dirname, "./../config/id_rsa_priv.pem"),
   "utf8"
 );
 
 //keys públicos del token
 const PUBLIC_KEY = fs.readFileSync(
-  path.join(__dirname, "./../config/publicTokenKey.key"),
+  path.join(__dirname, "./../config/id_rsa_pub.pem"),
   "utf8"
-); 
+);
 
 //configuración de
 const refreshTokenIat = "30d";
@@ -51,4 +51,3 @@ token.verify = function (strToken) {
     });
   });
 };
-
