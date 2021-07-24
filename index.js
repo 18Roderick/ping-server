@@ -1,9 +1,10 @@
-require('dotenv').config();
+require("dotenv").config();
 
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
 const helmet = require("helmet");
+const compression = require("compression");
 //Archivo con las variables de configuración
 const config = require("./config/configEnv");
 
@@ -20,11 +21,12 @@ const app = express();
 //middleware
 
 app.use(helmet());
+app.use(compression());
 app.use(cors());
 app.use(morgan("tiny"));
 app.use(express.json());
 
-app.use(routes)
+app.use(routes);
 
 //rutas de errores
 app.use(errorController.error404);

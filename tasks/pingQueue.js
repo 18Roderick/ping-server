@@ -1,7 +1,7 @@
 const Bull = require("bull");
 const ping = require("ping");
 
-const { Servidores } = require("../models");
+const { Servidores, PingServidores } = require("../models");
 
 const pingQueue = new Bull("pingQueue");
 
@@ -29,3 +29,4 @@ myFirstQueue.process(async (job) => {
 myFirstQueue.on("completed", (job, result) => {
   console.log(`Job completed with result ${job.data}`);
 });
+

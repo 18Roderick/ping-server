@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       this.belongsTo(models.Usuarios, {
         foreignKey: "idUsuario",
         as: "usuario",
-        onDelete: 'NO ACTION'
+        onDelete: "NO ACTION",
       });
     }
   }
@@ -25,7 +25,6 @@ module.exports = (sequelize, DataTypes) => {
         defaultType: DataTypes.UUIDV4,
         defaultValue: DataTypes.UUIDV4,
         allowNull: false,
-        unique: true,
       },
       idServidor: {
         type: DataTypes.INTEGER,
@@ -71,7 +70,12 @@ module.exports = (sequelize, DataTypes) => {
       sequelize,
       modelName: "Servidores",
       timestamps: false,
-
+      indexes: [
+        {
+          unique: true,
+          fields: ["publicId"],
+        },
+      ],
     }
   );
 

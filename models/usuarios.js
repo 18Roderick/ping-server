@@ -92,7 +92,12 @@ module.exports = (sequelize, DataTypes) => {
       sequelize,
       modelName: "Usuarios",
       timestamps: false,
- 
+      indexes: [
+        {
+          unique: true,
+          fields: ["email"],
+        },
+      ],
     }
   );
 
