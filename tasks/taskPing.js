@@ -37,9 +37,9 @@ async function main(limit = 1000, offset = 0) {
     await enviarPings(servidores.rows);
 
     if (!servidores.rows.length < limit) {
-      main(limit, offset + limit);
+      setTimeout(() => main(limit, offset + limit), 500);
     } else {
-      timeout(() => main(), 500);
+      setTimeout(() => main(), 500);
     }
     // process.exit(0);
   } catch (e) {
@@ -57,27 +57,14 @@ async function main(limit = 1000, offset = 0) {
 //Iniciar proceso
 
 async function enviarPings(servers) {
-  try {
-    if (Array.isArray(servers)) {
-      let sizeServers = servers.length;
-      let count = 0;
-
-      while (count < sizeServers) {
+  if (Array.isArray(servers)) {
+    let sizeServers = servers.length;
+    let count = 0;
+    while (count < sizeServers) {
+      try {
         const server = servers[count];
         const logPing = await makePing(server.ip || server.dominio);
-        /*    let testData = {
-          inputHost: "www.google.com",
-          host: "www.google.com",
-          alive: true,
- time: 86,
-          times: [86],
-          min: "86.000",
-          max: "86.000",
-          avg: "86.000",
-          stddev: "0.000",
-          packetLoss: "0.000",
-          numeric_host: "142.250.217.228",
-        }; */
+
         let packagesReceived = null;
 
         if (logPing.time >= 0 && logPing.packetLoss >= 0) {
@@ -102,17 +89,13 @@ async function enviarPings(servers) {
           datosPing: newPing,
         };
 
-        console.log(data);
         process.send(data);
-
-        count += count;
-
-        await sleep(500);
+      } catch (error) {
+        console.log(error);
       }
+
+      count += count;
     }
-  } catch (error) {
-    process.send(error);
-    return false;
   }
 }
 
@@ -121,7 +104,7 @@ function formatNumber(number) {
 }
 
 function castString(str) {
-  Buffer.from(str, "utf-8").toString();
+  return Buffer.from(str, "utf-8").toString().replace("\xFFFD", "");
 }
 
 function reinicarProceso(obj) {
@@ -140,3 +123,19 @@ process.on("error", (err) => {
 process.on("message", (obj) => {
   reinicarProceso(obj);
 });
+
+console.log(
+  castString(
+    "\r\n" +
+      "Haciendo ping a 172.217.15.196 con 32 bytes de datos:\r\n" +
+      "Respuesta desde 172.217.15.196: bytes=32 tiempo=80ms TTL=111\r\n" +
+      "\r\n" +
+      "Estad�sticas de ping para 172.217.15.196:\r\n" +
+      "    Paquetes: enviados = 1, recibidos = 1, perdidos = 0\r\n" +
+      "    (0% perdidos),\r\n" +
+      "Tiempos aproximados de ida y vuelta en milisegundos:\r\n" +
+      "    M�nimo = 80ms, M�ximo = 80ms, Media = 80ms\r\n"
+  )
+);
+//process.exit(0)
+//.replace(/[\u0800-\uFFFF]/g, '')
