@@ -7,9 +7,8 @@
     "dialect": "mysql",
     "define": {
       "charset": "utf8",
-      "dialectOptions": {
-        "collate": "utf8_general_ci"
-      }
+      "collate": "utf8_general_ci",
+      "timestamps": false
     }
   },
   "test": {
@@ -20,9 +19,8 @@
     "dialect": "mysql",
     "define": {
       "charset": "utf8",
-      "dialectOptions": {
-        "collate": "utf8_general_ci"
-      }
+      "collate": "utf8_general_ci",
+      "timestamps": false
     }
   },
   "production": {
@@ -33,9 +31,8 @@
     "dialect": "mysql",
     "define": {
       "charset": "utf8",
-      "dialectOptions": {
-        "collate": "utf8_general_ci"
-      }
+      "collate": "utf8_general_ci",
+      "timestamps": false
     }
   }
 }

@@ -56,6 +56,8 @@ module.exports = (sequelize, DataTypes) => {
       sequelize,
       modelName: "PingServidores",
       timestamps: false,
+      charset: "utf8",
+      collate: "utf8_general_ci",
     }
   );
   return PingServidores;
