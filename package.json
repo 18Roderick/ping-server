@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest",
     "start": "nodemon index.js",
-    "runAllSeeds": "sequelize db:seed:all",
+    "runAllSeeds": "npx sequelize db:seed:all",
     "redisStart": "redis-server --service-start",
     "redisStop": "redis-server --service-stop"
   },
@@ -45,6 +45,7 @@
   "devDependencies": {
     "dotenv": "^10.0.0",
     "morgan": "^1.10.0",
-    "nodemon": "^2.0.7"
+    "nodemon": "^2.0.7",
+    "sequelize-cli": "^6.2.0"
   }
 }

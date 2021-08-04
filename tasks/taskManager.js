@@ -66,5 +66,5 @@ const taskManager = (function () {
   //return this;
 })();
 
-console.log(taskManager);
+
 module.exports = taskManager;

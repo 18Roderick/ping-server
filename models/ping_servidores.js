@@ -22,29 +22,29 @@ module.exports = (sequelize, DataTypes) => {
         autoIncrement: true,
         allowNull: false,
       },
-      paquetesEnviados: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
+      times: {
+        type: DataTypes.FLOAT,
       },
-      paquetesRecibidos: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
+      packagesReceived: {
+        type: DataTypes.FLOAT,
       },
-      paquetesPerdidos: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
+      packetLoss: {
+        type: DataTypes.FLOAT,
       },
-      tiempoMinimoMs: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
+      min: {
+        type: DataTypes.FLOAT,
       },
-      tiempoMaximoMs: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
+      max: {
+        type: DataTypes.FLOAT,
       },
-      tiempoMedioMs: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
+      avg: {
+        type: DataTypes.FLOAT,
+      },
+      log: {
+        type: DataTypes.TEXT,
+      },
+      isAlive: {
+        type: DataTypes.BOOLEAN,
       },
       fechaPing: {
         type: DataTypes.DATE,
