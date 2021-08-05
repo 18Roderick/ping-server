@@ -1,13 +1,27 @@
 const taskManager = (function () {
   const { fork } = require("child_process");
   const path = require("path");
-
+  const EventEmitter = require("events");
   let retries = 0;
   let limitRetries = 5;
 
   const childPath = path.join(__dirname, "taskPing.js");
 
   let forked = fork(childPath);
+
+  function Event() {
+    let eventHanlder = new EventEmitter();
+
+    forked.on("message", (data) => {
+      if (typeof data === "object") {
+        if (data.data) eventHanlder.emit("ping", data.data);
+      }
+    });
+
+    //eventHanlder.addListener("ping", (data) => {});
+
+    return eventHanlder;
+  }
 
   const init = function () {
     forked = fork(childPath);
@@ -21,10 +35,9 @@ const taskManager = (function () {
 
     if (retries < limitRetries) {
       console.log("Reintentando conexión");
-      if(forked.exitCode != null) {
+      if (forked.exitCode != null) {
         forked.kill();
-       // forked.disconnect();
-        
+        // forked.disconnect();
       }
       init();
       retries++;
@@ -33,11 +46,10 @@ const taskManager = (function () {
     }
   };
 
-
   const initChild = () => forked.send({ init: true });
 
   forked.on("message", (msg) => {
-    console.log("Message from child", msg);
+    // console.log("Message from child", msg);
   });
 
   process.on("error", (err) => {
@@ -59,12 +71,22 @@ const taskManager = (function () {
 
   //Iniciar Sub Proceso
 
-  
   initChild();
 
   // forked
-  //return this;
+  return {
+    Event: Event,
+  };
 })();
 
+const event = taskManager.Event();
+
+event.on("ping", (data) => {
+  console.log("Datos Recibidos del child process");
+});
+
+event.on("ping", (data) => {
+  console.log("Datos Recibidos del child process 2");
+});
 
 module.exports = taskManager;

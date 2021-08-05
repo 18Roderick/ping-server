@@ -89,7 +89,7 @@ async function enviarPings(servers) {
           datosPing: newPing,
         };
 
-        process.send(data);
+        process.send({ data });
       } catch (error) {
         console.log(error);
       }
@@ -123,19 +123,3 @@ process.on("error", (err) => {
 process.on("message", (obj) => {
   reinicarProceso(obj);
 });
-
-console.log(
-  castString(
-    "\r\n" +
-      "Haciendo ping a 172.217.15.196 con 32 bytes de datos:\r\n" +
-      "Respuesta desde 172.217.15.196: bytes=32 tiempo=80ms TTL=111\r\n" +
-      "\r\n" +
-      "Estad�sticas de ping para 172.217.15.196:\r\n" +
-      "    Paquetes: enviados = 1, recibidos = 1, perdidos = 0\r\n" +
-      "    (0% perdidos),\r\n" +
-      "Tiempos aproximados de ida y vuelta en milisegundos:\r\n" +
-      "    M�nimo = 80ms, M�ximo = 80ms, Media = 80ms\r\n"
-  )
-);
-//process.exit(0)
-//.replace(/[\u0800-\uFFFF]/g, '')
