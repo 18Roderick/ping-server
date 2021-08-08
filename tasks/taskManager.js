@@ -81,12 +81,6 @@ const taskManager = (function () {
 
 const event = taskManager.Event();
 
-event.on("ping", (data) => {
-  console.log("Datos Recibidos del child process");
-});
 
-event.on("ping", (data) => {
-  console.log("Datos Recibidos del child process 2");
-});
 
 module.exports = taskManager;

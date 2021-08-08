@@ -11,6 +11,7 @@ const testHost = "www.google.com";
 
 let retries = 0;
 let limitRetries = 5;
+let timeMs = 1000;
 
 async function makePing(hosts, limit = 10) {
   return await ping.promise.probe(hosts);
@@ -37,9 +38,9 @@ async function main(limit = 1000, offset = 0) {
     await enviarPings(servidores.rows);
 
     if (!servidores.rows.length < limit) {
-      setTimeout(() => main(limit, offset + limit), 500);
+      setTimeout(() => main(limit, offset + limit), timeMs);
     } else {
-      setTimeout(() => main(), 500);
+      setTimeout(() => main(), timeMs);
     }
     // process.exit(0);
   } catch (e) {
@@ -74,7 +75,7 @@ async function enviarPings(servers) {
 
         const newPing = await PingServidores.create({
           idServidor: server.idServidor,
-          times: parseInt(logPing.time),
+          times: logPing.time ? parseInt(logPing.time) : null,
           packagesReceived: packagesReceived,
           packetLoss: formatNumber(logPing.packetLoss),
           min: formatNumber(logPing.max),
@@ -100,7 +101,7 @@ async function enviarPings(servers) {
 }
 
 function formatNumber(number) {
-  return number >= 0 ? parseFloat(number) : number;
+  return number >= 0 ? parseFloat(number) : null;
 }
 
 function castString(str) {
