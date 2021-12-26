@@ -5,9 +5,7 @@ const usuarioRouter = require("./usuarios/usuarios");
 const servidoresRouter = require("./servidores/servidores");
 
 router.get("/", (req, res) => {
-  res.render("index", {
-    titulo: "Inicio",
-  });
+	res.status(200).json({ message: "OK", status: 1 });
 });
 
 router.use("/usuarios", usuarioRouter);

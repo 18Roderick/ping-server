@@ -11,116 +11,116 @@ const testHost = "www.google.com";
 
 let retries = 0;
 let limitRetries = 5;
-let timeMs = 1000;
+let timeMs = 30000;
 
 async function makePing(hosts, limit = 10) {
-  return await ping.promise.probe(hosts);
+	return await ping.promise.probe(hosts);
 }
 
 async function main(limit = 1000, offset = 0) {
-  try {
-    let where = {};
+	try {
+		let where = {};
 
-    let servidores = await Servidores.findAndCountAll({
-      limit: 1000,
-      offset: 0,
-      where: where,
-      attributes: ["dominio", "ip", "idServidor", "nombre"],
-      include: [
-        {
-          model: Usuarios,
-          as: "usuario",
-          attributes: ["idUsuario", "nombre", "estatus", "email"],
-        },
-      ],
-    });
-    // process.send(servidores.rows[0].usuario);
-    await enviarPings(servidores.rows);
+		let servidores = await Servidores.findAndCountAll({
+			limit: 1000,
+			offset: 0,
+			where: where,
+			attributes: ["dominio", "ip", "idServidor", "nombre"],
+			include: [
+				{
+					model: Usuarios,
+					as: "usuario",
+					attributes: ["idUsuario", "nombre", "estatus", "email"],
+				},
+			],
+		});
+		// process.send(servidores.rows[0].usuario);
+		await enviarPings(servidores.rows);
 
-    if (!servidores.rows.length < limit) {
-      setTimeout(() => main(limit, offset + limit), timeMs);
-    } else {
-      setTimeout(() => main(), timeMs);
-    }
-    // process.exit(0);
-  } catch (e) {
-    // process.exit(0);
-    if (retries < limitRetries) {
-      main();
-      retries++;
-    } else {
-      process.exit(0);
-    }
-    throw e;
-  }
+		if (!servidores.rows.length < limit) {
+			setTimeout(() => main(limit, offset + limit), timeMs);
+		} else {
+			setTimeout(() => main(), timeMs);
+		}
+		// process.exit(0);
+	} catch (e) {
+		// process.exit(0);
+		if (retries < limitRetries) {
+			main();
+			retries++;
+		} else {
+			process.exit(0);
+		}
+		throw e;
+	}
 }
 
 //Iniciar proceso
 
 async function enviarPings(servers) {
-  if (Array.isArray(servers)) {
-    let sizeServers = servers.length;
-    let count = 0;
-    while (count < sizeServers) {
-      try {
-        const server = servers[count];
-        const logPing = await makePing(server.ip || server.dominio);
+	if (Array.isArray(servers)) {
+		let sizeServers = servers.length;
+		let count = 0;
+		while (count < sizeServers) {
+			try {
+				const server = servers[count];
+				const logPing = await makePing(server.ip || server.dominio);
 
-        let packagesReceived = null;
+				let packagesReceived = null;
 
-        if (logPing.time >= 0 && logPing.packetLoss >= 0) {
-          packagesReceived =
-            formatNumber(logPing.time) - formatNumber(logPing.packetLoss);
-        }
+				if (logPing.time >= 0 && logPing.packetLoss >= 0) {
+					packagesReceived = formatNumber(logPing.time) - formatNumber(logPing.packetLoss);
+				}
+				console.log(logPing);
 
-        const newPing = await PingServidores.create({
-          idServidor: server.idServidor,
-          times: logPing.time ? parseInt(logPing.time) : null,
-          packagesReceived: packagesReceived,
-          packetLoss: formatNumber(logPing.packetLoss),
-          min: formatNumber(logPing.max),
-          max: formatNumber(logPing.max),
-          avg: formatNumber(logPing.avg),
-          isAlive: logPing.alive,
-          log: castString(logPing.output),
-        });
+				const newPing = await PingServidores.create({
+					idServidor: server.idServidor,
+					times: logPing.time ? parseInt(logPing.time) : null,
+					packagesReceived: packagesReceived,
+					packetLoss: formatNumber(logPing.packetLoss),
+					min: formatNumber(logPing.max),
+					max: formatNumber(logPing.max),
+					avg: formatNumber(logPing.avg),
+					isAlive: logPing.alive,
+					log: castString(logPing.output),
+				});
 
-        const data = {
-          usuario: server.usuario,
-          datosPing: newPing,
-        };
+				const data = {
+					usuario: server.usuario,
+					datosPing: newPing,
+				};
 
-        process.send({ data });
-      } catch (error) {
-        console.log(error);
-      }
+				process.send({ data });
+			} catch (error) {
+				console.log(error.message);
+			}
 
-      count += count;
-    }
-  }
+			count += count;
+		}
+	}
 }
 
 function formatNumber(number) {
-  return number >= 0 ? parseFloat(number) : null;
+	return number >= 0 ? parseFloat(number) : null;
 }
 
 function castString(str) {
-  return Buffer.from(str, "utf-8").toString().replace("\xFFFD", "");
+	return Buffer.from(str, "utf-8").toString().replace("\xFFFD", "");
 }
 
 function reinicarProceso(obj) {
-  if (obj) {
-    if (obj.init) {
-      process.send("Iniciando Proceso");
-      main();
-    }
-  }
+	if (obj) {
+		if (obj.init) {
+			process.send("Iniciando Proceso");
+			main();
+		}
+	}
 }
 
 process.on("error", (err) => {
-  console.error("Ocurrió error ", err.message);
+	console.error("Ocurrió error ", err.message);
 });
 
 process.on("message", (obj) => {
-  reinicarProceso(obj);
+	reinicarProceso(obj);
 });
