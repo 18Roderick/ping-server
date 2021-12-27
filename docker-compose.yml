@@ -33,7 +33,7 @@ services:
       - ping-net
     ports:
       - 3000:3000
-    command: "npm run run:seeds && npm start"
+    command: " npm start"
     #  -"npm rebuild bcrypt --build-from-source"
   redis:
     image: "redis:latest"

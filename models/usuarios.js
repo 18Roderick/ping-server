@@ -5,11 +5,6 @@ const cipher = require("../utils/cipher");
 
 module.exports = (sequelize, DataTypes) => {
 	class Usuarios extends Model {
-		/**
-		 * Helper method for defining associations.
-		 * This method is not a part of Sequelize lifecycle.
-		 * The `models/index` file will call this method automatically.
-		 */
 		static associate(models) {
 			this.hasMany(models.Servidores, { as: "servidores", foreignKey: "idUsuario" });
 		}

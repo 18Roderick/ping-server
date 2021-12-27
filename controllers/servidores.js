@@ -19,7 +19,7 @@ module.exports.getServidores = async (req, res, next) => {
 			],
 		});
 
-		console.log(datosToken, servidores);
+		console.log("Buscando Servidores");
 
 		res.json({
 			data: servidores,
@@ -79,7 +79,7 @@ module.exports.crearServidor = async (req, res, next) => {
 				where: { publicId: datosToken.id },
 				atributes: ["nombre", "apellido"],
 			});
-			console.log(user);
+
 			let servidor = await Servidores.create(
 				{
 					idUsuario: user.idUsuario,
