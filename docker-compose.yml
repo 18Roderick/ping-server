@@ -33,7 +33,7 @@ services:
       - ping-net
     ports:
       - 3000:3000
-    command: " npm start"
+    command: " npm run dev"
     #  -"npm rebuild bcrypt --build-from-source"
   redis:
     image: "redis:latest"
@@ -49,4 +49,6 @@ networks:
   ping-net:
     driver: bridge
 volumes:
-  dev-ping: {}
+  dev-ping: {
+   
+  }
