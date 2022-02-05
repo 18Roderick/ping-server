@@ -1,17 +1,13 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class EstatusUsuarios extends Model {
-    static associate(models) {
-      // define association here
-    }
-  }
+  class EstatusUsuarios extends Model {}
   EstatusUsuarios.init(
     {
       idEstatus: {
         type: DataTypes.INTEGER,
         primaryKey: true,
-        autoIncrement: true
+        autoIncrement: true,
       },
       tipo: {
         type: DataTypes.INTEGER,
