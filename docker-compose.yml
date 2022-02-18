@@ -49,6 +49,4 @@ networks:
   ping-net:
     driver: bridge
 volumes:
-  dev-ping: {
-   
-  }
+  dev-ping: {}

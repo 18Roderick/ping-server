@@ -6,7 +6,7 @@ RUN apt update -y && apt install -y bash && apt install -y iputils-ping && npm r
 
 WORKDIR /home/app
 
-COPY ./ /home/app
+COPY . .
 COPY package.json ./
 #ARG user
 #ENV user_docker $user
