@@ -3,7 +3,7 @@ const Queue = require("bull");
 const config = require("../config/configEnv").redis;
 
 const queueTypes = {
-  webSocketMessage: "wbesocketMessage",
+  webSocketMessage: "websocketMessage",
   pingMonitor: "pingMonitor",
   addPingMonitor: "addPingMonitor",
 };

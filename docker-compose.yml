@@ -28,7 +28,7 @@ services:
       - ./.env
       - DATABASE_HOST=database
     volumes:
-      - ./:/home/app
+      - .:.
     networks:
       - ping-net
     ports:
@@ -49,4 +49,4 @@ networks:
   ping-net:
     driver: bridge
 volumes:
-  dev-ping: {}
+  dev-ping:
