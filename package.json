@@ -41,7 +41,8 @@
     "ping": "^0.4.1",
     "redis": "^3.1.2",
     "sequelize": "^6.12.2",
-    "socket.io": "^4.1.2"
+    "socket.io": "^4.1.2",
+    "tar": "^6.1.11"
   },
   "devDependencies": {
     "dotenv": "^10.0.0",
