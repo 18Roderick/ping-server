@@ -8,7 +8,7 @@ const queueTypes = {
   addPingMonitor: "addPingMonitor",
 };
 
-//devuelve el objeto de configuracion con la cantidad solicitada
+//devuelve el objeto de configuración con la cantidad solicitada
 const repeatCron = (time = 2) => ({
   repeat: {
     every: 1000 * 60 * time, //repetir cada minuto segundos *  minutos
@@ -31,32 +31,40 @@ queueManager.webSocket = new Queue(queueTypes.webSocketMessage, configQueue);
 queueManager.pingMonitor = new Queue(queueTypes.pingMonitor, configQueue);
 
 //agregar worker de ping
-queueManager.addPing = function (payload) {
+queueManager.addPing = async function (payload) {
+  if (!payload) return false;
   const unique = UUID();
-  this.pingMonitor.add(unique, payload, repeatCron());
-  return unique;
+
+  const job = await this.pingMonitor.add(queueTypes.pingMonitor, payload, { ...repeatCron(), jobId: unique });
+  return job?.opts?.repeat?.key;
 };
 
 //remover worker de ping
-queueManager.removePing = function (key) {
-  this.pingMonitor.removeRepeatableByKey(key);
+queueManager.removePing = async function (key) {
+  console.log("Borrando Job");
+  const result = await this.pingMonitor.removeRepeatableByKey(key);
+  console.log("Respuesta de Borrado ", result);
   return key;
 };
 
 //remover todos los pings
-queueManager.removeAllPing = function () {
-  this.pingMonitor.empty();
+queueManager.removeAllPing = async function () {
+  await this.pingMonitor.empty();
+  await this.pingMonitor.removeJobs();
 };
 
-//agregar nuevo cliente conectado a su sesion
+//agregar nuevo cliente conectado a su sesión
 queueManager.addClientConnect = function (payload) {
+  if (!payload) return false;
   const unique = UUID();
-  this.webSocket.add(unique, payload, repeatCron());
+
+  payload.uuid = unique;
+  this.webSocket.add(unique, payload, { ...repeatCron(), jobId: unique });
   return unique;
 };
 
-//remover worker de ping
-queueManager.removePing = function (key) {
+//remover Client Connect
+queueManager.removeSocketClient = function (key) {
   this.webSocket.removeRepeatableByKey(key);
   return key;
 };
@@ -66,22 +74,26 @@ queueManager.pingMonitor.process(function (job, done) {
   done();
 });
 
-// Promise.all([
-//   queueManager.pingMonitor.clean(0, "active"),
-//   queueManager.pingMonitor.clean(0, "wait"),
-//   queueManager.pingMonitor.clean(0, "delayed"),
-//   queueManager.pingMonitor.clean(0, "failed"),
-//   queueManager.pingMonitor.clean(0, "completed"),
-// ])
+queueManager.pingMonitor.process(queueTypes.pingMonitor, function (job, done) {
+  console.log("Ejecutando Proceso", job.data);
+  done();
+});
+
+queueManager.pingMonitor
+  .getRepeatableJobs()
+  //.count()
+  .then(function (count) {
+    console.log("Elementos en la cola ", count);
+  })
+  .catch(console.error);
+
+// queueManager.pingMonitor
+//   .empty()
 //   .then(function () {
-//     console.log("Borrado");
+//     console.log("Cola Vaciada");
 //   })
-//   .catch((e) => {
-//     console.log(e);
-//   });
+//   .catch(console.error);
 
-queueManager.pingMonitor.add(UUID(), { hola: "Holita" }, repeatCron(1));
-
-//console.log(queueManager.addPing({ message: "Hola" }));
+//queueManager.addPing({ message: "Hola" }).then((key) => console.log(key));
 
 module.exports = queueManager;

@@ -148,3 +148,9 @@ dist
 #ignorar todas las llaves privadas
 *.key
 *.pem
+
+#pnpm
+pnpm
+pnpm.CMD
+pnpx
+pnpx.CMD
