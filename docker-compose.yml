@@ -3,6 +3,7 @@ version: "3.9"
 services:
   database:
     image: mysql
+    container_name: ping-database
     restart: unless-stopped
     command: --default-authentication-plugin=mysql_native_password
     ports:
@@ -18,6 +19,7 @@ services:
   node:
     image: "node:latest"
     #image: "node-ping"
+    container_name: ping-server
     user: "node"
     restart: unless-stopped
     working_dir: /home/app
@@ -28,7 +30,7 @@ services:
       - ./.env
       - DATABASE_HOST=database
     volumes:
-      - .:.
+      - ./:/home/app
     networks:
       - ping-net
     ports:
@@ -37,6 +39,7 @@ services:
     #  -"npm rebuild bcrypt --build-from-source"
   redis:
     image: "redis:latest"
+    container_name: ping-cache
     restart: unless-stopped
     networks:
       - ping-net
