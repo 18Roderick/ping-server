@@ -5,7 +5,7 @@ const usuarioRouter = require("./usuarios/usuarios");
 const servidoresRouter = require("./servidores/servidores");
 
 router.get("/", (req, res) => {
-	res.status(200).json({ message: "OK", status: 3 });
+	res.status(200).json({ message: "OK", status: 4 });
 });
 
 router.use("/usuarios", usuarioRouter);
