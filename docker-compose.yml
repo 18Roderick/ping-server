@@ -12,6 +12,7 @@ services:
     networks:
       - ping-net
     environment:
+      MYSQL_USER: "pinguser"
       MYSQL_DATABASE: "pingdom"
       MYSQL_ROOT_PASSWORD: "123456"
       # PRODUCTION: development
@@ -28,7 +29,7 @@ services:
       - ./.env
       - DATABASE_HOST=database
     volumes:
-      - .:.
+      - ./:/home/app
     networks:
       - ping-net
     ports:
