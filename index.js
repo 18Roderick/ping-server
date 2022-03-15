@@ -3,9 +3,9 @@ const socket = require("socket.io");
 
 //const { sequelize } = require("../models");
 
-const app = require("../app");
+const app = require("./app");
 
-const config = require("../config/configEnv");
+const config = require("./config/configEnv");
 
 //const pingWorker = require("../tasks/taskManager");
 
