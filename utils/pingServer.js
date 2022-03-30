@@ -1,21 +1,21 @@
+//ts-check
 const ping = require("ping");
 
-const testHost = "www.google.com";
-
 function convertPingData(pingData) {
+  const reg = /\./g;
   let data = {};
   if (!data) return data;
-
-  data.host = pingData.host ?? "";
+  console.log(pingData);
+  data.host = reg.test(pingData.host) ? pingData.host : "";
   data.alive = pingData.alive ?? false;
-  data.time = pingData.time ?? 0;
-  data.times = pingData.times ? pingData.times.length : null;
-  data.min = !isNaN(pingData.min) ? parseFloat(pingData.min ?? 0) : 0;
-  data.max = !isNaN(pingData.max) ? parseFloat(pingData.max ?? 0) : 0;
-  data.avg = !isNaN(pingData.avg) ? parseFloat(pingData.avg ?? 0) : 0;
-  data.packetLoss = parseFloat(pingData.packetLoss ?? 0);
-  data.numericHost = pingData.numeric_host;
-  data.details = pingData.output;
+  data.time = !isNaN(pingData.time) ? pingData.time : null;
+  data.times = pingData.times ? pingData.times.length || null : null;
+  data.min = !isNaN(pingData.min) ? parseFloat(pingData.min ?? 0) : null;
+  data.max = !isNaN(pingData.max) ? parseFloat(pingData.max ?? 0) : null;
+  data.avg = !isNaN(pingData.avg) ? parseFloat(pingData.avg ?? 0) : null;
+  data.packetLoss = !isNaN(pingData.packetLoss) ? parseFloat(pingData.packetLoss) : null;
+  data.numericHost = pingData.numeric_host ?? null;
+  data.details = removerCharacters(pingData.output);
 
   return data;
 }
@@ -25,14 +25,20 @@ function convertPingData(pingData) {
 //   return str.replace(/\r?\n|\r/g, " ");
 // }
 
-const pingTest = async () => {
-  try {
-    let log = await ping.promise.probe(testHost);
-    const data = convertPingData(log);
-    console.log(log, data);
-  } catch (error) {
-    console.log(error);
-  }
-};
+function removerCharacters(str) {
+  if (!str) return str;
 
-pingTest();
+  return str.replace(/\+/g, "");
+}
+
+async function makePing(server) {
+  if (!server) throw new Error("IP o Dominio Invalido");
+  let log = await ping.promise.probe(testHost);
+  const data = convertPingData(log);
+
+  return data;
+}
+
+module.exports = {
+  makePing,
+};

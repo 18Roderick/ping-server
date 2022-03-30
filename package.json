@@ -7,9 +7,7 @@
     "test": "jest",
     "start": "node ./index.js",
     "dev": "nodemon ./index.js",
-    "run:seeds": "npx sequelize db:seed:all",
-    "redisStart": "redis-server --service-start",
-    "redisStop": "redis-server --service-stop"
+    "run:seeds": "npx sequelize db:seed:all"
   },
   "repository": {
     "type": "git",

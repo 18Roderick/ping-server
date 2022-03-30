@@ -1,13 +1,15 @@
-FROM node:latest
+FROM node:17-alpine3.14
 
-
-RUN apt update -y && apt install -y bash && apt install -y iputils-ping && npm rebuild bcrypt --build-from-source
+#RUN apt update -y && apt install -y bash && apt install -y iputils-ping && npm rebuild bcrypt --build-from-source
 
 
 WORKDIR /home/app
 
 COPY . .
-COPY package.json ./
+
+
+#RUN npm run run:seeds
+
 #ARG user
 #ENV user_docker $user
 #ADD add_user.sh /datos1

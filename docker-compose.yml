@@ -13,11 +13,14 @@ services:
     networks:
       - ping-net
     environment:
-      MYSQL_DATABASE: "pingdom"
-      MYSQL_ROOT_PASSWORD: "123456"
-      # PRODUCTION: development
+      - MYSQL_ROOT_PASSWORD=1234565418848468468248624682ddd
+      - MYSQL_USER=monitoruser
+      - MYSQL_PASSWORD=123456
+      - MYSQL_DATABASE=pingdom
   node:
-    image: "node:latest"
+    build:
+      context: .
+      dockerfile: "Dockerfile"
     #image: "node-ping"
     container_name: ping-server
     user: "node"
@@ -38,7 +41,7 @@ services:
     command: " npm run dev"
     #  -"npm rebuild bcrypt --build-from-source"
   redis:
-    image: "redis:latest"
+    image: redis:7.0-rc1-alpine
     container_name: ping-cache
     restart: unless-stopped
     networks:
@@ -50,6 +53,5 @@ services:
 
 networks:
   ping-net:
-    driver: bridge
 volumes:
   dev-ping:

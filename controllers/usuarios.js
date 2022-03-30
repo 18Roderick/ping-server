@@ -8,6 +8,7 @@ const { validationResult } = require("express-validator");
 
 module.exports.crearUsuario = async function (req, res) {
   try {
+    console.log("llego");
     const { nombre, apellido, email, password } = req.body;
     const errors = validationResult(req);
     let token = "";

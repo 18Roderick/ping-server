@@ -11,31 +11,31 @@ const temporalTokenIat = "8h";
 let token = module.exports;
 
 const tokenConfig = {
-	issuer: "Pingdom Copy",
-	expiresIn: "1h",
-	algorithm: config.tokenAlgorithm,
-	audience: "Client_Identity",
+  issuer: "Pingdom Copy",
+  expiresIn: "1h",
+  algorithm: config.tokenAlgorithm,
+  audience: "Client_Identity",
 };
 
 token.sign = function (payload) {
-	return jwt.sign(payload, config.tokenSecret, {
-		...tokenConfig,
-		expiresIn: temporalTokenIat,
-	});
+  return jwt.sign(payload, config.tokenSecret, {
+    ...tokenConfig,
+    expiresIn: temporalTokenIat,
+  });
 };
 
 token.signRefreshToken = function (payload) {
-	return jwt.sign(payload, config.tokenSecret, {
-		...tokenConfig,
-		expiresIn: refreshTokenIat,
-	});
+  return jwt.sign(payload, config.tokenSecret, {
+    ...tokenConfig,
+    expiresIn: refreshTokenIat,
+  });
 };
 
 token.verify = function (strToken) {
-	return new Promise((resolve, reject) => {
-		jwt.verify(strToken, PUBLIC_KEY, (err, decoded) => {
-			if (err) reject(err);
-			resolve(decoded);
-		});
-	});
+  return new Promise((resolve, reject) => {
+    jwt.verify(strToken, config.tokenSecret, (err, decoded) => {
+      if (err) reject(err);
+      resolve(decoded);
+    });
+  });
 };

@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "idUsuario",
         onDelete: "NO ACTION",
       });
+
       this.hasMany(models.PingServidores, {
         as: "pings",
         foreignKey: "idServidor",
@@ -40,7 +41,6 @@ module.exports = (sequelize, DataTypes) => {
           model: "EstatusServidores", // Can be both a string representing the table name or a Sequelize model
           key: "tipo",
         },
-
         defaultValue: 1,
       },
       dominio: {

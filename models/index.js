@@ -9,7 +9,7 @@ const db = {};
 
 let sequelize;
 
-let logging = !process.env.PRODUCTION ? false : true;
+let logging = false;
 
 config.logging = logging;
 
