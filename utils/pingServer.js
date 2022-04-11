@@ -5,9 +5,8 @@ function convertPingData(pingData) {
   const reg = /\./g;
   let data = {};
   if (!data) return data;
-  console.log(pingData);
   data.host = reg.test(pingData.host) ? pingData.host : "";
-  data.alive = pingData.alive ?? false;
+  data.isAlive = pingData.alive ?? false;
   data.time = !isNaN(pingData.time) ? pingData.time : null;
   data.times = pingData.times ? pingData.times.length || null : null;
   data.min = !isNaN(pingData.min) ? parseFloat(pingData.min ?? 0) : null;
@@ -15,7 +14,7 @@ function convertPingData(pingData) {
   data.avg = !isNaN(pingData.avg) ? parseFloat(pingData.avg ?? 0) : null;
   data.packetLoss = !isNaN(pingData.packetLoss) ? parseFloat(pingData.packetLoss) : null;
   data.numericHost = pingData.numeric_host ?? null;
-  data.details = removerCharacters(pingData.output);
+  data.log = removerCharacters(pingData.output);
 
   return data;
 }
@@ -27,17 +26,18 @@ function convertPingData(pingData) {
 
 function removerCharacters(str) {
   if (!str) return str;
-
   return str.replace(/\+/g, "");
 }
 
 async function makePing(server) {
   if (!server) throw new Error("IP o Dominio Invalido");
-  let log = await ping.promise.probe(testHost);
+  let log = await ping.promise.probe(server);
   const data = convertPingData(log);
 
   return data;
 }
+
+// makePing(`8.8.8.8`).then(console.info).then(console.error);
 
 module.exports = {
   makePing,

@@ -1,40 +1,58 @@
 const http = require("http");
 const socket = require("socket.io");
 
-//const { sequelize } = require("../models");
+const { sequelize } = require("./models/index");
 
 const app = require("./app");
 
 const config = require("./config/configEnv");
 
-//const pingWorker = require("../tasks/taskManager");
-
 const httpServer = http.createServer(app);
+
+const serverTasks = require("./tasks/serverTasks");
 
 const options = {};
 
 const io = socket(httpServer, options);
 
-//let eventHanlder = pingWorker.Event();
+let retryCount = 0;
 
 io.on("connection", (socket) => {
   console.log("a user connected");
   socket.on("disconnect", () => {
     console.log("user disconnected");
   });
-
-  /*   eventHanlder.on("ping", (data) => {
-    socket.emit("serverPing", data);
-  }); */
 });
 
-// sequelize
-// 	.authenticate()
-// 	.then(() => {
-httpServer.listen(config.PORT, () => {
-  console.log(`servidor corriendo en puerto ${config.PORT}`);
+//retry server
+
+httpServer.on("error", (e) => {
+  if (e.code === "EADDRINUSE" && retryCount < 3) {
+    console.log(`Intentando iniciar la aplicación count ${retryCount}`);
+    setTimeout(() => {
+      httpServer.close();
+      httpServer.listen(config.PORT);
+      retryCount++;
+    }, 5000);
+  }
 });
-// })
-// .catch((err) => {
-// 	console.error(err);
-// });
+
+async function start() {
+  try {
+    //verificar acceso a la base de datos
+    await sequelize.authenticate();
+    console.log(`Acceso a base de Datos`);
+
+    //verificar lo parámetros de estatus de tablas
+    const task = await serverTasks.verifyDatabaseData();
+    console.info("Verificación de parámetros de base de datos ejecutada ", task);
+
+    await httpServer.listen(config.PORT, () => {
+      console.log(`Servidor corriendo en puerto ${config.PORT} `);
+    });
+  } catch (error) {
+    console.error("Error Iniciando la aplicación", error);
+  }
+}
+
+start();

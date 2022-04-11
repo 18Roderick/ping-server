@@ -7,6 +7,7 @@ const config = {
   secretSalt: Number(process.env.SECRET_SALT),
   redis: {
     REDIS_PORT: process.env.REDIS_PORT,
+    REDIS_HOST: process.env.REDIS_HOST || "localhost",
   },
   database: {
     host: process.env.DATABASE_HOST || "localhost",

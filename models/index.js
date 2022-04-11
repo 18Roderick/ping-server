@@ -42,10 +42,10 @@ module.exports = db;
 const main = async () => {
   try {
     await sequelize.sync({ force: false });
-    console.log("Sincronización Completa");
+    console.log("Sync completed");
   } catch (error) {
     console.log(config, error);
   }
 };
 
-main();
+//main();

@@ -51,33 +51,30 @@ module.exports.login = async function (req, res) {
     const errors = validationResult(req);
     let token = "";
     if (!errors.isEmpty()) {
-      let cleanErrors = errors.array().map((d) => ({ msg: d.msg }));
-
-      res.status(400).json({
-        message: "Se encontraron Errores en los datos ingresados",
-        errors: cleanErrors,
+      return res.status(400).json({
+        message: "Email o Contraseña no Valido",
       });
     }
 
     let user = await Usuarios.findOne({ where: { email } });
 
-    if (!(await cipher.compare(password, user.password)))
-      res.status(401).json({
+    if (!user || !(await cipher.compare(password, user.password))) {
+      return res.status(401).json({
         message: "Acceso no Autorizado",
       });
+    }
 
     token = tokenCreator.sign({
       nombre: user.nombre,
       id: user.publicId,
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "Éxito",
       token,
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({
+    return res.status(500).json({
       message: "Error Creando Usuario",
     });
   }

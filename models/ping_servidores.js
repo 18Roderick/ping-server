@@ -25,9 +25,6 @@ module.exports = (sequelize, DataTypes) => {
       times: {
         type: DataTypes.FLOAT,
       },
-      packagesReceived: {
-        type: DataTypes.FLOAT,
-      },
       packetLoss: {
         type: DataTypes.FLOAT,
       },
@@ -45,6 +42,10 @@ module.exports = (sequelize, DataTypes) => {
       },
       isAlive: {
         type: DataTypes.BOOLEAN,
+      },
+      numericHost: {
+        type: DataTypes.STRING,
+        allowNull: true,
       },
       fechaPing: {
         type: DataTypes.DATE,

@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
   Tasks.init(
     {
       idTask: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(500),
         allowNull: false,
         unique: true,
       },
@@ -23,6 +23,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       fechaActualizacion: {
         type: DataTypes.DATE,
+        allowNull: true,
       },
     },
     {

@@ -5,6 +5,7 @@ const queueTypes = {
   webSocketMessage: "websocketMessage",
   pingMonitor: "pingMonitor",
   addPingMonitor: "addPingMonitor",
+  serverTasks: "serverTasks",
 };
 
 //devuelve el objeto de configuración con la cantidad solicitada
@@ -21,6 +22,7 @@ const configQueue = {
   },
   redis: {
     port: config.REDIS_PORT,
+    host: config.REDIS_HOST,
   },
 };
 
@@ -29,22 +31,7 @@ const queueManager = {};
 queueManager.webSocket = new Queue(queueTypes.webSocketMessage, configQueue);
 queueManager.pingMonitor = new Queue(queueTypes.pingMonitor, configQueue);
 
-// queueManager.pingMonitor
-//   .getRepeatableJobs()
-//   //.count()
-//   .then(function (count) {
-//     console.log("Elementos en la cola ", count);
-//   })
-//   .catch(console.error);
-
-// queueManager.pingMonitor
-//   .empty()
-//   .then(function () {
-//     console.log("Cola Vaciada");
-//   })
-//   .catch(console.error);
-
-//queueManager.addPing({ message: "Hola" }).then((key) => console.log(key));
+queueManager.serverTasks = new Queue(queueTypes.serverTasks, configQueue);
 
 module.exports = {
   queueManager,
