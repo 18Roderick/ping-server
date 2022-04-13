@@ -53,11 +53,21 @@ monitorTasks.addTasks = async function (payload) {
 
 //agregar worker de ping
 monitorTasks.verifyDatabaseData = async function () {
-  const job = await queueManager.serverTasks.add(taskVerifyDatabaseData, 1, {
-    removeOnCompleted: true,
-    jobId: taskVerifyDatabaseData,
-  });
-  return job?.id;
+  const lastJob = await queueManager.serverTasks.getJob(taskVerifyDatabaseData);
+
+  if (!lastJob) {
+    const job = await queueManager.serverTasks.add(taskVerifyDatabaseData, 1, {
+      removeOnCompleted: true,
+      jobId: taskVerifyDatabaseData,
+    });
+    return job?.id;
+  } else {
+    if (["completed", "failed", "stuck"].includes(await lastJob.getState())) {
+      console.log("entrando");
+      await lastJob.retry();
+    }
+    return lastJob.id;
+  }
 };
 
 module.exports = monitorTasks;

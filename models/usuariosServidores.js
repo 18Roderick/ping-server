@@ -12,7 +12,6 @@ module.exports = (sequelize, DataTypes) => {
           model: "Usuarios", // Can be both a string representing the table name or a Sequelize model
           key: "id",
         },
-        defaultValue: 1,
       },
       idServidor: {
         type: DataTypes.INTEGER,
@@ -21,7 +20,6 @@ module.exports = (sequelize, DataTypes) => {
           model: "Servidores", // Can be both a string representing the table name or a Sequelize model
           key: "id",
         },
-        defaultValue: 1,
       },
     },
     {
