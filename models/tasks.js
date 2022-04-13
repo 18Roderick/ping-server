@@ -1,7 +1,6 @@
 //ts-check
 "use strict";
 const { Model } = require("sequelize");
-
 module.exports = (sequelize, DataTypes) => {
   class Tasks extends Model {
     static associate(models) {
@@ -18,6 +17,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(500),
         allowNull: false,
         unique: true,
+        primaryKey: true,
       },
       estatus: {
         type: DataTypes.ENUM("running", "stopped", "deleted"),

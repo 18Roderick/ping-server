@@ -6,15 +6,20 @@ const { queueManager, queueTypes, repeatCron } = require("./QueueManager");
 const monitorQueue = {};
 
 queueManager.pingMonitor.process(queueTypes.pingMonitor, async function (job, done) {
-  if (job?.data?.idServidor) {
-    const server = job.data;
-    const dataPing = await makePing(server.dominio);
-    PingServidores.create({
-      idServidor: server.idServidor,
-      ...dataPing,
-    });
+  try {
+    if (job?.data?.idServidor) {
+      const server = job.data;
+      const dataPing = await makePing(server.dominio);
+      PingServidores.create({
+        idServidor: server.idServidor,
+        ...dataPing,
+      });
+    }
+    return;
+  } catch (error) {
+    console.log(error.message);
+    return;
   }
-  return;
 });
 
 //agregar worker de ping
@@ -42,11 +47,19 @@ monitorQueue.removeAllPing = async function () {
   await queueManager.pingMonitor.removeJobs();
 };
 
-// monitorQueue
-//   .removePing("pingMonitor:314d3650-08e0-4015-916d-830d0c2e02cd::120000")
-//   .then(console.log)
-//   .catch(console.log);
+//remover todos los jobs repetitivos
+monitorQueue.removeAllRepeatable = async function () {
+  const listJobs = await queueManager.pingMonitor.getRepeatableJobs();
+  console.log(listJobs);
+  let i = 0;
 
-// queueManager.pingMonitor.getRepeatableJobs().then(console.log);
+  while (i < listJobs.length) {
+    await queueManager.pingMonitor.removeRepeatableByKey(listJobs[i].key);
+    i++;
+  }
+  return true;
+};
+
+//monitorQueue.removeAllRepeatable().then(console.info).catch(console.error);
 
 module.exports = monitorQueue;

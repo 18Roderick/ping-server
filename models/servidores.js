@@ -18,6 +18,11 @@ module.exports = (sequelize, DataTypes) => {
         as: "pings",
         foreignKey: "idServidor",
       });
+
+      this.hasMany(models.Tasks, {
+        as: "tasks",
+        foreignKey: "idServidor",
+      });
     }
   }
   Servidores.init(

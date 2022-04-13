@@ -1,12 +1,14 @@
 "user strict";
-const { Usuarios, Servidores } = require("../models");
+const { Usuarios, Servidores, Tasks, PingServidores } = require("../models");
+const { Op } = require("sequelize");
 const ServerServices = require("../services/serverServices");
 const { validationResult } = require("express-validator");
 
 module.exports.getServidores = async (req, res) => {
   try {
     let datosToken = req.datosToken;
-
+    const today = new Date();
+    const dateToday = today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
     let servidores = await Servidores.findAll({
       where: {},
       attributes: ["dominio", "ip", "idServidor", "nombre"],
@@ -17,10 +19,18 @@ module.exports.getServidores = async (req, res) => {
           where: { publicId: datosToken.id },
           attributes: [],
         },
+        {
+          model: Tasks,
+          as: "tasks",
+        },
+        {
+          model: PingServidores,
+          as: "pings",
+          attributes: { exclude: ["idPingServidor", "idServidor"] },
+          where: { fechaPing: { [Op.gte]: new Date(dateToday) } },
+        },
       ],
     });
-
-    console.log("Buscando Servidores");
 
     res.json({
       data: servidores,

@@ -37,7 +37,7 @@ queueManager.serverTasks.process(taskVerifyDatabaseData, async function (job, do
 
     return;
   } catch (error) {
-    console.error(error);
+    console.error(error.message);
     return;
   }
 });
@@ -55,6 +55,7 @@ monitorTasks.addTasks = async function (payload) {
 monitorTasks.verifyDatabaseData = async function () {
   const job = await queueManager.serverTasks.add(taskVerifyDatabaseData, 1, {
     removeOnCompleted: true,
+    jobId: taskVerifyDatabaseData,
   });
   return job?.id;
 };

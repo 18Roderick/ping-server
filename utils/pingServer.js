@@ -7,8 +7,8 @@ function convertPingData(pingData) {
   if (!data) return data;
   data.host = reg.test(pingData.host) ? pingData.host : "";
   data.isAlive = pingData.alive ?? false;
-  data.time = !isNaN(pingData.time) ? pingData.time : null;
-  data.times = pingData.times ? pingData.times.length || null : null;
+  data.times = !isNaN(pingData.time) ? pingData.time : null;
+  data.repeatedTimes = pingData.times ? pingData.times.length || null : null;
   data.min = !isNaN(pingData.min) ? parseFloat(pingData.min ?? 0) : null;
   data.max = !isNaN(pingData.max) ? parseFloat(pingData.max ?? 0) : null;
   data.avg = !isNaN(pingData.avg) ? parseFloat(pingData.avg ?? 0) : null;
@@ -33,6 +33,7 @@ async function makePing(server) {
   if (!server) throw new Error("IP o Dominio Invalido");
   let log = await ping.promise.probe(server);
   const data = convertPingData(log);
+  console.log(log);
 
   return data;
 }
