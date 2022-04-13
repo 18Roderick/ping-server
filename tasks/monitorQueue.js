@@ -42,4 +42,11 @@ monitorQueue.removeAllPing = async function () {
   await queueManager.pingMonitor.removeJobs();
 };
 
+// monitorQueue
+//   .removePing("pingMonitor:314d3650-08e0-4015-916d-830d0c2e02cd::120000")
+//   .then(console.log)
+//   .catch(console.log);
+
+// queueManager.pingMonitor.getRepeatableJobs().then(console.log);
+
 module.exports = monitorQueue;

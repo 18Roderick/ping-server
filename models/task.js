@@ -3,7 +3,14 @@
 const { Model } = require("sequelize");
 
 module.exports = (sequelize, DataTypes) => {
-  class Tasks extends Model {}
+  class Tasks extends Model {
+    static associate(models) {
+      this.belongsTo(models.Servidores, {
+        foreignKey: "idServidor",
+        as: "servidor",
+      });
+    }
+  }
 
   Tasks.init(
     {

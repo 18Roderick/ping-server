@@ -1,7 +1,13 @@
-'use strict';
+"use strict";
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('SERVIDOREs', {
+    await queryInterface.createTable("Servidores", {
+      publicId: {
+        type: Sequelize.UUID,
+        defaultType: Sequelize.UUIDV4,
+        defaultValue: Sequelize.UUIDV4,
+        allowNull: false,
+      },
       idServidor: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -12,8 +18,16 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: "USUARIOS",
+          model: "Usuarios",
           key: "idUsuario",
+        },
+      },
+      estatus: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: "EstatusServidores", // Can be both a string representing the table name or a Sequelize model
+          key: "tipo",
         },
       },
       dominio: {
@@ -27,7 +41,7 @@ module.exports = {
       descripcion: {
         type: Sequelize.TEXT,
       },
-      IP: {
+      ip: {
         type: Sequelize.STRING,
         allowNull: false,
         validate: {
@@ -36,15 +50,16 @@ module.exports = {
       },
       fechaCreacion: {
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+        defaultValue: Sequelize.NOW,
         allowNull: false,
       },
       fechaActualizacion: {
-        type: "ON UPDATE CURRENT_TIMESTAMP",
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW,
       },
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('SERVIDOREs');
-  }
+    await queryInterface.dropTable("Servidores");
+  },
 };

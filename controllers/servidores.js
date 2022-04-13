@@ -1,5 +1,6 @@
 "user strict";
 const { Usuarios, Servidores } = require("../models");
+const ServerServices = require("../services/serverServices");
 const { validationResult } = require("express-validator");
 
 module.exports.getServidores = async (req, res) => {
@@ -71,38 +72,20 @@ module.exports.getServidoresByPage = async (req, res) => {
 module.exports.crearServidor = async (req, res) => {
   try {
     let datosToken = req.datosToken;
-    let { nombre, ip, dominio } = req.body;
     let errors = validationResult(req);
 
     if (errors.isEmpty()) {
       let user = await Usuarios.findOne({
         where: { publicId: datosToken.id },
-        atributes: ["nombre", "apellido"],
       });
 
-      let servidor = await Servidores.create(
-        {
-          idUsuario: user.idUsuario,
-          nombre: nombre,
-          ip: ip,
-          dominio: dominio,
-        },
-        {
-          attributes: ["dominio", "ip", "idServidor", "nombre"],
-        }
-      );
+      const data = await ServerServices.createServer({ idUsuario: user.idUsuario, ...req.body });
 
-      console.log("Nuevo Servidor Agregado ", user.nombre);
+      console.log("Nuevo Servidor Agregado ", data);
 
       res.json({
         message: "Servidor Agregado",
-        servidor: {
-          nombre: servidor.nombre,
-          ip: servidor.ip,
-          dominio: servidor.dominio,
-          estatus: servidor.estatus,
-          idServidor: servidor.idServidor,
-        },
+        data,
       });
     } else {
       res.status(400).json({

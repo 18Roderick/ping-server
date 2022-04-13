@@ -1,8 +1,8 @@
 "use strict";
-const EstatusUsuarios = require("../data/estatusUsuarios.json");
+const EstatusServidores = require("../data/estatusServidores.json");
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable("estatusUsuarios", {
+    await queryInterface.createTable("EstatusServidores", {
       idEstatus: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -23,9 +23,9 @@ module.exports = {
       },
     });
 
-    await queryInterface.bulkInsert("estatusUsuarios", EstatusUsuarios);
+    await queryInterface.bulkInsert("EstatusServidores", EstatusServidores);
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable("estatusUsuarios");
+    await queryInterface.dropTable("EstatusServidores");
   },
 };

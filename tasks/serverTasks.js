@@ -13,29 +13,33 @@ queueManager.serverTasks.process(async function (job, done) {
 });
 
 queueManager.serverTasks.process(taskVerifyDatabaseData, async function (job, done) {
-  const listaStatusServidores = await EstatusServidores.findAll();
-  const listaStatusUsuarios = await EstatusUsuarios.findAll();
-
-  if (listaStatusServidores.length === 0) {
-    EstatusServidores.bulkCreate(require("../data/estatusServidores.json"));
-  }
-
-  if (listaStatusUsuarios.length === 0) {
-    EstatusUsuarios.bulkCreate(require("../data/estatusUsuarios.json"));
-  }
-
-  if (process.env.NODE_ENV === "development") {
-    const [userData] = require("../data/usuarioDefault.json");
-    const userDefault = await Usuarios.findOne({ where: { email: userData.email } });
-
-    //si no existe el usuario entonces crearlo
-    if (!userDefault?.email) {
-      console.info("Creando Usuario de prueba");
-      await Usuarios.create(userData);
+  try {
+    const listaStatusServidores = await EstatusServidores.findAll();
+    const listaStatusUsuarios = await EstatusUsuarios.findAll();
+    //run:seeds
+    if (listaStatusServidores.length === 0) {
+      await EstatusServidores.bulkCreate(require("../data/estatusServidores.json"));
     }
-  }
 
-  return;
+    if (listaStatusUsuarios.length === 0) {
+      await EstatusUsuarios.bulkCreate(require("../data/estatusUsuarios.json"));
+    }
+
+    if (process.env.NODE_ENV === "development") {
+      const [userData] = require("../data/usuarioDefault.json");
+      const userDefault = await Usuarios.findOne({ where: { email: userData.email } });
+      //si no existe el usuario entonces crearlo
+      if (!userDefault?.email) {
+        console.info("Creando Usuario de prueba");
+        await Usuarios.create(userData);
+      }
+    }
+
+    return;
+  } catch (error) {
+    console.error(error);
+    return;
+  }
 });
 
 queueManager.serverTasks.on("error", (e) => console.log(e));
