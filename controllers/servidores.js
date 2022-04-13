@@ -1,37 +1,13 @@
 "user strict";
 const { Usuarios, Servidores, Tasks, PingServidores } = require("../models");
-const { Op } = require("sequelize");
-const ServerServices = require("../services/serverServices");
+
+const ServidoresServices = require("../services/servidoresServices");
 const { validationResult } = require("express-validator");
 
 module.exports.getServidores = async (req, res) => {
   try {
     let datosToken = req.datosToken;
-    const today = new Date();
-    const dateToday = today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
-    let servidores = await Servidores.findAll({
-      where: {},
-      attributes: ["dominio", "ip", "idServidor", "nombre"],
-      include: [
-        {
-          model: Usuarios,
-          as: "usuario",
-          where: { publicId: datosToken.id },
-          attributes: [],
-        },
-        {
-          model: Tasks,
-          as: "tasks",
-        },
-        {
-          model: PingServidores,
-          as: "pings",
-          attributes: { exclude: ["idPingServidor", "idServidor"] },
-          where: { fechaPing: { [Op.gte]: new Date(dateToday) } },
-        },
-      ],
-    });
-
+    let servidores = await ServidoresServices.getServers(datosToken.id);
     res.json({
       data: servidores,
     });
@@ -89,7 +65,7 @@ module.exports.crearServidor = async (req, res) => {
         where: { publicId: datosToken.id },
       });
 
-      const data = await ServerServices.createServer({ idUsuario: user.idUsuario, ...req.body });
+      const data = await ServidoresServices.createServer({ idUsuario: user.idUsuario, ...req.body });
 
       console.log("Nuevo Servidor Agregado ", data);
 

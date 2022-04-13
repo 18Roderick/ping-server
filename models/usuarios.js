@@ -6,7 +6,11 @@ const cipher = require("../utils/cipher");
 module.exports = (sequelize, DataTypes) => {
   class Usuarios extends Model {
     static associate(models) {
-      this.hasMany(models.Servidores, { as: "servidores", foreignKey: "idUsuario" });
+      this.hasMany(models.Servidores, {
+        as: "servidores",
+        foreignKey: "idUsuario",
+        through: "UsuariosServidores",
+      });
     }
   }
   Usuarios.init(
