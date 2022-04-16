@@ -56,7 +56,7 @@ monitorTasks.verifyDatabaseData = async function () {
   const lastJob = await queueManager.serverTasks.getJob(taskVerifyDatabaseData);
 
   if (!lastJob) {
-    const job = await queueManager.serverTasks.add(taskVerifyDatabaseData, 1, {
+    const job = await queueManager.serverTasks.add(taskVerifyDatabaseData, UUID(), {
       removeOnCompleted: true,
       jobId: taskVerifyDatabaseData,
     });

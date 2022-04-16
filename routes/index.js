@@ -14,4 +14,5 @@ router.get("/ping", (_req, res) => {
 
 router.use("/usuarios", usuarioRouter);
 router.use("/servidores", servidoresRouter);
+
 module.exports = router;

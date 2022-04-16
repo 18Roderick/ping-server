@@ -10,7 +10,7 @@ queueManager.pingMonitor.process(queueTypes.pingMonitor, async function (job, do
     if (job?.data?.idServidor) {
       const server = job.data;
       const dataPing = await makePing(server.dominio);
-      PingServidores.create({
+      await PingServidores.create({
         idServidor: server.idServidor,
         ...dataPing,
       });
@@ -18,6 +18,7 @@ queueManager.pingMonitor.process(queueTypes.pingMonitor, async function (job, do
     return;
   } catch (error) {
     console.log(error.message);
+    await job.moveToFailed();
     return;
   }
 });
@@ -60,6 +61,6 @@ monitorQueue.removeAllRepeatable = async function () {
   return true;
 };
 
-//monitorQueue.removeAllRepeatable().then(console.info).catch(console.error);
+monitorQueue.removeAllRepeatable().then(console.info).catch(console.error);
 
 module.exports = monitorQueue;

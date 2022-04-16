@@ -10,9 +10,10 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       this.belongsToMany(models.Usuarios, {
         as: "usuario",
-        foreignKey: "idUsuario",
+        foreignKey: "idServidor",
+        otherKey: "idUsuario",
         onDelete: "NO ACTION",
-        through: "UsuariosServidores",
+        through: models.UsuariosServidores,
       });
 
       this.hasMany(models.PingServidores, {

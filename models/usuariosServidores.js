@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         references: {
           model: "Usuarios", // Can be both a string representing the table name or a Sequelize model
-          key: "id",
+          key: "idUsuario",
         },
       },
       idServidor: {
@@ -18,13 +18,14 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         references: {
           model: "Servidores", // Can be both a string representing the table name or a Sequelize model
-          key: "id",
+          key: "idServidor",
         },
       },
     },
     {
       sequelize,
       modelName: "UsuariosServidores",
+      timestamps: false,
     }
   );
 

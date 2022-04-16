@@ -13,9 +13,9 @@ const serverTasks = require("./tasks/serverTasks");
 
 const options = {};
 
-const io = socket(httpServer, options);
-
 let retryCount = 0;
+
+const io = socket(httpServer, options);
 
 io.on("connection", (socket) => {
   console.log("a user connected");
@@ -46,6 +46,8 @@ async function start() {
     //verificar lo parámetros de estatus de tablas
     const task = await serverTasks.verifyDatabaseData();
     console.info("Verificación de parámetros de base de datos ejecutada ", task);
+
+    //iniciar monitoreo
 
     await httpServer.listen(config.PORT, () => {
       console.log(`Servidor corriendo en puerto ${config.PORT} `);

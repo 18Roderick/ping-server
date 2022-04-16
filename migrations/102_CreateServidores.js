@@ -14,14 +14,6 @@ module.exports = {
         autoIncrement: true,
         allowNull: false,
       },
-      idUsuario: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: "UsuariosServidores",
-          key: "idUsuario",
-        },
-      },
       estatus: {
         type: Sequelize.INTEGER,
         allowNull: false,
