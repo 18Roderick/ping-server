@@ -47,66 +47,42 @@ ServidoresServices.getServers = async function (idUsuario) {
 ServidoresServices.createServer = async function (bodyServer) {
   const transaction = await sequelize.transaction();
   try {
+    const errors = [];
+
     const usuario = await Usuarios.findOne({
       where: { idUsuario: bodyServer.idUsuario },
+      // include: { model: Servidores, as: "servidor", where: { idUsuario: bodyServer.idUsuario } },
     });
 
-    // console.log(usuario);
-
-    if (!usuario) throw new Error("Usuario no encontrado");
+    if (!usuario) return { errors: ["Usuario no encontrado"] };
 
     const servidor = await Servidores.findOne({
       where: {
         dominio: bodyServer.dominio,
       },
+      include: { model: Usuarios, as: "usuario", where: { idUsuario: usuario.idUsuario } },
     });
 
-    const usuarioServidor = servidor
-      ? await UsuariosServidores.findOne({
-          where: { idUsuario: usuario.idUsuario, idServidor: servidor.idServidor },
-        })
-      : null;
-
-    if (servidor && usuarioServidor) throw new Error("Usuario ya tiene este servidor");
-
-    //inicializar variables
-    let newServidor = servidor;
-    let newTask = null;
+    if (servidor) return { errors: ["Servidor ya existe"] };
 
     //si el servidor no existe entonces debe ser creado junto con su tarea
-    if (!servidor) {
-      newServidor = await Servidores.create(
-        {
-          dominio: bodyServer.dominio,
-          descripcion: bodyServer.descripcion ?? null,
-        },
-        { transaction }
-      );
 
-      await newServidor.addUsuario(usuario, {
-        through: { nombre: bodyServer.nombre, ip: bodyServer.ip },
-        transaction,
-      });
+    const newServidor = await Servidores.create(
+      {
+        idUsuario: usuario.idUsuario,
+        nombre: bodyServer.nombre,
+        ip: bodyServer.ip,
+        dominio: bodyServer.dominio,
+        descripcion: bodyServer.descripcion ?? null,
+      },
+      { transaction }
+    );
 
-      newTask = await PingServices.addServerPing(newServidor, transaction);
-    }
-
-    if (servidor && !usuarioServidor) {
-      //si el servidor existe entonces, solo crear l asociación a la tabla de servidores
-      console.log("Creando asociación a servidor existente");
-      // await UsuariosServidores.create(
-      //   { idServidor: newServidor.idServidor, idUsuario: usuario.idUsuario },
-      //   { transaction }
-      // );
-      await newServidor.addUsuario(usuario, {
-        through: { nombre: bodyServer.nombre, ip: bodyServer.ip },
-        transaction,
-      });
-      newTask = await Tasks.findOne({ where: { idServidor: newServidor.idServidor } }, { transaction });
-    }
+    const newTask = await PingServices.addServerPing(newServidor, transaction);
 
     await transaction.commit();
     return { servidor: newServidor, task: newTask };
+    // return { servidor: {}, task: {} };
   } catch (error) {
     transaction.rollback();
     console.log(error);

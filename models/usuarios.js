@@ -7,9 +7,9 @@ module.exports = (sequelize, DataTypes) => {
   class Usuarios extends Model {
     static associations(models) {
       this.hasMany(models.Servidores, {
-        foreignKey: "idUsuario",
-        otherKey: "idServidor",
-        as: "servidores",
+        foreignKey: "idServidor",
+        as: "servidor",
+        onDelete: "NO ACTION",
       });
     }
   }

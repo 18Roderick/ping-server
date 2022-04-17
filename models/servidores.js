@@ -10,19 +10,20 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       this.belongsTo(models.Usuarios, {
         as: "usuario",
-        foreignKey: "idServidor",
-        otherKey: "idUsuario",
+        foreignKey: "idUsuario",
         onDelete: "NO ACTION",
       });
 
       this.hasMany(models.PingServidores, {
         as: "pings",
         foreignKey: "idServidor",
+        onDelete: "NO ACTION",
       });
 
       this.hasMany(models.Tasks, {
         as: "tasks",
         foreignKey: "idServidor",
+        onDelete: "NO ACTION",
       });
     }
   }

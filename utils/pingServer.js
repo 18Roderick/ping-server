@@ -33,8 +33,6 @@ async function makePing(server) {
   if (!server) throw new Error("IP o Dominio Invalido");
   let log = await ping.promise.probe(server);
   const data = convertPingData(log);
-  console.log(log);
-
   return data;
 }
 

@@ -9,6 +9,7 @@ queueManager.pingMonitor.process(queueTypes.pingMonitor, async function (job, do
   try {
     if (job?.data?.idServidor) {
       const server = job.data;
+      console.log("Making ping to ", server.dominio);
       const dataPing = await makePing(server.dominio);
       await PingServidores.create({
         idServidor: server.idServidor,
@@ -29,7 +30,6 @@ monitorQueue.addPing = async function (payload) {
   const unique = UUID();
   const job = await queueManager.pingMonitor.add(queueTypes.pingMonitor, payload, {
     ...repeatCron(),
-    jobId: unique,
   });
   return job?.opts?.repeat?.key;
 };
@@ -61,6 +61,6 @@ monitorQueue.removeAllRepeatable = async function () {
   return true;
 };
 
-monitorQueue.removeAllRepeatable().then(console.info).catch(console.error);
+//monitorQueue.removeAllRepeatable().then(console.info).catch(console.error);
 
 module.exports = monitorQueue;
