@@ -43,7 +43,7 @@ module.exports = {
       },
       ip: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
         validate: {
           isIP: true,
         },

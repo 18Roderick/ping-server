@@ -28,6 +28,10 @@ queueManager.pingMonitor.process(queueTypes.pingMonitor, async function (job, do
 
 queueManager.pingMonitor.process(dailySumary, async (job, done) => {
   try {
+    if (job?.data?.idUsuario) {
+    }
+
+    return done();
   } catch (error) {
     return done(error);
   }

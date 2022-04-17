@@ -7,25 +7,12 @@ const usuarios = require("../models/usuarios");
 
 const ServidoresServices = {};
 
-ServidoresServices.getServers = async function (idUsuario) {
-  const today = new Date();
-  const dateToday = today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
-  const usuario = await Usuarios.findOne({
-    where: { publicId: idUsuario },
-  });
-
+ServidoresServices.getServerDetail = async function (idServidor) {
   let servidores = await Servidores.findAll({
-    where: {},
-    order: [["fechaCreacion", "ASC"]],
-    attributes: ["idServidor", "nombre", "descripcion", "fechaCreacion"],
-
+    where: { idServidor: idServidor },
+    order: [["fechaCreacion", "DESC"]],
+    attributes: { exclude: ["idUsuario"] },
     include: [
-      {
-        model: Usuarios,
-        as: "usuario",
-        where: { publicId: idUsuario },
-        attributes: [],
-      },
       {
         model: Tasks,
         as: "tasks",
@@ -34,8 +21,32 @@ ServidoresServices.getServers = async function (idUsuario) {
         model: PingServidores,
         as: "pings",
         attributes: { exclude: ["idPingServidor", "idServidor"] },
-        // where: { fechaPing: { [Op.gte]: new Date(dateToday) } },
-        order: [["fechaPing", "ASC"]],
+        order: [["fechaPing", "DESC"]],
+        limit: 1,
+      },
+    ],
+  });
+
+  return servidores;
+};
+
+ServidoresServices.getServers = async function (idUsuario) {
+  let servidores = await Servidores.findAll({
+    where: {},
+    order: [["fechaCreacion", "DESC"]],
+    attributes: { exclude: ["idUsuario"] },
+    include: [
+      {
+        model: Usuarios,
+        as: "usuario",
+        where: { publicId: idUsuario },
+        attributes: [],
+      },
+      {
+        model: PingServidores,
+        as: "pings",
+        attributes: { exclude: ["idPingServidor", "idServidor"] },
+        order: [["fechaPing", "DESC"]],
         limit: 1,
       },
     ],

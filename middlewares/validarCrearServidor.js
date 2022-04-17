@@ -4,10 +4,17 @@ const regexDominio = new RegExp("^([a-z0-9]+(-[a-z0-9]+)*.)+[a-z]{2,}$");
 
 module.exports = checkSchema({
   ip: {
-    optional: true,
+    optional: {
+      nullable: true,
+      checkFalsy: true,
+    },
     isIP: {
       errorMessage: "El numero ingresado no es una IP Valida",
     },
+  },
+  descripcion: {
+    optional: true,
+    trim: true,
   },
   dominio: {
     isEmpty: {
