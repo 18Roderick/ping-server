@@ -67,7 +67,7 @@ module.exports.crearServidor = async (req, res) => {
 
       const data = await ServidoresServices.createServer({ idUsuario: user.idUsuario, ...req.body });
 
-      console.log("Nuevo Servidor Agregado ", data);
+      // console.log("Nuevo Servidor Agregado ", data);
 
       res.json({
         message: "Servidor Agregado",

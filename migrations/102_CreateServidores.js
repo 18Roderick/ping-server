@@ -22,6 +22,14 @@ module.exports = {
           key: "tipo",
         },
       },
+      idUsuario: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: "Usuarios", // Can be both a string representing the table name or a Sequelize model
+          key: "idUsuario",
+        },
+      },
       dominio: {
         type: Sequelize.STRING,
         allowNull: false,

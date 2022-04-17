@@ -8,6 +8,7 @@ PingServices.addServerPing = async function (server, transaction = null) {
     let config = {};
 
     if (transaction) config.transaction = transaction;
+
     const taskId = await monitorQueue.addPing(server);
     console.log("Creando Tarea en la tabla de Tareas", await Tasks.findAll());
     const newTask = await Tasks.create(

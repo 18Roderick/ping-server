@@ -8,12 +8,11 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      this.belongsToMany(models.Usuarios, {
+      this.belongsTo(models.Usuarios, {
         as: "usuario",
         foreignKey: "idServidor",
         otherKey: "idUsuario",
         onDelete: "NO ACTION",
-        through: models.UsuariosServidores,
       });
 
       this.hasMany(models.PingServidores, {
@@ -54,16 +53,19 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      ip: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          isIP: true,
+        },
+      },
       nombre: {
         type: DataTypes.STRING,
         allowNull: false,
       },
       descripcion: {
         type: DataTypes.TEXT,
-      },
-      ip: {
-        type: DataTypes.STRING,
-        allowNull: true,
       },
       fechaCreacion: {
         type: DataTypes.DATE,
