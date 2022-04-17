@@ -3,6 +3,8 @@ const { PingServidores } = require("../models");
 const { makePing } = require("../utils/pingServer");
 const { queueManager, queueTypes, repeatCron } = require("./QueueManager");
 
+const dailySumary = "DAILYSUMMARY";
+
 const monitorQueue = {};
 
 queueManager.pingMonitor.process(queueTypes.pingMonitor, async function (job, done) {
@@ -16,11 +18,18 @@ queueManager.pingMonitor.process(queueTypes.pingMonitor, async function (job, do
         ...dataPing,
       });
     }
-    return;
+    return done();
   } catch (error) {
     console.log(error.message);
     await job.moveToFailed();
-    return;
+    return done(error);
+  }
+});
+
+queueManager.pingMonitor.process(dailySumary, async (job, done) => {
+  try {
+  } catch (error) {
+    return done(error);
   }
 });
 

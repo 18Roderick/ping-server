@@ -31,7 +31,7 @@ function removerCharacters(str) {
 
 async function makePing(server) {
   if (!server) throw new Error("IP o Dominio Invalido");
-  let log = await ping.promise.probe(server);
+  let log = await ping.promise.probe(server, { extra: ["-i", "2"] });
   const data = convertPingData(log);
   return data;
 }
