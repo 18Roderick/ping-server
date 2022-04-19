@@ -48,6 +48,14 @@ monitorQueue.addPing = async function (payload) {
   return job?.opts?.repeat?.key;
 };
 
+//stop repeatable job
+monitorQueue.stop = async function (key) {
+  console.log("Borrando Job");
+  const result = await queueManager.pingMonitor.getJob(key);
+  console.log("Respuesta de Borrado ", result);
+  return key;
+};
+
 //remover worker de ping
 monitorQueue.removePing = async function (key) {
   console.log("Borrando Job");
@@ -76,5 +84,7 @@ monitorQueue.removeAllRepeatable = async function () {
 };
 
 //monitorQueue.removeAllRepeatable().then(console.info).catch(console.error);
+
+monitorQueue.stop("").then(console.info).catch(console.error);
 
 module.exports = monitorQueue;

@@ -13,20 +13,24 @@ module.exports = checkSchema({
         minNumbers: 1,
       },
     },
+    trim: true,
   },
   nombre: {
     isEmpty: {
       negated: true,
       errorMessage: "Nombre del usuario es requerido",
     },
+    trim: true,
   },
   apellido: {
     isEmpty: {
       negated: true,
       errorMessage: "Apellido del usuario es requerido",
     },
+    trim: true,
   },
   email: {
+    trim: true,
     isEmail: {
       errorMessage: "Email ingresado no es valido",
       bail: true,
