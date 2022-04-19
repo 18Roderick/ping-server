@@ -16,7 +16,7 @@ function convertPingData(pingData) {
   data.max = !isNaN(pingData.max) ? parseFloat(pingData.max ?? 0) : metrics.max;
   data.avg = !isNaN(pingData.avg) ? parseFloat(pingData.avg ?? 0) : metrics.avg;
   data.packetLoss = !isNaN(pingData.packetLoss) ? parseFloat(pingData.packetLoss) : null;
-  data.numericHost = pingData.numeric_host ?? null;
+  data.numericHost = pingData.numeric_host ? pingData.numeric_host.replace(")", "") : null;
   data.log = removerCharacters(pingData.output);
 
   return data;

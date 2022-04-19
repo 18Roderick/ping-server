@@ -43,6 +43,7 @@ monitorQueue.addPing = async function (payload) {
   const unique = UUID();
   const job = await queueManager.pingMonitor.add(queueTypes.pingMonitor, payload, {
     ...repeatCron(),
+    jobId: unique,
   });
   return job?.opts?.repeat?.key;
 };

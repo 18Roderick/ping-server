@@ -2,6 +2,8 @@ const { Op } = require("sequelize");
 const Ajv = require("ajv");
 const { UsuariosServidores, Usuarios, Servidores, Tasks, PingServidores, sequelize } = require("../models");
 
+const { makePing } = require("../utils/pingServer");
+
 const PingServices = require("./pingServices");
 const usuarios = require("../models/usuarios");
 
@@ -75,6 +77,13 @@ ServidoresServices.createServer = async function (bodyServer) {
     });
 
     if (servidor) return { errors: ["Servidor ya existe"] };
+
+    //buscar ip del servidor si no fue enviada
+
+    if (!bodyServer.ip) {
+      const pingData = await makePing(bodyServer.dominio);
+      bodyServer.ip = pingData.numericHost;
+    }
 
     //si el servidor no existe entonces debe ser creado junto con su tarea
 

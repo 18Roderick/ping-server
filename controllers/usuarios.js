@@ -1,3 +1,4 @@
+const createError = require("http-errors");
 const { Usuarios } = require("../models");
 
 const tokenCreator = require("../utils/token");
@@ -8,12 +9,13 @@ const { validationResult } = require("express-validator");
 
 module.exports.crearUsuario = async function (req, res) {
   try {
-    console.log("llego");
     const { nombre, apellido, email, password } = req.body;
     const errors = validationResult(req);
     let token = "";
     if (!errors.isEmpty()) {
-      res.status(400).json({
+      return res.status(400).json({
+        statusCode: 400,
+        statusText: "bad request",
         message: "Se encontraron Errores en los datos ingresados",
         errors: errors.array(),
       });
