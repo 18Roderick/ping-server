@@ -4,14 +4,13 @@ const { Usuarios, Servidores, Tasks, PingServidores } = require("../models");
 const ServidoresServices = require("../services/servidoresServices");
 const UsuariosServices = require("../services/usuariosServices");
 const { validationResult } = require("express-validator");
-const { json } = require("sequelize/types");
 
 module.exports.getServidores = async (req, res) => {
   try {
     let datosToken = req.datosToken;
     const usuario = await UsuariosServices.findUsuarioById(datosToken.id);
 
-    if (!usuario) return json.status(403).json({ message: "Sin acceso" });
+    if (!usuario) return res.status(403).json({ message: "Sin acceso" });
 
     let servidores = await ServidoresServices.getServers(datosToken.id);
     res.json({
