@@ -1,11 +1,13 @@
 const UUID = require("uuid").v4;
-const { PingServidores } = require("../models");
 const { makePing } = require("../utils/pingServer");
 const { queueManager, queueTypes, repeatCron } = require("./QueueManager");
+const { PrismaClient } = require("../providers/prismaProvider");
 
 const dailySumary = "DAILYSUMMARY";
 
 const monitorQueue = {};
+
+const prisma = new PrismaClient();
 
 queueManager.pingMonitor.process(queueTypes.pingMonitor, async function (job, done) {
   try {
@@ -13,9 +15,17 @@ queueManager.pingMonitor.process(queueTypes.pingMonitor, async function (job, do
       const server = job.data;
       console.log("Making ping to ", server.dominio);
       const dataPing = await makePing(server.dominio);
-      await PingServidores.create({
-        idServidor: server.idServidor,
-        ...dataPing,
+      await prisma.servidores.update({
+        where: {
+          idServidor: server.idServidor,
+        },
+        data: {
+          PingServidores: {
+            create: {
+              data: dataPing,
+            },
+          },
+        },
       });
     }
     return done();
@@ -57,7 +67,7 @@ monitorQueue.stop = async function (key) {
 };
 
 //remover worker de ping
-monitorQueue.removePing = async function (key) {
+monitorQueue.removePingRepeatable = async function (key) {
   console.log("Borrando Job");
   const result = await queueManager.pingMonitor.removeRepeatableByKey(key);
   console.log("Respuesta de Borrado ", result);

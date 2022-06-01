@@ -1,14 +1,11 @@
-const bcrypt = require("bcrypt");
-const config = require("../config/configEnv");
+const argon = require("argon2");
 
 let cipher = module.exports;
 
-
 cipher.encrypt = function (str) {
-  return bcrypt.hash(str, config.secretSalt);
+  return argon.hash(str);
 };
 
 cipher.compare = function (str, password) {
-  return bcrypt.compare(str, password);
+  return argon.verify(password, str);
 };
-

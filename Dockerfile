@@ -1,11 +1,15 @@
-FROM node:17-alpine3.14
-
-#RUN apt update -y && apt install -y bash && apt install -y iputils-ping && npm rebuild bcrypt --build-from-source
+FROM node:slim
 
 
 WORKDIR /home/app
 
+COPY package*.json .
 COPY . .
+RUN npm install 
+
+RUN npx prisma generate
+
+
 
 
 #RUN npm run run:seeds

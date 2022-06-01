@@ -1,11 +1,13 @@
 const createError = require("http-errors");
-const { Usuarios } = require("../models");
+const { PrismaClient } = require("../prisma/generated/prisma-client-js");
 
 const tokenCreator = require("../utils/token");
 
 const cipher = require("../utils/cipher");
 
 const { validationResult } = require("express-validator");
+
+const prisma = new PrismaClient();
 
 module.exports.crearUsuario = async function (req, res) {
   try {
@@ -20,11 +22,13 @@ module.exports.crearUsuario = async function (req, res) {
         errors: errors.array(),
       });
     } else {
-      const user = await Usuarios.create({
-        nombre: nombre,
-        apellido: apellido,
-        email: email,
-        password: password,
+      const user = await prisma.usuarios.create({
+        data: {
+          nombre: nombre,
+          apellido: apellido,
+          email: email,
+          password: password,
+        },
       });
 
       if (typeof user == "object") {
@@ -52,13 +56,14 @@ module.exports.login = async function (req, res) {
     const { email, password } = req.body;
     const errors = validationResult(req);
     let token = "";
+    console.log("paso Validación");
     if (!errors.isEmpty()) {
       return res.status(400).json({
         message: "Email o Contraseña no Valido",
       });
     }
 
-    let user = await Usuarios.findOne({ where: { email } });
+    let user = await prisma.usuarios.findUnique({ where: { email } });
 
     if (!user || !(await cipher.compare(password, user.password))) {
       return res.status(401).json({
@@ -76,8 +81,9 @@ module.exports.login = async function (req, res) {
       token,
     });
   } catch (error) {
+    console.log(error);
     return res.status(500).json({
-      message: "Error Creando Usuario",
+      message: "Error Login",
     });
   }
 };

@@ -5,9 +5,9 @@ module.exports = checkSchema({
   password: {
     isStrongPassword: {
       errorMessage:
-        "La contraseña debe tener mínimo 7 caracteres con letras mayúsculas/minúsculas y al menos 1 número y 1 carácter especial",
+        "La contraseña debe tener mínimo 6 caracteres con letras mayúsculas/minúsculas y al menos 1 número y 1 carácter especial",
       options: {
-        minLength: 7,
+        minLength: 6,
         minLowercase: 1,
         minUppercase: 1,
         minNumbers: 1,

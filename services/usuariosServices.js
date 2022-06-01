@@ -1,6 +1,9 @@
 const { Op } = require("sequelize");
 const Ajv = require("ajv");
-const { UsuariosServidores, Usuarios, Servidores, Tasks, PingServidores, sequelize } = require("../models");
+
+const { PrismaClient } = require("../prisma/generated/prisma-client-js");
+
+const prisma = new PrismaClient();
 
 const UsuariosServices = {};
 
@@ -8,7 +11,7 @@ UsuariosServices.findUsuarioById = async function (id) {
   search = {};
   if (!isNaN(id)) search.idUsuario = id;
   else search.publicId = id;
-  return await Usuarios.findOne({
+  return prisma.usuarios.findUnique({
     where: { ...search },
   });
 };

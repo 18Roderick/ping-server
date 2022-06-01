@@ -25,7 +25,7 @@ module.exports = async function (req, res, next) {
     console.log(err.name);
 
     let status = err?.name == "jwt expired" ? 403 : 401;
-    if (!tokenErrors[err.name]) status = 500;
+    if (!tokenErrors[err.name]) status = 403;
 
     const message =
       err.message == "jwt expired" ? "Token ha expirado debe volver a iniciar sesión" : "Token No Valido";

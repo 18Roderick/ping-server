@@ -1,11 +1,15 @@
 const UUID = require("uuid").v4;
-const { EstatusServidores, EstatusUsuarios, Usuarios } = require("../models");
+const cipher = require("../utils/cipher");
 
 const { queueManager, queueTypes } = require("./QueueManager");
+
+const { PrismaClient } = require("../providers/prismaProvider");
 
 const taskVerifyDatabaseData = "taskVerifyDatabaseData";
 
 const monitorTasks = {};
+
+const prisma = new PrismaClient();
 
 queueManager.serverTasks.process(async function (job, done) {
   console.log("Ejecutando Proceso", job.data);
@@ -14,24 +18,25 @@ queueManager.serverTasks.process(async function (job, done) {
 
 queueManager.serverTasks.process(taskVerifyDatabaseData, async function (job, done) {
   try {
-    const listaStatusServidores = await EstatusServidores.findAll();
-    const listaStatusUsuarios = await EstatusUsuarios.findAll();
+    const listaStatusServidores = await prisma.estatusServidores.findMany();
+    const listaStatusUsuarios = await prisma.estatusUsuarios.findMany();
     //run:seeds
     if (listaStatusServidores.length === 0) {
-      await EstatusServidores.bulkCreate(require("../data/estatusServidores.json"));
+      await prisma.estatusServidores.createMany(require("../data/estatusServidores.json"));
     }
 
     if (listaStatusUsuarios.length === 0) {
-      await EstatusUsuarios.bulkCreate(require("../data/estatusUsuarios.json"));
+      await prisma.estatusUsuarios.createMany(require("../data/estatusUsuarios.json"));
     }
 
     if (process.env.NODE_ENV === "development") {
       const [userData] = require("../data/usuarioDefault.json");
-      const userDefault = await Usuarios.findOne({ where: { email: userData.email } });
+      const userDefault = await prisma.usuarios.findUnique({ where: { email: userData.email } });
       //si no existe el usuario entonces crearlo
       if (!userDefault?.email) {
+        userData.password = await cipher.encrypt(password);
         console.info("Creando Usuario de prueba");
-        await Usuarios.create(userData);
+        await prisma.usuarios.create({ data: userData });
       }
     }
 
