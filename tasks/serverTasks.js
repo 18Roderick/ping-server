@@ -22,11 +22,15 @@ queueManager.serverTasks.process(taskVerifyDatabaseData, async function (job, do
     const listaStatusUsuarios = await prisma.estatusUsuarios.findMany();
     //run:seeds
     if (listaStatusServidores.length === 0) {
-      await prisma.estatusServidores.createMany(require("../data/estatusServidores.json"));
+      await prisma.estatusServidores.createMany({
+        data: require("../data/estatusServidores.json"),
+      });
     }
 
     if (listaStatusUsuarios.length === 0) {
-      await prisma.estatusUsuarios.createMany(require("../data/estatusUsuarios.json"));
+      await prisma.estatusUsuarios.createMany({
+        data: require("../data/estatusUsuarios.json"),
+      });
     }
 
     if (process.env.NODE_ENV === "development") {
@@ -34,7 +38,7 @@ queueManager.serverTasks.process(taskVerifyDatabaseData, async function (job, do
       const userDefault = await prisma.usuarios.findUnique({ where: { email: userData.email } });
       //si no existe el usuario entonces crearlo
       if (!userDefault?.email) {
-        userData.password = await cipher.encrypt(password);
+        userData.password = await cipher.encrypt(userData.password);
         console.info("Creando Usuario de prueba");
         await prisma.usuarios.create({ data: userData });
       }
@@ -43,7 +47,6 @@ queueManager.serverTasks.process(taskVerifyDatabaseData, async function (job, do
     return;
   } catch (error) {
     console.error(error.message);
-    return;
   }
 });
 

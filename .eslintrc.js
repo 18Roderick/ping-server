@@ -1,6 +1,5 @@
 module.exports = {
   env: {
-    browser: true,
     commonjs: true,
     es6: true,
     node: true,
@@ -15,7 +14,7 @@ module.exports = {
   },
   rules: {
     indent: ["error", 2],
-    "linebreak-style": ["error", "windows"],
+    "linebreak-style": ["error", "linux"],
     quotes: ["error", "double"],
     semi: ["error", "always"],
   },

@@ -1,9 +1,13 @@
 const UUID = require("uuid").v4;
+const { DateTime } = require("luxon");
 const { makePing } = require("../utils/pingServer");
-const { queueManager, queueTypes, repeatCron } = require("./QueueManager");
+const { queueManager, queueTypes, repeatCron, INTERVALS } = require("./QueueManager");
 const { PrismaClient } = require("../providers/prismaProvider");
 
-const dailySumary = "DAILYSUMMARY";
+const JOB_TYPES = {
+  DAILY: "DAILYSUMMARY",
+  MONTHLY: "MONHTLY",
+};
 
 const monitorQueue = {};
 
@@ -13,8 +17,14 @@ queueManager.pingMonitor.process(queueTypes.pingMonitor, async function (job, do
   try {
     if (job?.data?.idServidor) {
       const server = job.data;
-      console.log("Making ping to ", server.dominio);
+      console.log(`Making ping to ${server.dominio}  ${DateTime.now().toISO()}`);
       const dataPing = await makePing(server.dominio);
+      const task = await prisma.tasks.findFirst({
+        where: {
+          idServidor: server.idServidor,
+        },
+      });
+
       await prisma.servidores.update({
         where: {
           idServidor: server.idServidor,
@@ -22,7 +32,14 @@ queueManager.pingMonitor.process(queueTypes.pingMonitor, async function (job, do
         data: {
           PingServidores: {
             create: {
-              data: dataPing,
+              times: dataPing.times,
+              packetLoss: dataPing.packetLoss,
+              min: dataPing.min,
+              max: dataPing.max,
+              avg: dataPing.avg,
+              log: dataPing.log,
+              isAlive: dataPing.isAlive,
+              numericHost: dataPing.numericHost,
             },
           },
         },
@@ -36,7 +53,7 @@ queueManager.pingMonitor.process(queueTypes.pingMonitor, async function (job, do
   }
 });
 
-queueManager.pingMonitor.process(dailySumary, async (job, done) => {
+queueManager.pingMonitor.process(JOB_TYPES.DAILY, async (job, done) => {
   try {
     if (job?.data?.idUsuario) {
     }
@@ -58,12 +75,23 @@ monitorQueue.addPing = async function (payload) {
   return job?.opts?.repeat?.key;
 };
 
+//agregar worker de ping
+monitorQueue.dailySummary = async function (payload) {
+  if (!payload) return false;
+  const unique = UUID();
+  //add a job to summarize the daily data
+  const job = await queueManager.pingMonitor.add(JOB_TYPES.DAILY, payload, {
+    jobId: unique,
+    repeat: {
+      every: INTERVALS.EVERY_DAY,
+    },
+  });
+  return job?.opts?.repeat?.key;
+};
+
 //stop repeatable job
-monitorQueue.stop = async function (key) {
-  console.log("Borrando Job");
-  const result = await queueManager.pingMonitor.getJob(key);
-  console.log("Respuesta de Borrado ", result);
-  return key;
+monitorQueue.stopRepeatable = async function (key) {
+  //TODO crea a function to stop repeatable jobs
 };
 
 //remover worker de ping
@@ -83,12 +111,8 @@ monitorQueue.removeAllPing = async function () {
 //remover todos los jobs repetitivos
 monitorQueue.removeAllRepeatable = async function () {
   const listJobs = await queueManager.pingMonitor.getRepeatableJobs();
-  console.log(listJobs);
-  let i = 0;
-
-  while (i < listJobs.length) {
-    await queueManager.pingMonitor.removeRepeatableByKey(listJobs[i].key);
-    i++;
+  for (let job of listJobs) {
+    await queueManager.pingMonitor.removeRepeatableByKey(job.key);
   }
   return true;
 };

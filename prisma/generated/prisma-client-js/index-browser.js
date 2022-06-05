@@ -111,7 +111,10 @@ exports.Prisma.ServidoresScalarFieldEnum = makeEnum({
   dominio: 'dominio',
   ip: 'ip',
   fechaCreacion: 'fechaCreacion',
-  fechaActualizacion: 'fechaActualizacion'
+  fechaActualizacion: 'fechaActualizacion',
+  descripcion: 'descripcion',
+  idUsuario: 'idUsuario',
+  nombre: 'nombre'
 });
 
 exports.Prisma.TasksScalarFieldEnum = makeEnum({
@@ -120,7 +123,9 @@ exports.Prisma.TasksScalarFieldEnum = makeEnum({
   idServidor: 'idServidor',
   estatus: 'estatus',
   fechaCreacion: 'fechaCreacion',
-  fechaActualizacion: 'fechaActualizacion'
+  interval: 'interval',
+  error: 'error',
+  ultimaEjecucion: 'ultimaEjecucion'
 });
 
 exports.Prisma.UsuariosScalarFieldEnum = makeEnum({
@@ -131,15 +136,6 @@ exports.Prisma.UsuariosScalarFieldEnum = makeEnum({
   apellido: 'apellido',
   email: 'email',
   password: 'password',
-  fechaCreacion: 'fechaCreacion',
-  fechaActualizacion: 'fechaActualizacion'
-});
-
-exports.Prisma.UsuariosServidoresScalarFieldEnum = makeEnum({
-  idUsuario: 'idUsuario',
-  idServidor: 'idServidor',
-  nombre: 'nombre',
-  descripcion: 'descripcion',
   fechaCreacion: 'fechaCreacion',
   fechaActualizacion: 'fechaActualizacion'
 });
@@ -167,11 +163,14 @@ exports.Prisma.PingServidoresOrderByRelevanceFieldEnum = makeEnum({
 exports.Prisma.ServidoresOrderByRelevanceFieldEnum = makeEnum({
   publicId: 'publicId',
   dominio: 'dominio',
-  ip: 'ip'
+  ip: 'ip',
+  descripcion: 'descripcion',
+  nombre: 'nombre'
 });
 
 exports.Prisma.TasksOrderByRelevanceFieldEnum = makeEnum({
-  idTask: 'idTask'
+  idTask: 'idTask',
+  error: 'error'
 });
 
 exports.Prisma.UsuariosOrderByRelevanceFieldEnum = makeEnum({
@@ -180,11 +179,6 @@ exports.Prisma.UsuariosOrderByRelevanceFieldEnum = makeEnum({
   apellido: 'apellido',
   email: 'email',
   password: 'password'
-});
-
-exports.Prisma.UsuariosServidoresOrderByRelevanceFieldEnum = makeEnum({
-  nombre: 'nombre',
-  descripcion: 'descripcion'
 });
 exports.TasksEstatus = makeEnum({
   running: 'running',
@@ -198,8 +192,7 @@ exports.Prisma.ModelName = makeEnum({
   PingServidores: 'PingServidores',
   Servidores: 'Servidores',
   Tasks: 'Tasks',
-  Usuarios: 'Usuarios',
-  UsuariosServidores: 'UsuariosServidores'
+  Usuarios: 'Usuarios'
 });
 
 /**

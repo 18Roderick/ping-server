@@ -8,7 +8,31 @@ const queueTypes = {
   serverTasks: "serverTasks",
 };
 
+/**@typedef {Object} INTERVALS */
+/**
+ * @property {number} FIVE_MINUTES 5 minutes in mili seconds
+ * @property {number} ONE_MINUTE 1 minutes in mili seconds
+ * @property {number} TEN_MINUTES 10 minutes in mili seconds
+ * @property {number} ONE_HOUR 1 hour in mili seconds
+ * @property {number} EVERY_DAY every day at 12am
+ * @property {number} EVERY_MONTH Every month on the last Sunday, at noon
+ */
+const INTERVALS = {
+  FIVE_MINUTES: 1000 * 60 * 5,
+  ONE_MINUTE: 1000 * 60 * 1,
+  TEN_MINUTES: 1000 * 60 * 10,
+  ONE_HOUR: 1000 * 60 * 60,
+  EVERY_DAY: "0 0 0 * * ?", //every day at 12am
+  EVERY_MONTH: "0 0 12 1L * ?", //Every month on the last Sunday, at noon
+};
+
 //devuelve el objeto de configuración con la cantidad solicitada
+/** @function */
+
+/** @param {number} time - number os minutes between */
+/** @typedef
+ * @property {object}
+ */
 const repeatCron = (time = 2) => ({
   repeat: {
     every: 1000 * 60 * time, //repetir cada minuto segundos *  minutos
@@ -37,4 +61,5 @@ module.exports = {
   queueManager,
   queueTypes,
   repeatCron,
+  INTERVALS,
 };

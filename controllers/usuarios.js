@@ -1,4 +1,5 @@
 const createError = require("http-errors");
+const uuid = require("uuid").v4;
 const { PrismaClient } = require("../prisma/generated/prisma-client-js");
 
 const tokenCreator = require("../utils/token");
@@ -17,17 +18,22 @@ module.exports.crearUsuario = async function (req, res) {
     if (!errors.isEmpty()) {
       return res.status(400).json({
         statusCode: 400,
-        statusText: "bad request",
         message: "Se encontraron Errores en los datos ingresados",
         errors: errors.array(),
       });
     } else {
       const user = await prisma.usuarios.create({
         data: {
+          publicId: uuid(),
           nombre: nombre,
           apellido: apellido,
+          EstatusUsuarios: {
+            connect: {
+              idEstatus: 1,
+            },
+          },
           email: email,
-          password: password,
+          password: await cipher.encrypt(password),
         },
       });
 
@@ -63,7 +69,9 @@ module.exports.login = async function (req, res) {
       });
     }
 
-    let user = await prisma.usuarios.findUnique({ where: { email } });
+    let user = await prisma.usuarios.findUnique({
+      where: { email },
+    });
 
     if (!user || !(await cipher.compare(password, user.password))) {
       return res.status(401).json({

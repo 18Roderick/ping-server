@@ -4,6 +4,7 @@
         "nombre": "romero",
         "email": "test@gmail.com",
         "password": "@test123456A",
-        "estatus": 1
+        "estatus": 1,
+        "publicId": "d7d2acfc-3b18-46d1-86cc-a4e6a51b0891"
     }
 ]

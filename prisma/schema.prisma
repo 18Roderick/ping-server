@@ -36,68 +36,62 @@ model PingServidores {
   log            String?    @db.Text
   isAlive        Boolean?
   numericHost    String?    @db.VarChar(255)
-  fechaPing      DateTime   @db.DateTime(0)
+  fechaPing      DateTime   @default(now()) @db.DateTime(0)
   Servidores     Servidores @relation(fields: [idServidor], references: [idServidor], onDelete: NoAction, onUpdate: NoAction, map: "PingServidores_ibfk_1")
 
   @@index([idServidor], map: "idServidor")
 }
 
 model Servidores {
-  publicId           String?              @db.Char(255)
-  idServidor         Int                  @id @default(autoincrement())
+  publicId           String?           @db.Char(255)
+  idServidor         Int               @id @default(autoincrement())
   estatus            Int
-  dominio            String               @db.VarChar(255)
-  ip                 String?              @db.VarChar(255)
-  fechaCreacion      DateTime             @default(now())
-  fechaActualizacion DateTime?            @updatedAt
-  EstatusServidores  EstatusServidores    @relation(fields: [estatus], references: [tipo], onDelete: NoAction, onUpdate: NoAction, map: "Servidores_ibfk_1")
+  dominio            String            @db.VarChar(255)
+  ip                 String?           @db.VarChar(255)
+  fechaCreacion      DateTime          @default(now())
+  fechaActualizacion DateTime?         @updatedAt
+  descripcion        String?           @db.Text
+  idUsuario          Int?
+  nombre             String            @db.VarChar(255)
+  EstatusServidores  EstatusServidores @relation(fields: [estatus], references: [tipo], onDelete: NoAction, onUpdate: NoAction, map: "Servidores_ibfk_1")
+  Usuarios           Usuarios?         @relation(fields: [idUsuario], references: [idUsuario])
   PingServidores     PingServidores[]
   Tasks              Tasks[]
-  UsuariosServidores UsuariosServidores[]
 
   @@index([publicId, idServidor])
+  @@index([estatus], map: "Servidores_ibfk_1")
+  @@index([idUsuario], map: "Servidores_idUsuario_fkey")
 }
 
 model Tasks {
-  id                 Int           @id @default(autoincrement())
-  idTask             String        @unique(map: "idTask") @db.VarChar(500)
-  idServidor         Int
-  estatus            TasksEstatus? @default(stopped)
-  fechaCreacion      DateTime      @default(now())
-  fechaActualizacion DateTime?     @updatedAt
-  Servidores         Servidores    @relation(fields: [idServidor], references: [idServidor], onDelete: NoAction, onUpdate: NoAction, map: "Tasks_ibfk_1")
+  id              Int           @id @default(autoincrement())
+  idTask          String        @unique(map: "idTask") @db.VarChar(500)
+  idServidor      Int
+  estatus         TasksEstatus? @default(stopped)
+  fechaCreacion   DateTime      @default(now())
+  interval        Int
+  error           String?       @db.Text
+  ultimaEjecucion DateTime?     @db.DateTime(0)
+  Servidores      Servidores    @relation(fields: [idServidor], references: [idServidor], onDelete: NoAction, onUpdate: NoAction, map: "Tasks_ibfk_1")
 
   @@index([idServidor], map: "idServidor")
 }
 
 model Usuarios {
-  publicId           String               @unique(map: "publicId") @db.Char(36)
-  idUsuario          Int                  @id @default(autoincrement())
-  estatus            Int
-  nombre             String               @db.VarChar(50)
-  apellido           String               @db.VarChar(50)
-  email              String?              @unique(map: "email") @db.VarChar(255)
-  password           String               @db.VarChar(255)
-  fechaCreacion      DateTime             @default(now())
-  fechaActualizacion DateTime?            @updatedAt
-  EstatusUsuarios    EstatusUsuarios      @relation(fields: [estatus], references: [tipo], onDelete: NoAction, onUpdate: NoAction, map: "Usuarios_ibfk_1")
-  UsuariosServidores UsuariosServidores[]
+  publicId           String          @unique(map: "publicId") @db.Char(36)
+  idUsuario          Int             @id @default(autoincrement())
+  estatus            Int             @default(1)
+  nombre             String          @db.VarChar(50)
+  apellido           String          @db.VarChar(50)
+  email              String?         @unique(map: "email") @db.VarChar(255)
+  password           String          @db.VarChar(255)
+  fechaCreacion      DateTime        @default(now())
+  fechaActualizacion DateTime?       @updatedAt
+  EstatusUsuarios    EstatusUsuarios @relation(fields: [estatus], references: [tipo], onDelete: NoAction, onUpdate: NoAction, map: "Usuarios_ibfk_1")
+  Servidores         Servidores[]
 
   @@index([idUsuario, publicId])
-}
-
-model UsuariosServidores {
-  idUsuario          Int
-  usuario            Usuarios   @relation(fields: [idUsuario], references: [idUsuario], onDelete: NoAction, onUpdate: NoAction)
-  idServidor         Int
-  servidor           Servidores @relation(fields: [idServidor], references: [idServidor], onDelete: NoAction, onUpdate: NoAction)
-  nombre             String     @db.VarChar(255)
-  descripcion        String?    @db.Text
-  fechaCreacion      DateTime   @default(now())
-  fechaActualizacion DateTime?  @updatedAt
-
-  @@id([idUsuario, idServidor])
-  @@index([idUsuario, idServidor])
+  @@index([estatus], map: "Usuarios_ibfk_1")
 }
 
 enum TasksEstatus {

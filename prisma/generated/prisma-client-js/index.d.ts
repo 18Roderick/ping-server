@@ -64,6 +64,9 @@ export type Servidores = {
   ip: string | null
   fechaCreacion: Date
   fechaActualizacion: Date | null
+  descripcion: string | null
+  idUsuario: number | null
+  nombre: string
 }
 
 /**
@@ -76,7 +79,9 @@ export type Tasks = {
   idServidor: number
   estatus: TasksEstatus | null
   fechaCreacion: Date
-  fechaActualizacion: Date | null
+  interval: number
+  error: string | null
+  ultimaEjecucion: Date | null
 }
 
 /**
@@ -91,19 +96,6 @@ export type Usuarios = {
   apellido: string
   email: string | null
   password: string
-  fechaCreacion: Date
-  fechaActualizacion: Date | null
-}
-
-/**
- * Model UsuariosServidores
- * 
- */
-export type UsuariosServidores = {
-  idUsuario: number
-  idServidor: number
-  nombre: string
-  descripcion: string | null
   fechaCreacion: Date
   fechaActualizacion: Date | null
 }
@@ -326,16 +318,6 @@ export class PrismaClient<
     * ```
     */
   get usuarios(): Prisma.UsuariosDelegate<GlobalReject>;
-
-  /**
-   * `prisma.usuariosServidores`: Exposes CRUD operations for the **UsuariosServidores** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more UsuariosServidores
-    * const usuariosServidores = await prisma.usuariosServidores.findMany()
-    * ```
-    */
-  get usuariosServidores(): Prisma.UsuariosServidoresDelegate<GlobalReject>;
 }
 
 export namespace Prisma {
@@ -755,8 +737,7 @@ export namespace Prisma {
     PingServidores: 'PingServidores',
     Servidores: 'Servidores',
     Tasks: 'Tasks',
-    Usuarios: 'Usuarios',
-    UsuariosServidores: 'UsuariosServidores'
+    Usuarios: 'Usuarios'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1026,13 +1007,11 @@ export namespace Prisma {
   export type ServidoresCountOutputType = {
     PingServidores: number
     Tasks: number
-    UsuariosServidores: number
   }
 
   export type ServidoresCountOutputTypeSelect = {
     PingServidores?: boolean
     Tasks?: boolean
-    UsuariosServidores?: boolean
   }
 
   export type ServidoresCountOutputTypeGetPayload<
@@ -1077,11 +1056,11 @@ export namespace Prisma {
 
 
   export type UsuariosCountOutputType = {
-    UsuariosServidores: number
+    Servidores: number
   }
 
   export type UsuariosCountOutputTypeSelect = {
-    UsuariosServidores?: boolean
+    Servidores?: boolean
   }
 
   export type UsuariosCountOutputTypeGetPayload<
@@ -3906,11 +3885,13 @@ export namespace Prisma {
   export type ServidoresAvgAggregateOutputType = {
     idServidor: number | null
     estatus: number | null
+    idUsuario: number | null
   }
 
   export type ServidoresSumAggregateOutputType = {
     idServidor: number | null
     estatus: number | null
+    idUsuario: number | null
   }
 
   export type ServidoresMinAggregateOutputType = {
@@ -3921,6 +3902,9 @@ export namespace Prisma {
     ip: string | null
     fechaCreacion: Date | null
     fechaActualizacion: Date | null
+    descripcion: string | null
+    idUsuario: number | null
+    nombre: string | null
   }
 
   export type ServidoresMaxAggregateOutputType = {
@@ -3931,6 +3915,9 @@ export namespace Prisma {
     ip: string | null
     fechaCreacion: Date | null
     fechaActualizacion: Date | null
+    descripcion: string | null
+    idUsuario: number | null
+    nombre: string | null
   }
 
   export type ServidoresCountAggregateOutputType = {
@@ -3941,6 +3928,9 @@ export namespace Prisma {
     ip: number
     fechaCreacion: number
     fechaActualizacion: number
+    descripcion: number
+    idUsuario: number
+    nombre: number
     _all: number
   }
 
@@ -3948,11 +3938,13 @@ export namespace Prisma {
   export type ServidoresAvgAggregateInputType = {
     idServidor?: true
     estatus?: true
+    idUsuario?: true
   }
 
   export type ServidoresSumAggregateInputType = {
     idServidor?: true
     estatus?: true
+    idUsuario?: true
   }
 
   export type ServidoresMinAggregateInputType = {
@@ -3963,6 +3955,9 @@ export namespace Prisma {
     ip?: true
     fechaCreacion?: true
     fechaActualizacion?: true
+    descripcion?: true
+    idUsuario?: true
+    nombre?: true
   }
 
   export type ServidoresMaxAggregateInputType = {
@@ -3973,6 +3968,9 @@ export namespace Prisma {
     ip?: true
     fechaCreacion?: true
     fechaActualizacion?: true
+    descripcion?: true
+    idUsuario?: true
+    nombre?: true
   }
 
   export type ServidoresCountAggregateInputType = {
@@ -3983,6 +3981,9 @@ export namespace Prisma {
     ip?: true
     fechaCreacion?: true
     fechaActualizacion?: true
+    descripcion?: true
+    idUsuario?: true
+    nombre?: true
     _all?: true
   }
 
@@ -4086,6 +4087,9 @@ export namespace Prisma {
     ip: string | null
     fechaCreacion: Date
     fechaActualizacion: Date | null
+    descripcion: string | null
+    idUsuario: number | null
+    nombre: string
     _count: ServidoresCountAggregateOutputType | null
     _avg: ServidoresAvgAggregateOutputType | null
     _sum: ServidoresSumAggregateOutputType | null
@@ -4115,18 +4119,21 @@ export namespace Prisma {
     ip?: boolean
     fechaCreacion?: boolean
     fechaActualizacion?: boolean
+    descripcion?: boolean
+    idUsuario?: boolean
+    nombre?: boolean
     EstatusServidores?: boolean | EstatusServidoresArgs
+    Usuarios?: boolean | UsuariosArgs
     PingServidores?: boolean | PingServidoresFindManyArgs
     Tasks?: boolean | TasksFindManyArgs
-    UsuariosServidores?: boolean | UsuariosServidoresFindManyArgs
     _count?: boolean | ServidoresCountOutputTypeArgs
   }
 
   export type ServidoresInclude = {
     EstatusServidores?: boolean | EstatusServidoresArgs
+    Usuarios?: boolean | UsuariosArgs
     PingServidores?: boolean | PingServidoresFindManyArgs
     Tasks?: boolean | TasksFindManyArgs
-    UsuariosServidores?: boolean | UsuariosServidoresFindManyArgs
     _count?: boolean | ServidoresCountOutputTypeArgs
   }
 
@@ -4142,18 +4149,18 @@ export namespace Prisma {
     ? Servidores  & {
     [P in TrueKeys<S['include']>]:
         P extends 'EstatusServidores' ? EstatusServidoresGetPayload<S['include'][P]> :
+        P extends 'Usuarios' ? UsuariosGetPayload<S['include'][P]> | null :
         P extends 'PingServidores' ? Array < PingServidoresGetPayload<S['include'][P]>>  :
         P extends 'Tasks' ? Array < TasksGetPayload<S['include'][P]>>  :
-        P extends 'UsuariosServidores' ? Array < UsuariosServidoresGetPayload<S['include'][P]>>  :
         P extends '_count' ? ServidoresCountOutputTypeGetPayload<S['include'][P]> :  never
   } 
     : 'select' extends U
     ? {
     [P in TrueKeys<S['select']>]:
         P extends 'EstatusServidores' ? EstatusServidoresGetPayload<S['select'][P]> :
+        P extends 'Usuarios' ? UsuariosGetPayload<S['select'][P]> | null :
         P extends 'PingServidores' ? Array < PingServidoresGetPayload<S['select'][P]>>  :
         P extends 'Tasks' ? Array < TasksGetPayload<S['select'][P]>>  :
-        P extends 'UsuariosServidores' ? Array < UsuariosServidoresGetPayload<S['select'][P]>>  :
         P extends '_count' ? ServidoresCountOutputTypeGetPayload<S['select'][P]> :  P extends keyof Servidores ? Servidores[P] : never
   } 
     : Servidores
@@ -4496,11 +4503,11 @@ export namespace Prisma {
 
     EstatusServidores<T extends EstatusServidoresArgs = {}>(args?: Subset<T, EstatusServidoresArgs>): CheckSelect<T, Prisma__EstatusServidoresClient<EstatusServidores | null >, Prisma__EstatusServidoresClient<EstatusServidoresGetPayload<T> | null >>;
 
+    Usuarios<T extends UsuariosArgs = {}>(args?: Subset<T, UsuariosArgs>): CheckSelect<T, Prisma__UsuariosClient<Usuarios | null >, Prisma__UsuariosClient<UsuariosGetPayload<T> | null >>;
+
     PingServidores<T extends PingServidoresFindManyArgs = {}>(args?: Subset<T, PingServidoresFindManyArgs>): CheckSelect<T, PrismaPromise<Array<PingServidores>>, PrismaPromise<Array<PingServidoresGetPayload<T>>>>;
 
     Tasks<T extends TasksFindManyArgs = {}>(args?: Subset<T, TasksFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Tasks>>, PrismaPromise<Array<TasksGetPayload<T>>>>;
-
-    UsuariosServidores<T extends UsuariosServidoresFindManyArgs = {}>(args?: Subset<T, UsuariosServidoresFindManyArgs>): CheckSelect<T, PrismaPromise<Array<UsuariosServidores>>, PrismaPromise<Array<UsuariosServidoresGetPayload<T>>>>;
 
     private get _document();
     /**
@@ -4846,11 +4853,13 @@ export namespace Prisma {
   export type TasksAvgAggregateOutputType = {
     id: number | null
     idServidor: number | null
+    interval: number | null
   }
 
   export type TasksSumAggregateOutputType = {
     id: number | null
     idServidor: number | null
+    interval: number | null
   }
 
   export type TasksMinAggregateOutputType = {
@@ -4859,7 +4868,9 @@ export namespace Prisma {
     idServidor: number | null
     estatus: TasksEstatus | null
     fechaCreacion: Date | null
-    fechaActualizacion: Date | null
+    interval: number | null
+    error: string | null
+    ultimaEjecucion: Date | null
   }
 
   export type TasksMaxAggregateOutputType = {
@@ -4868,7 +4879,9 @@ export namespace Prisma {
     idServidor: number | null
     estatus: TasksEstatus | null
     fechaCreacion: Date | null
-    fechaActualizacion: Date | null
+    interval: number | null
+    error: string | null
+    ultimaEjecucion: Date | null
   }
 
   export type TasksCountAggregateOutputType = {
@@ -4877,7 +4890,9 @@ export namespace Prisma {
     idServidor: number
     estatus: number
     fechaCreacion: number
-    fechaActualizacion: number
+    interval: number
+    error: number
+    ultimaEjecucion: number
     _all: number
   }
 
@@ -4885,11 +4900,13 @@ export namespace Prisma {
   export type TasksAvgAggregateInputType = {
     id?: true
     idServidor?: true
+    interval?: true
   }
 
   export type TasksSumAggregateInputType = {
     id?: true
     idServidor?: true
+    interval?: true
   }
 
   export type TasksMinAggregateInputType = {
@@ -4898,7 +4915,9 @@ export namespace Prisma {
     idServidor?: true
     estatus?: true
     fechaCreacion?: true
-    fechaActualizacion?: true
+    interval?: true
+    error?: true
+    ultimaEjecucion?: true
   }
 
   export type TasksMaxAggregateInputType = {
@@ -4907,7 +4926,9 @@ export namespace Prisma {
     idServidor?: true
     estatus?: true
     fechaCreacion?: true
-    fechaActualizacion?: true
+    interval?: true
+    error?: true
+    ultimaEjecucion?: true
   }
 
   export type TasksCountAggregateInputType = {
@@ -4916,7 +4937,9 @@ export namespace Prisma {
     idServidor?: true
     estatus?: true
     fechaCreacion?: true
-    fechaActualizacion?: true
+    interval?: true
+    error?: true
+    ultimaEjecucion?: true
     _all?: true
   }
 
@@ -5018,7 +5041,9 @@ export namespace Prisma {
     idServidor: number
     estatus: TasksEstatus | null
     fechaCreacion: Date
-    fechaActualizacion: Date | null
+    interval: number
+    error: string | null
+    ultimaEjecucion: Date | null
     _count: TasksCountAggregateOutputType | null
     _avg: TasksAvgAggregateOutputType | null
     _sum: TasksSumAggregateOutputType | null
@@ -5046,7 +5071,9 @@ export namespace Prisma {
     idServidor?: boolean
     estatus?: boolean
     fechaCreacion?: boolean
-    fechaActualizacion?: boolean
+    interval?: boolean
+    error?: boolean
+    ultimaEjecucion?: boolean
     Servidores?: boolean | ServidoresArgs
   }
 
@@ -5982,13 +6009,13 @@ export namespace Prisma {
     fechaCreacion?: boolean
     fechaActualizacion?: boolean
     EstatusUsuarios?: boolean | EstatusUsuariosArgs
-    UsuariosServidores?: boolean | UsuariosServidoresFindManyArgs
+    Servidores?: boolean | ServidoresFindManyArgs
     _count?: boolean | UsuariosCountOutputTypeArgs
   }
 
   export type UsuariosInclude = {
     EstatusUsuarios?: boolean | EstatusUsuariosArgs
-    UsuariosServidores?: boolean | UsuariosServidoresFindManyArgs
+    Servidores?: boolean | ServidoresFindManyArgs
     _count?: boolean | UsuariosCountOutputTypeArgs
   }
 
@@ -6004,14 +6031,14 @@ export namespace Prisma {
     ? Usuarios  & {
     [P in TrueKeys<S['include']>]:
         P extends 'EstatusUsuarios' ? EstatusUsuariosGetPayload<S['include'][P]> :
-        P extends 'UsuariosServidores' ? Array < UsuariosServidoresGetPayload<S['include'][P]>>  :
+        P extends 'Servidores' ? Array < ServidoresGetPayload<S['include'][P]>>  :
         P extends '_count' ? UsuariosCountOutputTypeGetPayload<S['include'][P]> :  never
   } 
     : 'select' extends U
     ? {
     [P in TrueKeys<S['select']>]:
         P extends 'EstatusUsuarios' ? EstatusUsuariosGetPayload<S['select'][P]> :
-        P extends 'UsuariosServidores' ? Array < UsuariosServidoresGetPayload<S['select'][P]>>  :
+        P extends 'Servidores' ? Array < ServidoresGetPayload<S['select'][P]>>  :
         P extends '_count' ? UsuariosCountOutputTypeGetPayload<S['select'][P]> :  P extends keyof Usuarios ? Usuarios[P] : never
   } 
     : Usuarios
@@ -6354,7 +6381,7 @@ export namespace Prisma {
 
     EstatusUsuarios<T extends EstatusUsuariosArgs = {}>(args?: Subset<T, EstatusUsuariosArgs>): CheckSelect<T, Prisma__EstatusUsuariosClient<EstatusUsuarios | null >, Prisma__EstatusUsuariosClient<EstatusUsuariosGetPayload<T> | null >>;
 
-    UsuariosServidores<T extends UsuariosServidoresFindManyArgs = {}>(args?: Subset<T, UsuariosServidoresFindManyArgs>): CheckSelect<T, PrismaPromise<Array<UsuariosServidores>>, PrismaPromise<Array<UsuariosServidoresGetPayload<T>>>>;
+    Servidores<T extends ServidoresFindManyArgs = {}>(args?: Subset<T, ServidoresFindManyArgs>): CheckSelect<T, PrismaPromise<Array<Servidores>>, PrismaPromise<Array<ServidoresGetPayload<T>>>>;
 
     private get _document();
     /**
@@ -6685,922 +6712,6 @@ export namespace Prisma {
 
 
   /**
-   * Model UsuariosServidores
-   */
-
-
-  export type AggregateUsuariosServidores = {
-    _count: UsuariosServidoresCountAggregateOutputType | null
-    _avg: UsuariosServidoresAvgAggregateOutputType | null
-    _sum: UsuariosServidoresSumAggregateOutputType | null
-    _min: UsuariosServidoresMinAggregateOutputType | null
-    _max: UsuariosServidoresMaxAggregateOutputType | null
-  }
-
-  export type UsuariosServidoresAvgAggregateOutputType = {
-    idUsuario: number | null
-    idServidor: number | null
-  }
-
-  export type UsuariosServidoresSumAggregateOutputType = {
-    idUsuario: number | null
-    idServidor: number | null
-  }
-
-  export type UsuariosServidoresMinAggregateOutputType = {
-    idUsuario: number | null
-    idServidor: number | null
-    nombre: string | null
-    descripcion: string | null
-    fechaCreacion: Date | null
-    fechaActualizacion: Date | null
-  }
-
-  export type UsuariosServidoresMaxAggregateOutputType = {
-    idUsuario: number | null
-    idServidor: number | null
-    nombre: string | null
-    descripcion: string | null
-    fechaCreacion: Date | null
-    fechaActualizacion: Date | null
-  }
-
-  export type UsuariosServidoresCountAggregateOutputType = {
-    idUsuario: number
-    idServidor: number
-    nombre: number
-    descripcion: number
-    fechaCreacion: number
-    fechaActualizacion: number
-    _all: number
-  }
-
-
-  export type UsuariosServidoresAvgAggregateInputType = {
-    idUsuario?: true
-    idServidor?: true
-  }
-
-  export type UsuariosServidoresSumAggregateInputType = {
-    idUsuario?: true
-    idServidor?: true
-  }
-
-  export type UsuariosServidoresMinAggregateInputType = {
-    idUsuario?: true
-    idServidor?: true
-    nombre?: true
-    descripcion?: true
-    fechaCreacion?: true
-    fechaActualizacion?: true
-  }
-
-  export type UsuariosServidoresMaxAggregateInputType = {
-    idUsuario?: true
-    idServidor?: true
-    nombre?: true
-    descripcion?: true
-    fechaCreacion?: true
-    fechaActualizacion?: true
-  }
-
-  export type UsuariosServidoresCountAggregateInputType = {
-    idUsuario?: true
-    idServidor?: true
-    nombre?: true
-    descripcion?: true
-    fechaCreacion?: true
-    fechaActualizacion?: true
-    _all?: true
-  }
-
-  export type UsuariosServidoresAggregateArgs = {
-    /**
-     * Filter which UsuariosServidores to aggregate.
-     * 
-    **/
-    where?: UsuariosServidoresWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of UsuariosServidores to fetch.
-     * 
-    **/
-    orderBy?: Enumerable<UsuariosServidoresOrderByWithRelationAndSearchRelevanceInput>
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     * 
-    **/
-    cursor?: UsuariosServidoresWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` UsuariosServidores from the position of the cursor.
-     * 
-    **/
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` UsuariosServidores.
-     * 
-    **/
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned UsuariosServidores
-    **/
-    _count?: true | UsuariosServidoresCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to average
-    **/
-    _avg?: UsuariosServidoresAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: UsuariosServidoresSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: UsuariosServidoresMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: UsuariosServidoresMaxAggregateInputType
-  }
-
-  export type GetUsuariosServidoresAggregateType<T extends UsuariosServidoresAggregateArgs> = {
-        [P in keyof T & keyof AggregateUsuariosServidores]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateUsuariosServidores[P]>
-      : GetScalarType<T[P], AggregateUsuariosServidores[P]>
-  }
-
-
-
-
-  export type UsuariosServidoresGroupByArgs = {
-    where?: UsuariosServidoresWhereInput
-    orderBy?: Enumerable<UsuariosServidoresOrderByWithAggregationInput>
-    by: Array<UsuariosServidoresScalarFieldEnum>
-    having?: UsuariosServidoresScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: UsuariosServidoresCountAggregateInputType | true
-    _avg?: UsuariosServidoresAvgAggregateInputType
-    _sum?: UsuariosServidoresSumAggregateInputType
-    _min?: UsuariosServidoresMinAggregateInputType
-    _max?: UsuariosServidoresMaxAggregateInputType
-  }
-
-
-  export type UsuariosServidoresGroupByOutputType = {
-    idUsuario: number
-    idServidor: number
-    nombre: string
-    descripcion: string | null
-    fechaCreacion: Date
-    fechaActualizacion: Date | null
-    _count: UsuariosServidoresCountAggregateOutputType | null
-    _avg: UsuariosServidoresAvgAggregateOutputType | null
-    _sum: UsuariosServidoresSumAggregateOutputType | null
-    _min: UsuariosServidoresMinAggregateOutputType | null
-    _max: UsuariosServidoresMaxAggregateOutputType | null
-  }
-
-  type GetUsuariosServidoresGroupByPayload<T extends UsuariosServidoresGroupByArgs> = PrismaPromise<
-    Array<
-      PickArray<UsuariosServidoresGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof UsuariosServidoresGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], UsuariosServidoresGroupByOutputType[P]>
-            : GetScalarType<T[P], UsuariosServidoresGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type UsuariosServidoresSelect = {
-    idUsuario?: boolean
-    usuario?: boolean | UsuariosArgs
-    idServidor?: boolean
-    servidor?: boolean | ServidoresArgs
-    nombre?: boolean
-    descripcion?: boolean
-    fechaCreacion?: boolean
-    fechaActualizacion?: boolean
-  }
-
-  export type UsuariosServidoresInclude = {
-    usuario?: boolean | UsuariosArgs
-    servidor?: boolean | ServidoresArgs
-  }
-
-  export type UsuariosServidoresGetPayload<
-    S extends boolean | null | undefined | UsuariosServidoresArgs,
-    U = keyof S
-      > = S extends true
-        ? UsuariosServidores
-    : S extends undefined
-    ? never
-    : S extends UsuariosServidoresArgs | UsuariosServidoresFindManyArgs
-    ?'include' extends U
-    ? UsuariosServidores  & {
-    [P in TrueKeys<S['include']>]:
-        P extends 'usuario' ? UsuariosGetPayload<S['include'][P]> :
-        P extends 'servidor' ? ServidoresGetPayload<S['include'][P]> :  never
-  } 
-    : 'select' extends U
-    ? {
-    [P in TrueKeys<S['select']>]:
-        P extends 'usuario' ? UsuariosGetPayload<S['select'][P]> :
-        P extends 'servidor' ? ServidoresGetPayload<S['select'][P]> :  P extends keyof UsuariosServidores ? UsuariosServidores[P] : never
-  } 
-    : UsuariosServidores
-  : UsuariosServidores
-
-
-  type UsuariosServidoresCountArgs = Merge<
-    Omit<UsuariosServidoresFindManyArgs, 'select' | 'include'> & {
-      select?: UsuariosServidoresCountAggregateInputType | true
-    }
-  >
-
-  export interface UsuariosServidoresDelegate<GlobalRejectSettings> {
-    /**
-     * Find zero or one UsuariosServidores that matches the filter.
-     * @param {UsuariosServidoresFindUniqueArgs} args - Arguments to find a UsuariosServidores
-     * @example
-     * // Get one UsuariosServidores
-     * const usuariosServidores = await prisma.usuariosServidores.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findUnique<T extends UsuariosServidoresFindUniqueArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
-      args: SelectSubset<T, UsuariosServidoresFindUniqueArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findUnique', 'UsuariosServidores'> extends True ? CheckSelect<T, Prisma__UsuariosServidoresClient<UsuariosServidores>, Prisma__UsuariosServidoresClient<UsuariosServidoresGetPayload<T>>> : CheckSelect<T, Prisma__UsuariosServidoresClient<UsuariosServidores | null >, Prisma__UsuariosServidoresClient<UsuariosServidoresGetPayload<T> | null >>
-
-    /**
-     * Find the first UsuariosServidores that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {UsuariosServidoresFindFirstArgs} args - Arguments to find a UsuariosServidores
-     * @example
-     * // Get one UsuariosServidores
-     * const usuariosServidores = await prisma.usuariosServidores.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-    **/
-    findFirst<T extends UsuariosServidoresFindFirstArgs,  LocalRejectSettings = T["rejectOnNotFound"] extends RejectOnNotFound ? T['rejectOnNotFound'] : undefined>(
-      args?: SelectSubset<T, UsuariosServidoresFindFirstArgs>
-    ): HasReject<GlobalRejectSettings, LocalRejectSettings, 'findFirst', 'UsuariosServidores'> extends True ? CheckSelect<T, Prisma__UsuariosServidoresClient<UsuariosServidores>, Prisma__UsuariosServidoresClient<UsuariosServidoresGetPayload<T>>> : CheckSelect<T, Prisma__UsuariosServidoresClient<UsuariosServidores | null >, Prisma__UsuariosServidoresClient<UsuariosServidoresGetPayload<T> | null >>
-
-    /**
-     * Find zero or more UsuariosServidores that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {UsuariosServidoresFindManyArgs=} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all UsuariosServidores
-     * const usuariosServidores = await prisma.usuariosServidores.findMany()
-     * 
-     * // Get first 10 UsuariosServidores
-     * const usuariosServidores = await prisma.usuariosServidores.findMany({ take: 10 })
-     * 
-     * // Only select the `idUsuario`
-     * const usuariosServidoresWithIdUsuarioOnly = await prisma.usuariosServidores.findMany({ select: { idUsuario: true } })
-     * 
-    **/
-    findMany<T extends UsuariosServidoresFindManyArgs>(
-      args?: SelectSubset<T, UsuariosServidoresFindManyArgs>
-    ): CheckSelect<T, PrismaPromise<Array<UsuariosServidores>>, PrismaPromise<Array<UsuariosServidoresGetPayload<T>>>>
-
-    /**
-     * Create a UsuariosServidores.
-     * @param {UsuariosServidoresCreateArgs} args - Arguments to create a UsuariosServidores.
-     * @example
-     * // Create one UsuariosServidores
-     * const UsuariosServidores = await prisma.usuariosServidores.create({
-     *   data: {
-     *     // ... data to create a UsuariosServidores
-     *   }
-     * })
-     * 
-    **/
-    create<T extends UsuariosServidoresCreateArgs>(
-      args: SelectSubset<T, UsuariosServidoresCreateArgs>
-    ): CheckSelect<T, Prisma__UsuariosServidoresClient<UsuariosServidores>, Prisma__UsuariosServidoresClient<UsuariosServidoresGetPayload<T>>>
-
-    /**
-     * Create many UsuariosServidores.
-     *     @param {UsuariosServidoresCreateManyArgs} args - Arguments to create many UsuariosServidores.
-     *     @example
-     *     // Create many UsuariosServidores
-     *     const usuariosServidores = await prisma.usuariosServidores.createMany({
-     *       data: {
-     *         // ... provide data here
-     *       }
-     *     })
-     *     
-    **/
-    createMany<T extends UsuariosServidoresCreateManyArgs>(
-      args?: SelectSubset<T, UsuariosServidoresCreateManyArgs>
-    ): PrismaPromise<BatchPayload>
-
-    /**
-     * Delete a UsuariosServidores.
-     * @param {UsuariosServidoresDeleteArgs} args - Arguments to delete one UsuariosServidores.
-     * @example
-     * // Delete one UsuariosServidores
-     * const UsuariosServidores = await prisma.usuariosServidores.delete({
-     *   where: {
-     *     // ... filter to delete one UsuariosServidores
-     *   }
-     * })
-     * 
-    **/
-    delete<T extends UsuariosServidoresDeleteArgs>(
-      args: SelectSubset<T, UsuariosServidoresDeleteArgs>
-    ): CheckSelect<T, Prisma__UsuariosServidoresClient<UsuariosServidores>, Prisma__UsuariosServidoresClient<UsuariosServidoresGetPayload<T>>>
-
-    /**
-     * Update one UsuariosServidores.
-     * @param {UsuariosServidoresUpdateArgs} args - Arguments to update one UsuariosServidores.
-     * @example
-     * // Update one UsuariosServidores
-     * const usuariosServidores = await prisma.usuariosServidores.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-    **/
-    update<T extends UsuariosServidoresUpdateArgs>(
-      args: SelectSubset<T, UsuariosServidoresUpdateArgs>
-    ): CheckSelect<T, Prisma__UsuariosServidoresClient<UsuariosServidores>, Prisma__UsuariosServidoresClient<UsuariosServidoresGetPayload<T>>>
-
-    /**
-     * Delete zero or more UsuariosServidores.
-     * @param {UsuariosServidoresDeleteManyArgs} args - Arguments to filter UsuariosServidores to delete.
-     * @example
-     * // Delete a few UsuariosServidores
-     * const { count } = await prisma.usuariosServidores.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-    **/
-    deleteMany<T extends UsuariosServidoresDeleteManyArgs>(
-      args?: SelectSubset<T, UsuariosServidoresDeleteManyArgs>
-    ): PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more UsuariosServidores.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {UsuariosServidoresUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many UsuariosServidores
-     * const usuariosServidores = await prisma.usuariosServidores.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-    **/
-    updateMany<T extends UsuariosServidoresUpdateManyArgs>(
-      args: SelectSubset<T, UsuariosServidoresUpdateManyArgs>
-    ): PrismaPromise<BatchPayload>
-
-    /**
-     * Create or update one UsuariosServidores.
-     * @param {UsuariosServidoresUpsertArgs} args - Arguments to update or create a UsuariosServidores.
-     * @example
-     * // Update or create a UsuariosServidores
-     * const usuariosServidores = await prisma.usuariosServidores.upsert({
-     *   create: {
-     *     // ... data to create a UsuariosServidores
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the UsuariosServidores we want to update
-     *   }
-     * })
-    **/
-    upsert<T extends UsuariosServidoresUpsertArgs>(
-      args: SelectSubset<T, UsuariosServidoresUpsertArgs>
-    ): CheckSelect<T, Prisma__UsuariosServidoresClient<UsuariosServidores>, Prisma__UsuariosServidoresClient<UsuariosServidoresGetPayload<T>>>
-
-    /**
-     * Count the number of UsuariosServidores.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {UsuariosServidoresCountArgs} args - Arguments to filter UsuariosServidores to count.
-     * @example
-     * // Count the number of UsuariosServidores
-     * const count = await prisma.usuariosServidores.count({
-     *   where: {
-     *     // ... the filter for the UsuariosServidores we want to count
-     *   }
-     * })
-    **/
-    count<T extends UsuariosServidoresCountArgs>(
-      args?: Subset<T, UsuariosServidoresCountArgs>,
-    ): PrismaPromise<
-      T extends _Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], UsuariosServidoresCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a UsuariosServidores.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {UsuariosServidoresAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends UsuariosServidoresAggregateArgs>(args: Subset<T, UsuariosServidoresAggregateArgs>): PrismaPromise<GetUsuariosServidoresAggregateType<T>>
-
-    /**
-     * Group by UsuariosServidores.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {UsuariosServidoresGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends UsuariosServidoresGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: UsuariosServidoresGroupByArgs['orderBy'] }
-        : { orderBy?: UsuariosServidoresGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends TupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, UsuariosServidoresGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetUsuariosServidoresGroupByPayload<T> : PrismaPromise<InputErrors>
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for UsuariosServidores.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export class Prisma__UsuariosServidoresClient<T> implements PrismaPromise<T> {
-    [prisma]: true;
-    private readonly _dmmf;
-    private readonly _fetcher;
-    private readonly _queryType;
-    private readonly _rootField;
-    private readonly _clientMethod;
-    private readonly _args;
-    private readonly _dataPath;
-    private readonly _errorFormat;
-    private readonly _measurePerformance?;
-    private _isList;
-    private _callsite;
-    private _requestPromise?;
-    constructor(_dmmf: runtime.DMMFClass, _fetcher: PrismaClientFetcher, _queryType: 'query' | 'mutation', _rootField: string, _clientMethod: string, _args: any, _dataPath: string[], _errorFormat: ErrorFormat, _measurePerformance?: boolean | undefined, _isList?: boolean);
-    readonly [Symbol.toStringTag]: 'PrismaClientPromise';
-
-    usuario<T extends UsuariosArgs = {}>(args?: Subset<T, UsuariosArgs>): CheckSelect<T, Prisma__UsuariosClient<Usuarios | null >, Prisma__UsuariosClient<UsuariosGetPayload<T> | null >>;
-
-    servidor<T extends ServidoresArgs = {}>(args?: Subset<T, ServidoresArgs>): CheckSelect<T, Prisma__ServidoresClient<Servidores | null >, Prisma__ServidoresClient<ServidoresGetPayload<T> | null >>;
-
-    private get _document();
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2>;
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult>;
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): Promise<T>;
-  }
-
-  // Custom InputTypes
-
-  /**
-   * UsuariosServidores findUnique
-   */
-  export type UsuariosServidoresFindUniqueArgs = {
-    /**
-     * Select specific fields to fetch from the UsuariosServidores
-     * 
-    **/
-    select?: UsuariosServidoresSelect | null
-    /**
-     * Choose, which related nodes to fetch as well.
-     * 
-    **/
-    include?: UsuariosServidoresInclude | null
-    /**
-     * Throw an Error if a UsuariosServidores can't be found
-     * 
-    **/
-    rejectOnNotFound?: RejectOnNotFound
-    /**
-     * Filter, which UsuariosServidores to fetch.
-     * 
-    **/
-    where: UsuariosServidoresWhereUniqueInput
-  }
-
-
-  /**
-   * UsuariosServidores findFirst
-   */
-  export type UsuariosServidoresFindFirstArgs = {
-    /**
-     * Select specific fields to fetch from the UsuariosServidores
-     * 
-    **/
-    select?: UsuariosServidoresSelect | null
-    /**
-     * Choose, which related nodes to fetch as well.
-     * 
-    **/
-    include?: UsuariosServidoresInclude | null
-    /**
-     * Throw an Error if a UsuariosServidores can't be found
-     * 
-    **/
-    rejectOnNotFound?: RejectOnNotFound
-    /**
-     * Filter, which UsuariosServidores to fetch.
-     * 
-    **/
-    where?: UsuariosServidoresWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of UsuariosServidores to fetch.
-     * 
-    **/
-    orderBy?: Enumerable<UsuariosServidoresOrderByWithRelationAndSearchRelevanceInput>
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for UsuariosServidores.
-     * 
-    **/
-    cursor?: UsuariosServidoresWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` UsuariosServidores from the position of the cursor.
-     * 
-    **/
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` UsuariosServidores.
-     * 
-    **/
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of UsuariosServidores.
-     * 
-    **/
-    distinct?: Enumerable<UsuariosServidoresScalarFieldEnum>
-  }
-
-
-  /**
-   * UsuariosServidores findMany
-   */
-  export type UsuariosServidoresFindManyArgs = {
-    /**
-     * Select specific fields to fetch from the UsuariosServidores
-     * 
-    **/
-    select?: UsuariosServidoresSelect | null
-    /**
-     * Choose, which related nodes to fetch as well.
-     * 
-    **/
-    include?: UsuariosServidoresInclude | null
-    /**
-     * Filter, which UsuariosServidores to fetch.
-     * 
-    **/
-    where?: UsuariosServidoresWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of UsuariosServidores to fetch.
-     * 
-    **/
-    orderBy?: Enumerable<UsuariosServidoresOrderByWithRelationAndSearchRelevanceInput>
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing UsuariosServidores.
-     * 
-    **/
-    cursor?: UsuariosServidoresWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` UsuariosServidores from the position of the cursor.
-     * 
-    **/
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` UsuariosServidores.
-     * 
-    **/
-    skip?: number
-    distinct?: Enumerable<UsuariosServidoresScalarFieldEnum>
-  }
-
-
-  /**
-   * UsuariosServidores create
-   */
-  export type UsuariosServidoresCreateArgs = {
-    /**
-     * Select specific fields to fetch from the UsuariosServidores
-     * 
-    **/
-    select?: UsuariosServidoresSelect | null
-    /**
-     * Choose, which related nodes to fetch as well.
-     * 
-    **/
-    include?: UsuariosServidoresInclude | null
-    /**
-     * The data needed to create a UsuariosServidores.
-     * 
-    **/
-    data: XOR<UsuariosServidoresCreateInput, UsuariosServidoresUncheckedCreateInput>
-  }
-
-
-  /**
-   * UsuariosServidores createMany
-   */
-  export type UsuariosServidoresCreateManyArgs = {
-    /**
-     * The data used to create many UsuariosServidores.
-     * 
-    **/
-    data: Enumerable<UsuariosServidoresCreateManyInput>
-    skipDuplicates?: boolean
-  }
-
-
-  /**
-   * UsuariosServidores update
-   */
-  export type UsuariosServidoresUpdateArgs = {
-    /**
-     * Select specific fields to fetch from the UsuariosServidores
-     * 
-    **/
-    select?: UsuariosServidoresSelect | null
-    /**
-     * Choose, which related nodes to fetch as well.
-     * 
-    **/
-    include?: UsuariosServidoresInclude | null
-    /**
-     * The data needed to update a UsuariosServidores.
-     * 
-    **/
-    data: XOR<UsuariosServidoresUpdateInput, UsuariosServidoresUncheckedUpdateInput>
-    /**
-     * Choose, which UsuariosServidores to update.
-     * 
-    **/
-    where: UsuariosServidoresWhereUniqueInput
-  }
-
-
-  /**
-   * UsuariosServidores updateMany
-   */
-  export type UsuariosServidoresUpdateManyArgs = {
-    /**
-     * The data used to update UsuariosServidores.
-     * 
-    **/
-    data: XOR<UsuariosServidoresUpdateManyMutationInput, UsuariosServidoresUncheckedUpdateManyInput>
-    /**
-     * Filter which UsuariosServidores to update
-     * 
-    **/
-    where?: UsuariosServidoresWhereInput
-  }
-
-
-  /**
-   * UsuariosServidores upsert
-   */
-  export type UsuariosServidoresUpsertArgs = {
-    /**
-     * Select specific fields to fetch from the UsuariosServidores
-     * 
-    **/
-    select?: UsuariosServidoresSelect | null
-    /**
-     * Choose, which related nodes to fetch as well.
-     * 
-    **/
-    include?: UsuariosServidoresInclude | null
-    /**
-     * The filter to search for the UsuariosServidores to update in case it exists.
-     * 
-    **/
-    where: UsuariosServidoresWhereUniqueInput
-    /**
-     * In case the UsuariosServidores found by the `where` argument doesn't exist, create a new UsuariosServidores with this data.
-     * 
-    **/
-    create: XOR<UsuariosServidoresCreateInput, UsuariosServidoresUncheckedCreateInput>
-    /**
-     * In case the UsuariosServidores was found with the provided `where` argument, update it with this data.
-     * 
-    **/
-    update: XOR<UsuariosServidoresUpdateInput, UsuariosServidoresUncheckedUpdateInput>
-  }
-
-
-  /**
-   * UsuariosServidores delete
-   */
-  export type UsuariosServidoresDeleteArgs = {
-    /**
-     * Select specific fields to fetch from the UsuariosServidores
-     * 
-    **/
-    select?: UsuariosServidoresSelect | null
-    /**
-     * Choose, which related nodes to fetch as well.
-     * 
-    **/
-    include?: UsuariosServidoresInclude | null
-    /**
-     * Filter which UsuariosServidores to delete.
-     * 
-    **/
-    where: UsuariosServidoresWhereUniqueInput
-  }
-
-
-  /**
-   * UsuariosServidores deleteMany
-   */
-  export type UsuariosServidoresDeleteManyArgs = {
-    /**
-     * Filter which UsuariosServidores to delete
-     * 
-    **/
-    where?: UsuariosServidoresWhereInput
-  }
-
-
-  /**
-   * UsuariosServidores without action
-   */
-  export type UsuariosServidoresArgs = {
-    /**
-     * Select specific fields to fetch from the UsuariosServidores
-     * 
-    **/
-    select?: UsuariosServidoresSelect | null
-    /**
-     * Choose, which related nodes to fetch as well.
-     * 
-    **/
-    include?: UsuariosServidoresInclude | null
-  }
-
-
-
-  /**
    * Enums
    */
 
@@ -7651,7 +6762,10 @@ export namespace Prisma {
     dominio: 'dominio',
     ip: 'ip',
     fechaCreacion: 'fechaCreacion',
-    fechaActualizacion: 'fechaActualizacion'
+    fechaActualizacion: 'fechaActualizacion',
+    descripcion: 'descripcion',
+    idUsuario: 'idUsuario',
+    nombre: 'nombre'
   };
 
   export type ServidoresScalarFieldEnum = (typeof ServidoresScalarFieldEnum)[keyof typeof ServidoresScalarFieldEnum]
@@ -7663,7 +6777,9 @@ export namespace Prisma {
     idServidor: 'idServidor',
     estatus: 'estatus',
     fechaCreacion: 'fechaCreacion',
-    fechaActualizacion: 'fechaActualizacion'
+    interval: 'interval',
+    error: 'error',
+    ultimaEjecucion: 'ultimaEjecucion'
   };
 
   export type TasksScalarFieldEnum = (typeof TasksScalarFieldEnum)[keyof typeof TasksScalarFieldEnum]
@@ -7682,18 +6798,6 @@ export namespace Prisma {
   };
 
   export type UsuariosScalarFieldEnum = (typeof UsuariosScalarFieldEnum)[keyof typeof UsuariosScalarFieldEnum]
-
-
-  export const UsuariosServidoresScalarFieldEnum: {
-    idUsuario: 'idUsuario',
-    idServidor: 'idServidor',
-    nombre: 'nombre',
-    descripcion: 'descripcion',
-    fechaCreacion: 'fechaCreacion',
-    fechaActualizacion: 'fechaActualizacion'
-  };
-
-  export type UsuariosServidoresScalarFieldEnum = (typeof UsuariosServidoresScalarFieldEnum)[keyof typeof UsuariosServidoresScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -7731,14 +6835,17 @@ export namespace Prisma {
   export const ServidoresOrderByRelevanceFieldEnum: {
     publicId: 'publicId',
     dominio: 'dominio',
-    ip: 'ip'
+    ip: 'ip',
+    descripcion: 'descripcion',
+    nombre: 'nombre'
   };
 
   export type ServidoresOrderByRelevanceFieldEnum = (typeof ServidoresOrderByRelevanceFieldEnum)[keyof typeof ServidoresOrderByRelevanceFieldEnum]
 
 
   export const TasksOrderByRelevanceFieldEnum: {
-    idTask: 'idTask'
+    idTask: 'idTask',
+    error: 'error'
   };
 
   export type TasksOrderByRelevanceFieldEnum = (typeof TasksOrderByRelevanceFieldEnum)[keyof typeof TasksOrderByRelevanceFieldEnum]
@@ -7753,14 +6860,6 @@ export namespace Prisma {
   };
 
   export type UsuariosOrderByRelevanceFieldEnum = (typeof UsuariosOrderByRelevanceFieldEnum)[keyof typeof UsuariosOrderByRelevanceFieldEnum]
-
-
-  export const UsuariosServidoresOrderByRelevanceFieldEnum: {
-    nombre: 'nombre',
-    descripcion: 'descripcion'
-  };
-
-  export type UsuariosServidoresOrderByRelevanceFieldEnum = (typeof UsuariosServidoresOrderByRelevanceFieldEnum)[keyof typeof UsuariosServidoresOrderByRelevanceFieldEnum]
 
 
   /**
@@ -7949,10 +7048,13 @@ export namespace Prisma {
     ip?: StringNullableFilter | string | null
     fechaCreacion?: DateTimeFilter | Date | string
     fechaActualizacion?: DateTimeNullableFilter | Date | string | null
+    descripcion?: StringNullableFilter | string | null
+    idUsuario?: IntNullableFilter | number | null
+    nombre?: StringFilter | string
     EstatusServidores?: XOR<EstatusServidoresRelationFilter, EstatusServidoresWhereInput>
+    Usuarios?: XOR<UsuariosRelationFilter, UsuariosWhereInput> | null
     PingServidores?: PingServidoresListRelationFilter
     Tasks?: TasksListRelationFilter
-    UsuariosServidores?: UsuariosServidoresListRelationFilter
   }
 
   export type ServidoresOrderByWithRelationAndSearchRelevanceInput = {
@@ -7963,10 +7065,13 @@ export namespace Prisma {
     ip?: SortOrder
     fechaCreacion?: SortOrder
     fechaActualizacion?: SortOrder
+    descripcion?: SortOrder
+    idUsuario?: SortOrder
+    nombre?: SortOrder
     EstatusServidores?: EstatusServidoresOrderByWithRelationAndSearchRelevanceInput
+    Usuarios?: UsuariosOrderByWithRelationAndSearchRelevanceInput
     PingServidores?: PingServidoresOrderByRelationAggregateInput
     Tasks?: TasksOrderByRelationAggregateInput
-    UsuariosServidores?: UsuariosServidoresOrderByRelationAggregateInput
     _relevance?: ServidoresOrderByRelevanceInput
   }
 
@@ -7982,6 +7087,9 @@ export namespace Prisma {
     ip?: SortOrder
     fechaCreacion?: SortOrder
     fechaActualizacion?: SortOrder
+    descripcion?: SortOrder
+    idUsuario?: SortOrder
+    nombre?: SortOrder
     _count?: ServidoresCountOrderByAggregateInput
     _avg?: ServidoresAvgOrderByAggregateInput
     _max?: ServidoresMaxOrderByAggregateInput
@@ -8000,6 +7108,9 @@ export namespace Prisma {
     ip?: StringNullableWithAggregatesFilter | string | null
     fechaCreacion?: DateTimeWithAggregatesFilter | Date | string
     fechaActualizacion?: DateTimeNullableWithAggregatesFilter | Date | string | null
+    descripcion?: StringNullableWithAggregatesFilter | string | null
+    idUsuario?: IntNullableWithAggregatesFilter | number | null
+    nombre?: StringWithAggregatesFilter | string
   }
 
   export type TasksWhereInput = {
@@ -8011,7 +7122,9 @@ export namespace Prisma {
     idServidor?: IntFilter | number
     estatus?: EnumTasksEstatusNullableFilter | TasksEstatus | null
     fechaCreacion?: DateTimeFilter | Date | string
-    fechaActualizacion?: DateTimeNullableFilter | Date | string | null
+    interval?: IntFilter | number
+    error?: StringNullableFilter | string | null
+    ultimaEjecucion?: DateTimeNullableFilter | Date | string | null
     Servidores?: XOR<ServidoresRelationFilter, ServidoresWhereInput>
   }
 
@@ -8021,7 +7134,9 @@ export namespace Prisma {
     idServidor?: SortOrder
     estatus?: SortOrder
     fechaCreacion?: SortOrder
-    fechaActualizacion?: SortOrder
+    interval?: SortOrder
+    error?: SortOrder
+    ultimaEjecucion?: SortOrder
     Servidores?: ServidoresOrderByWithRelationAndSearchRelevanceInput
     _relevance?: TasksOrderByRelevanceInput
   }
@@ -8037,7 +7152,9 @@ export namespace Prisma {
     idServidor?: SortOrder
     estatus?: SortOrder
     fechaCreacion?: SortOrder
-    fechaActualizacion?: SortOrder
+    interval?: SortOrder
+    error?: SortOrder
+    ultimaEjecucion?: SortOrder
     _count?: TasksCountOrderByAggregateInput
     _avg?: TasksAvgOrderByAggregateInput
     _max?: TasksMaxOrderByAggregateInput
@@ -8054,7 +7171,9 @@ export namespace Prisma {
     idServidor?: IntWithAggregatesFilter | number
     estatus?: EnumTasksEstatusNullableWithAggregatesFilter | TasksEstatus | null
     fechaCreacion?: DateTimeWithAggregatesFilter | Date | string
-    fechaActualizacion?: DateTimeNullableWithAggregatesFilter | Date | string | null
+    interval?: IntWithAggregatesFilter | number
+    error?: StringNullableWithAggregatesFilter | string | null
+    ultimaEjecucion?: DateTimeNullableWithAggregatesFilter | Date | string | null
   }
 
   export type UsuariosWhereInput = {
@@ -8071,7 +7190,7 @@ export namespace Prisma {
     fechaCreacion?: DateTimeFilter | Date | string
     fechaActualizacion?: DateTimeNullableFilter | Date | string | null
     EstatusUsuarios?: XOR<EstatusUsuariosRelationFilter, EstatusUsuariosWhereInput>
-    UsuariosServidores?: UsuariosServidoresListRelationFilter
+    Servidores?: ServidoresListRelationFilter
   }
 
   export type UsuariosOrderByWithRelationAndSearchRelevanceInput = {
@@ -8085,7 +7204,7 @@ export namespace Prisma {
     fechaCreacion?: SortOrder
     fechaActualizacion?: SortOrder
     EstatusUsuarios?: EstatusUsuariosOrderByWithRelationAndSearchRelevanceInput
-    UsuariosServidores?: UsuariosServidoresOrderByRelationAggregateInput
+    Servidores?: ServidoresOrderByRelationAggregateInput
     _relevance?: UsuariosOrderByRelevanceInput
   }
 
@@ -8123,62 +7242,6 @@ export namespace Prisma {
     apellido?: StringWithAggregatesFilter | string
     email?: StringNullableWithAggregatesFilter | string | null
     password?: StringWithAggregatesFilter | string
-    fechaCreacion?: DateTimeWithAggregatesFilter | Date | string
-    fechaActualizacion?: DateTimeNullableWithAggregatesFilter | Date | string | null
-  }
-
-  export type UsuariosServidoresWhereInput = {
-    AND?: Enumerable<UsuariosServidoresWhereInput>
-    OR?: Enumerable<UsuariosServidoresWhereInput>
-    NOT?: Enumerable<UsuariosServidoresWhereInput>
-    idUsuario?: IntFilter | number
-    usuario?: XOR<UsuariosRelationFilter, UsuariosWhereInput>
-    idServidor?: IntFilter | number
-    servidor?: XOR<ServidoresRelationFilter, ServidoresWhereInput>
-    nombre?: StringFilter | string
-    descripcion?: StringNullableFilter | string | null
-    fechaCreacion?: DateTimeFilter | Date | string
-    fechaActualizacion?: DateTimeNullableFilter | Date | string | null
-  }
-
-  export type UsuariosServidoresOrderByWithRelationAndSearchRelevanceInput = {
-    idUsuario?: SortOrder
-    usuario?: UsuariosOrderByWithRelationAndSearchRelevanceInput
-    idServidor?: SortOrder
-    servidor?: ServidoresOrderByWithRelationAndSearchRelevanceInput
-    nombre?: SortOrder
-    descripcion?: SortOrder
-    fechaCreacion?: SortOrder
-    fechaActualizacion?: SortOrder
-    _relevance?: UsuariosServidoresOrderByRelevanceInput
-  }
-
-  export type UsuariosServidoresWhereUniqueInput = {
-    idUsuario_idServidor?: UsuariosServidoresIdUsuarioIdServidorCompoundUniqueInput
-  }
-
-  export type UsuariosServidoresOrderByWithAggregationInput = {
-    idUsuario?: SortOrder
-    idServidor?: SortOrder
-    nombre?: SortOrder
-    descripcion?: SortOrder
-    fechaCreacion?: SortOrder
-    fechaActualizacion?: SortOrder
-    _count?: UsuariosServidoresCountOrderByAggregateInput
-    _avg?: UsuariosServidoresAvgOrderByAggregateInput
-    _max?: UsuariosServidoresMaxOrderByAggregateInput
-    _min?: UsuariosServidoresMinOrderByAggregateInput
-    _sum?: UsuariosServidoresSumOrderByAggregateInput
-  }
-
-  export type UsuariosServidoresScalarWhereWithAggregatesInput = {
-    AND?: Enumerable<UsuariosServidoresScalarWhereWithAggregatesInput>
-    OR?: Enumerable<UsuariosServidoresScalarWhereWithAggregatesInput>
-    NOT?: Enumerable<UsuariosServidoresScalarWhereWithAggregatesInput>
-    idUsuario?: IntWithAggregatesFilter | number
-    idServidor?: IntWithAggregatesFilter | number
-    nombre?: StringWithAggregatesFilter | string
-    descripcion?: StringNullableWithAggregatesFilter | string | null
     fechaCreacion?: DateTimeWithAggregatesFilter | Date | string
     fechaActualizacion?: DateTimeNullableWithAggregatesFilter | Date | string | null
   }
@@ -8292,7 +7355,7 @@ export namespace Prisma {
     log?: string | null
     isAlive?: boolean | null
     numericHost?: string | null
-    fechaPing: Date | string
+    fechaPing?: Date | string
     Servidores: ServidoresCreateNestedOneWithoutPingServidoresInput
   }
 
@@ -8307,7 +7370,7 @@ export namespace Prisma {
     log?: string | null
     isAlive?: boolean | null
     numericHost?: string | null
-    fechaPing: Date | string
+    fechaPing?: Date | string
   }
 
   export type PingServidoresUpdateInput = {
@@ -8348,7 +7411,7 @@ export namespace Prisma {
     log?: string | null
     isAlive?: boolean | null
     numericHost?: string | null
-    fechaPing: Date | string
+    fechaPing?: Date | string
   }
 
   export type PingServidoresUpdateManyMutationInput = {
@@ -8383,10 +7446,12 @@ export namespace Prisma {
     ip?: string | null
     fechaCreacion?: Date | string
     fechaActualizacion?: Date | string | null
+    descripcion?: string | null
+    nombre: string
     EstatusServidores: EstatusServidoresCreateNestedOneWithoutServidoresInput
+    Usuarios?: UsuariosCreateNestedOneWithoutServidoresInput
     PingServidores?: PingServidoresCreateNestedManyWithoutServidoresInput
     Tasks?: TasksCreateNestedManyWithoutServidoresInput
-    UsuariosServidores?: UsuariosServidoresCreateNestedManyWithoutServidorInput
   }
 
   export type ServidoresUncheckedCreateInput = {
@@ -8397,9 +7462,11 @@ export namespace Prisma {
     ip?: string | null
     fechaCreacion?: Date | string
     fechaActualizacion?: Date | string | null
+    descripcion?: string | null
+    idUsuario?: number | null
+    nombre: string
     PingServidores?: PingServidoresUncheckedCreateNestedManyWithoutServidoresInput
     Tasks?: TasksUncheckedCreateNestedManyWithoutServidoresInput
-    UsuariosServidores?: UsuariosServidoresUncheckedCreateNestedManyWithoutServidorInput
   }
 
   export type ServidoresUpdateInput = {
@@ -8408,10 +7475,12 @@ export namespace Prisma {
     ip?: NullableStringFieldUpdateOperationsInput | string | null
     fechaCreacion?: DateTimeFieldUpdateOperationsInput | Date | string
     fechaActualizacion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    descripcion?: NullableStringFieldUpdateOperationsInput | string | null
+    nombre?: StringFieldUpdateOperationsInput | string
     EstatusServidores?: EstatusServidoresUpdateOneRequiredWithoutServidoresInput
+    Usuarios?: UsuariosUpdateOneWithoutServidoresInput
     PingServidores?: PingServidoresUpdateManyWithoutServidoresInput
     Tasks?: TasksUpdateManyWithoutServidoresInput
-    UsuariosServidores?: UsuariosServidoresUpdateManyWithoutServidorInput
   }
 
   export type ServidoresUncheckedUpdateInput = {
@@ -8422,9 +7491,11 @@ export namespace Prisma {
     ip?: NullableStringFieldUpdateOperationsInput | string | null
     fechaCreacion?: DateTimeFieldUpdateOperationsInput | Date | string
     fechaActualizacion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    descripcion?: NullableStringFieldUpdateOperationsInput | string | null
+    idUsuario?: NullableIntFieldUpdateOperationsInput | number | null
+    nombre?: StringFieldUpdateOperationsInput | string
     PingServidores?: PingServidoresUncheckedUpdateManyWithoutServidoresInput
     Tasks?: TasksUncheckedUpdateManyWithoutServidoresInput
-    UsuariosServidores?: UsuariosServidoresUncheckedUpdateManyWithoutServidorInput
   }
 
   export type ServidoresCreateManyInput = {
@@ -8435,6 +7506,9 @@ export namespace Prisma {
     ip?: string | null
     fechaCreacion?: Date | string
     fechaActualizacion?: Date | string | null
+    descripcion?: string | null
+    idUsuario?: number | null
+    nombre: string
   }
 
   export type ServidoresUpdateManyMutationInput = {
@@ -8443,6 +7517,8 @@ export namespace Prisma {
     ip?: NullableStringFieldUpdateOperationsInput | string | null
     fechaCreacion?: DateTimeFieldUpdateOperationsInput | Date | string
     fechaActualizacion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    descripcion?: NullableStringFieldUpdateOperationsInput | string | null
+    nombre?: StringFieldUpdateOperationsInput | string
   }
 
   export type ServidoresUncheckedUpdateManyInput = {
@@ -8453,13 +7529,18 @@ export namespace Prisma {
     ip?: NullableStringFieldUpdateOperationsInput | string | null
     fechaCreacion?: DateTimeFieldUpdateOperationsInput | Date | string
     fechaActualizacion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    descripcion?: NullableStringFieldUpdateOperationsInput | string | null
+    idUsuario?: NullableIntFieldUpdateOperationsInput | number | null
+    nombre?: StringFieldUpdateOperationsInput | string
   }
 
   export type TasksCreateInput = {
     idTask: string
     estatus?: TasksEstatus | null
     fechaCreacion?: Date | string
-    fechaActualizacion?: Date | string | null
+    interval: number
+    error?: string | null
+    ultimaEjecucion?: Date | string | null
     Servidores: ServidoresCreateNestedOneWithoutTasksInput
   }
 
@@ -8469,14 +7550,18 @@ export namespace Prisma {
     idServidor: number
     estatus?: TasksEstatus | null
     fechaCreacion?: Date | string
-    fechaActualizacion?: Date | string | null
+    interval: number
+    error?: string | null
+    ultimaEjecucion?: Date | string | null
   }
 
   export type TasksUpdateInput = {
     idTask?: StringFieldUpdateOperationsInput | string
     estatus?: NullableEnumTasksEstatusFieldUpdateOperationsInput | TasksEstatus | null
     fechaCreacion?: DateTimeFieldUpdateOperationsInput | Date | string
-    fechaActualizacion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    interval?: IntFieldUpdateOperationsInput | number
+    error?: NullableStringFieldUpdateOperationsInput | string | null
+    ultimaEjecucion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     Servidores?: ServidoresUpdateOneRequiredWithoutTasksInput
   }
 
@@ -8486,7 +7571,9 @@ export namespace Prisma {
     idServidor?: IntFieldUpdateOperationsInput | number
     estatus?: NullableEnumTasksEstatusFieldUpdateOperationsInput | TasksEstatus | null
     fechaCreacion?: DateTimeFieldUpdateOperationsInput | Date | string
-    fechaActualizacion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    interval?: IntFieldUpdateOperationsInput | number
+    error?: NullableStringFieldUpdateOperationsInput | string | null
+    ultimaEjecucion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type TasksCreateManyInput = {
@@ -8495,14 +7582,18 @@ export namespace Prisma {
     idServidor: number
     estatus?: TasksEstatus | null
     fechaCreacion?: Date | string
-    fechaActualizacion?: Date | string | null
+    interval: number
+    error?: string | null
+    ultimaEjecucion?: Date | string | null
   }
 
   export type TasksUpdateManyMutationInput = {
     idTask?: StringFieldUpdateOperationsInput | string
     estatus?: NullableEnumTasksEstatusFieldUpdateOperationsInput | TasksEstatus | null
     fechaCreacion?: DateTimeFieldUpdateOperationsInput | Date | string
-    fechaActualizacion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    interval?: IntFieldUpdateOperationsInput | number
+    error?: NullableStringFieldUpdateOperationsInput | string | null
+    ultimaEjecucion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type TasksUncheckedUpdateManyInput = {
@@ -8511,7 +7602,9 @@ export namespace Prisma {
     idServidor?: IntFieldUpdateOperationsInput | number
     estatus?: NullableEnumTasksEstatusFieldUpdateOperationsInput | TasksEstatus | null
     fechaCreacion?: DateTimeFieldUpdateOperationsInput | Date | string
-    fechaActualizacion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    interval?: IntFieldUpdateOperationsInput | number
+    error?: NullableStringFieldUpdateOperationsInput | string | null
+    ultimaEjecucion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type UsuariosCreateInput = {
@@ -8522,21 +7615,21 @@ export namespace Prisma {
     password: string
     fechaCreacion?: Date | string
     fechaActualizacion?: Date | string | null
-    EstatusUsuarios: EstatusUsuariosCreateNestedOneWithoutUsuariosInput
-    UsuariosServidores?: UsuariosServidoresCreateNestedManyWithoutUsuarioInput
+    EstatusUsuarios?: EstatusUsuariosCreateNestedOneWithoutUsuariosInput
+    Servidores?: ServidoresCreateNestedManyWithoutUsuariosInput
   }
 
   export type UsuariosUncheckedCreateInput = {
     publicId: string
     idUsuario?: number
-    estatus: number
+    estatus?: number
     nombre: string
     apellido: string
     email?: string | null
     password: string
     fechaCreacion?: Date | string
     fechaActualizacion?: Date | string | null
-    UsuariosServidores?: UsuariosServidoresUncheckedCreateNestedManyWithoutUsuarioInput
+    Servidores?: ServidoresUncheckedCreateNestedManyWithoutUsuariosInput
   }
 
   export type UsuariosUpdateInput = {
@@ -8548,7 +7641,7 @@ export namespace Prisma {
     fechaCreacion?: DateTimeFieldUpdateOperationsInput | Date | string
     fechaActualizacion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     EstatusUsuarios?: EstatusUsuariosUpdateOneRequiredWithoutUsuariosInput
-    UsuariosServidores?: UsuariosServidoresUpdateManyWithoutUsuarioInput
+    Servidores?: ServidoresUpdateManyWithoutUsuariosInput
   }
 
   export type UsuariosUncheckedUpdateInput = {
@@ -8561,13 +7654,13 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     fechaCreacion?: DateTimeFieldUpdateOperationsInput | Date | string
     fechaActualizacion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    UsuariosServidores?: UsuariosServidoresUncheckedUpdateManyWithoutUsuarioInput
+    Servidores?: ServidoresUncheckedUpdateManyWithoutUsuariosInput
   }
 
   export type UsuariosCreateManyInput = {
     publicId: string
     idUsuario?: number
-    estatus: number
+    estatus?: number
     nombre: string
     apellido: string
     email?: string | null
@@ -8594,67 +7687,6 @@ export namespace Prisma {
     apellido?: StringFieldUpdateOperationsInput | string
     email?: NullableStringFieldUpdateOperationsInput | string | null
     password?: StringFieldUpdateOperationsInput | string
-    fechaCreacion?: DateTimeFieldUpdateOperationsInput | Date | string
-    fechaActualizacion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  }
-
-  export type UsuariosServidoresCreateInput = {
-    usuario: UsuariosCreateNestedOneWithoutUsuariosServidoresInput
-    servidor: ServidoresCreateNestedOneWithoutUsuariosServidoresInput
-    nombre: string
-    descripcion?: string | null
-    fechaCreacion?: Date | string
-    fechaActualizacion?: Date | string | null
-  }
-
-  export type UsuariosServidoresUncheckedCreateInput = {
-    idUsuario: number
-    idServidor: number
-    nombre: string
-    descripcion?: string | null
-    fechaCreacion?: Date | string
-    fechaActualizacion?: Date | string | null
-  }
-
-  export type UsuariosServidoresUpdateInput = {
-    usuario?: UsuariosUpdateOneRequiredWithoutUsuariosServidoresInput
-    servidor?: ServidoresUpdateOneRequiredWithoutUsuariosServidoresInput
-    nombre?: StringFieldUpdateOperationsInput | string
-    descripcion?: NullableStringFieldUpdateOperationsInput | string | null
-    fechaCreacion?: DateTimeFieldUpdateOperationsInput | Date | string
-    fechaActualizacion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  }
-
-  export type UsuariosServidoresUncheckedUpdateInput = {
-    idUsuario?: IntFieldUpdateOperationsInput | number
-    idServidor?: IntFieldUpdateOperationsInput | number
-    nombre?: StringFieldUpdateOperationsInput | string
-    descripcion?: NullableStringFieldUpdateOperationsInput | string | null
-    fechaCreacion?: DateTimeFieldUpdateOperationsInput | Date | string
-    fechaActualizacion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  }
-
-  export type UsuariosServidoresCreateManyInput = {
-    idUsuario: number
-    idServidor: number
-    nombre: string
-    descripcion?: string | null
-    fechaCreacion?: Date | string
-    fechaActualizacion?: Date | string | null
-  }
-
-  export type UsuariosServidoresUpdateManyMutationInput = {
-    nombre?: StringFieldUpdateOperationsInput | string
-    descripcion?: NullableStringFieldUpdateOperationsInput | string | null
-    fechaCreacion?: DateTimeFieldUpdateOperationsInput | Date | string
-    fechaActualizacion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  }
-
-  export type UsuariosServidoresUncheckedUpdateManyInput = {
-    idUsuario?: IntFieldUpdateOperationsInput | number
-    idServidor?: IntFieldUpdateOperationsInput | number
-    nombre?: StringFieldUpdateOperationsInput | string
-    descripcion?: NullableStringFieldUpdateOperationsInput | string | null
     fechaCreacion?: DateTimeFieldUpdateOperationsInput | Date | string
     fechaActualizacion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
@@ -8995,9 +8027,25 @@ export namespace Prisma {
     not?: NestedDateTimeNullableFilter | Date | string | null
   }
 
+  export type IntNullableFilter = {
+    equals?: number | null
+    in?: Enumerable<number> | null
+    notIn?: Enumerable<number> | null
+    lt?: number
+    lte?: number
+    gt?: number
+    gte?: number
+    not?: NestedIntNullableFilter | number | null
+  }
+
   export type EstatusServidoresRelationFilter = {
     is?: EstatusServidoresWhereInput
     isNot?: EstatusServidoresWhereInput
+  }
+
+  export type UsuariosRelationFilter = {
+    is?: UsuariosWhereInput | null
+    isNot?: UsuariosWhereInput | null
   }
 
   export type PingServidoresListRelationFilter = {
@@ -9012,21 +8060,11 @@ export namespace Prisma {
     none?: TasksWhereInput
   }
 
-  export type UsuariosServidoresListRelationFilter = {
-    every?: UsuariosServidoresWhereInput
-    some?: UsuariosServidoresWhereInput
-    none?: UsuariosServidoresWhereInput
-  }
-
   export type PingServidoresOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
   export type TasksOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type UsuariosServidoresOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -9044,11 +8082,15 @@ export namespace Prisma {
     ip?: SortOrder
     fechaCreacion?: SortOrder
     fechaActualizacion?: SortOrder
+    descripcion?: SortOrder
+    idUsuario?: SortOrder
+    nombre?: SortOrder
   }
 
   export type ServidoresAvgOrderByAggregateInput = {
     idServidor?: SortOrder
     estatus?: SortOrder
+    idUsuario?: SortOrder
   }
 
   export type ServidoresMaxOrderByAggregateInput = {
@@ -9059,6 +8101,9 @@ export namespace Prisma {
     ip?: SortOrder
     fechaCreacion?: SortOrder
     fechaActualizacion?: SortOrder
+    descripcion?: SortOrder
+    idUsuario?: SortOrder
+    nombre?: SortOrder
   }
 
   export type ServidoresMinOrderByAggregateInput = {
@@ -9069,11 +8114,15 @@ export namespace Prisma {
     ip?: SortOrder
     fechaCreacion?: SortOrder
     fechaActualizacion?: SortOrder
+    descripcion?: SortOrder
+    idUsuario?: SortOrder
+    nombre?: SortOrder
   }
 
   export type ServidoresSumOrderByAggregateInput = {
     idServidor?: SortOrder
     estatus?: SortOrder
+    idUsuario?: SortOrder
   }
 
   export type DateTimeNullableWithAggregatesFilter = {
@@ -9088,6 +8137,22 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter
     _min?: NestedDateTimeNullableFilter
     _max?: NestedDateTimeNullableFilter
+  }
+
+  export type IntNullableWithAggregatesFilter = {
+    equals?: number | null
+    in?: Enumerable<number> | null
+    notIn?: Enumerable<number> | null
+    lt?: number
+    lte?: number
+    gt?: number
+    gte?: number
+    not?: NestedIntNullableWithAggregatesFilter | number | null
+    _count?: NestedIntNullableFilter
+    _avg?: NestedFloatNullableFilter
+    _sum?: NestedIntNullableFilter
+    _min?: NestedIntNullableFilter
+    _max?: NestedIntNullableFilter
   }
 
   export type EnumTasksEstatusNullableFilter = {
@@ -9109,12 +8174,15 @@ export namespace Prisma {
     idServidor?: SortOrder
     estatus?: SortOrder
     fechaCreacion?: SortOrder
-    fechaActualizacion?: SortOrder
+    interval?: SortOrder
+    error?: SortOrder
+    ultimaEjecucion?: SortOrder
   }
 
   export type TasksAvgOrderByAggregateInput = {
     id?: SortOrder
     idServidor?: SortOrder
+    interval?: SortOrder
   }
 
   export type TasksMaxOrderByAggregateInput = {
@@ -9123,7 +8191,9 @@ export namespace Prisma {
     idServidor?: SortOrder
     estatus?: SortOrder
     fechaCreacion?: SortOrder
-    fechaActualizacion?: SortOrder
+    interval?: SortOrder
+    error?: SortOrder
+    ultimaEjecucion?: SortOrder
   }
 
   export type TasksMinOrderByAggregateInput = {
@@ -9132,12 +8202,15 @@ export namespace Prisma {
     idServidor?: SortOrder
     estatus?: SortOrder
     fechaCreacion?: SortOrder
-    fechaActualizacion?: SortOrder
+    interval?: SortOrder
+    error?: SortOrder
+    ultimaEjecucion?: SortOrder
   }
 
   export type TasksSumOrderByAggregateInput = {
     id?: SortOrder
     idServidor?: SortOrder
+    interval?: SortOrder
   }
 
   export type EnumTasksEstatusNullableWithAggregatesFilter = {
@@ -9205,59 +8278,6 @@ export namespace Prisma {
   export type UsuariosSumOrderByAggregateInput = {
     idUsuario?: SortOrder
     estatus?: SortOrder
-  }
-
-  export type UsuariosRelationFilter = {
-    is?: UsuariosWhereInput
-    isNot?: UsuariosWhereInput
-  }
-
-  export type UsuariosServidoresOrderByRelevanceInput = {
-    fields: Enumerable<UsuariosServidoresOrderByRelevanceFieldEnum>
-    sort: SortOrder
-    search: string
-  }
-
-  export type UsuariosServidoresIdUsuarioIdServidorCompoundUniqueInput = {
-    idUsuario: number
-    idServidor: number
-  }
-
-  export type UsuariosServidoresCountOrderByAggregateInput = {
-    idUsuario?: SortOrder
-    idServidor?: SortOrder
-    nombre?: SortOrder
-    descripcion?: SortOrder
-    fechaCreacion?: SortOrder
-    fechaActualizacion?: SortOrder
-  }
-
-  export type UsuariosServidoresAvgOrderByAggregateInput = {
-    idUsuario?: SortOrder
-    idServidor?: SortOrder
-  }
-
-  export type UsuariosServidoresMaxOrderByAggregateInput = {
-    idUsuario?: SortOrder
-    idServidor?: SortOrder
-    nombre?: SortOrder
-    descripcion?: SortOrder
-    fechaCreacion?: SortOrder
-    fechaActualizacion?: SortOrder
-  }
-
-  export type UsuariosServidoresMinOrderByAggregateInput = {
-    idUsuario?: SortOrder
-    idServidor?: SortOrder
-    nombre?: SortOrder
-    descripcion?: SortOrder
-    fechaCreacion?: SortOrder
-    fechaActualizacion?: SortOrder
-  }
-
-  export type UsuariosServidoresSumOrderByAggregateInput = {
-    idUsuario?: SortOrder
-    idServidor?: SortOrder
   }
 
   export type ServidoresCreateNestedManyWithoutEstatusServidoresInput = {
@@ -9396,6 +8416,12 @@ export namespace Prisma {
     connect?: EstatusServidoresWhereUniqueInput
   }
 
+  export type UsuariosCreateNestedOneWithoutServidoresInput = {
+    create?: XOR<UsuariosCreateWithoutServidoresInput, UsuariosUncheckedCreateWithoutServidoresInput>
+    connectOrCreate?: UsuariosCreateOrConnectWithoutServidoresInput
+    connect?: UsuariosWhereUniqueInput
+  }
+
   export type PingServidoresCreateNestedManyWithoutServidoresInput = {
     create?: XOR<Enumerable<PingServidoresCreateWithoutServidoresInput>, Enumerable<PingServidoresUncheckedCreateWithoutServidoresInput>>
     connectOrCreate?: Enumerable<PingServidoresCreateOrConnectWithoutServidoresInput>
@@ -9408,13 +8434,6 @@ export namespace Prisma {
     connectOrCreate?: Enumerable<TasksCreateOrConnectWithoutServidoresInput>
     createMany?: TasksCreateManyServidoresInputEnvelope
     connect?: Enumerable<TasksWhereUniqueInput>
-  }
-
-  export type UsuariosServidoresCreateNestedManyWithoutServidorInput = {
-    create?: XOR<Enumerable<UsuariosServidoresCreateWithoutServidorInput>, Enumerable<UsuariosServidoresUncheckedCreateWithoutServidorInput>>
-    connectOrCreate?: Enumerable<UsuariosServidoresCreateOrConnectWithoutServidorInput>
-    createMany?: UsuariosServidoresCreateManyServidorInputEnvelope
-    connect?: Enumerable<UsuariosServidoresWhereUniqueInput>
   }
 
   export type PingServidoresUncheckedCreateNestedManyWithoutServidoresInput = {
@@ -9431,13 +8450,6 @@ export namespace Prisma {
     connect?: Enumerable<TasksWhereUniqueInput>
   }
 
-  export type UsuariosServidoresUncheckedCreateNestedManyWithoutServidorInput = {
-    create?: XOR<Enumerable<UsuariosServidoresCreateWithoutServidorInput>, Enumerable<UsuariosServidoresUncheckedCreateWithoutServidorInput>>
-    connectOrCreate?: Enumerable<UsuariosServidoresCreateOrConnectWithoutServidorInput>
-    createMany?: UsuariosServidoresCreateManyServidorInputEnvelope
-    connect?: Enumerable<UsuariosServidoresWhereUniqueInput>
-  }
-
   export type NullableDateTimeFieldUpdateOperationsInput = {
     set?: Date | string | null
   }
@@ -9448,6 +8460,16 @@ export namespace Prisma {
     upsert?: EstatusServidoresUpsertWithoutServidoresInput
     connect?: EstatusServidoresWhereUniqueInput
     update?: XOR<EstatusServidoresUpdateWithoutServidoresInput, EstatusServidoresUncheckedUpdateWithoutServidoresInput>
+  }
+
+  export type UsuariosUpdateOneWithoutServidoresInput = {
+    create?: XOR<UsuariosCreateWithoutServidoresInput, UsuariosUncheckedCreateWithoutServidoresInput>
+    connectOrCreate?: UsuariosCreateOrConnectWithoutServidoresInput
+    upsert?: UsuariosUpsertWithoutServidoresInput
+    disconnect?: boolean
+    delete?: boolean
+    connect?: UsuariosWhereUniqueInput
+    update?: XOR<UsuariosUpdateWithoutServidoresInput, UsuariosUncheckedUpdateWithoutServidoresInput>
   }
 
   export type PingServidoresUpdateManyWithoutServidoresInput = {
@@ -9478,18 +8500,12 @@ export namespace Prisma {
     deleteMany?: Enumerable<TasksScalarWhereInput>
   }
 
-  export type UsuariosServidoresUpdateManyWithoutServidorInput = {
-    create?: XOR<Enumerable<UsuariosServidoresCreateWithoutServidorInput>, Enumerable<UsuariosServidoresUncheckedCreateWithoutServidorInput>>
-    connectOrCreate?: Enumerable<UsuariosServidoresCreateOrConnectWithoutServidorInput>
-    upsert?: Enumerable<UsuariosServidoresUpsertWithWhereUniqueWithoutServidorInput>
-    createMany?: UsuariosServidoresCreateManyServidorInputEnvelope
-    set?: Enumerable<UsuariosServidoresWhereUniqueInput>
-    disconnect?: Enumerable<UsuariosServidoresWhereUniqueInput>
-    delete?: Enumerable<UsuariosServidoresWhereUniqueInput>
-    connect?: Enumerable<UsuariosServidoresWhereUniqueInput>
-    update?: Enumerable<UsuariosServidoresUpdateWithWhereUniqueWithoutServidorInput>
-    updateMany?: Enumerable<UsuariosServidoresUpdateManyWithWhereWithoutServidorInput>
-    deleteMany?: Enumerable<UsuariosServidoresScalarWhereInput>
+  export type NullableIntFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
   }
 
   export type PingServidoresUncheckedUpdateManyWithoutServidoresInput = {
@@ -9520,20 +8536,6 @@ export namespace Prisma {
     deleteMany?: Enumerable<TasksScalarWhereInput>
   }
 
-  export type UsuariosServidoresUncheckedUpdateManyWithoutServidorInput = {
-    create?: XOR<Enumerable<UsuariosServidoresCreateWithoutServidorInput>, Enumerable<UsuariosServidoresUncheckedCreateWithoutServidorInput>>
-    connectOrCreate?: Enumerable<UsuariosServidoresCreateOrConnectWithoutServidorInput>
-    upsert?: Enumerable<UsuariosServidoresUpsertWithWhereUniqueWithoutServidorInput>
-    createMany?: UsuariosServidoresCreateManyServidorInputEnvelope
-    set?: Enumerable<UsuariosServidoresWhereUniqueInput>
-    disconnect?: Enumerable<UsuariosServidoresWhereUniqueInput>
-    delete?: Enumerable<UsuariosServidoresWhereUniqueInput>
-    connect?: Enumerable<UsuariosServidoresWhereUniqueInput>
-    update?: Enumerable<UsuariosServidoresUpdateWithWhereUniqueWithoutServidorInput>
-    updateMany?: Enumerable<UsuariosServidoresUpdateManyWithWhereWithoutServidorInput>
-    deleteMany?: Enumerable<UsuariosServidoresScalarWhereInput>
-  }
-
   export type ServidoresCreateNestedOneWithoutTasksInput = {
     create?: XOR<ServidoresCreateWithoutTasksInput, ServidoresUncheckedCreateWithoutTasksInput>
     connectOrCreate?: ServidoresCreateOrConnectWithoutTasksInput
@@ -9558,18 +8560,18 @@ export namespace Prisma {
     connect?: EstatusUsuariosWhereUniqueInput
   }
 
-  export type UsuariosServidoresCreateNestedManyWithoutUsuarioInput = {
-    create?: XOR<Enumerable<UsuariosServidoresCreateWithoutUsuarioInput>, Enumerable<UsuariosServidoresUncheckedCreateWithoutUsuarioInput>>
-    connectOrCreate?: Enumerable<UsuariosServidoresCreateOrConnectWithoutUsuarioInput>
-    createMany?: UsuariosServidoresCreateManyUsuarioInputEnvelope
-    connect?: Enumerable<UsuariosServidoresWhereUniqueInput>
+  export type ServidoresCreateNestedManyWithoutUsuariosInput = {
+    create?: XOR<Enumerable<ServidoresCreateWithoutUsuariosInput>, Enumerable<ServidoresUncheckedCreateWithoutUsuariosInput>>
+    connectOrCreate?: Enumerable<ServidoresCreateOrConnectWithoutUsuariosInput>
+    createMany?: ServidoresCreateManyUsuariosInputEnvelope
+    connect?: Enumerable<ServidoresWhereUniqueInput>
   }
 
-  export type UsuariosServidoresUncheckedCreateNestedManyWithoutUsuarioInput = {
-    create?: XOR<Enumerable<UsuariosServidoresCreateWithoutUsuarioInput>, Enumerable<UsuariosServidoresUncheckedCreateWithoutUsuarioInput>>
-    connectOrCreate?: Enumerable<UsuariosServidoresCreateOrConnectWithoutUsuarioInput>
-    createMany?: UsuariosServidoresCreateManyUsuarioInputEnvelope
-    connect?: Enumerable<UsuariosServidoresWhereUniqueInput>
+  export type ServidoresUncheckedCreateNestedManyWithoutUsuariosInput = {
+    create?: XOR<Enumerable<ServidoresCreateWithoutUsuariosInput>, Enumerable<ServidoresUncheckedCreateWithoutUsuariosInput>>
+    connectOrCreate?: Enumerable<ServidoresCreateOrConnectWithoutUsuariosInput>
+    createMany?: ServidoresCreateManyUsuariosInputEnvelope
+    connect?: Enumerable<ServidoresWhereUniqueInput>
   }
 
   export type EstatusUsuariosUpdateOneRequiredWithoutUsuariosInput = {
@@ -9580,60 +8582,32 @@ export namespace Prisma {
     update?: XOR<EstatusUsuariosUpdateWithoutUsuariosInput, EstatusUsuariosUncheckedUpdateWithoutUsuariosInput>
   }
 
-  export type UsuariosServidoresUpdateManyWithoutUsuarioInput = {
-    create?: XOR<Enumerable<UsuariosServidoresCreateWithoutUsuarioInput>, Enumerable<UsuariosServidoresUncheckedCreateWithoutUsuarioInput>>
-    connectOrCreate?: Enumerable<UsuariosServidoresCreateOrConnectWithoutUsuarioInput>
-    upsert?: Enumerable<UsuariosServidoresUpsertWithWhereUniqueWithoutUsuarioInput>
-    createMany?: UsuariosServidoresCreateManyUsuarioInputEnvelope
-    set?: Enumerable<UsuariosServidoresWhereUniqueInput>
-    disconnect?: Enumerable<UsuariosServidoresWhereUniqueInput>
-    delete?: Enumerable<UsuariosServidoresWhereUniqueInput>
-    connect?: Enumerable<UsuariosServidoresWhereUniqueInput>
-    update?: Enumerable<UsuariosServidoresUpdateWithWhereUniqueWithoutUsuarioInput>
-    updateMany?: Enumerable<UsuariosServidoresUpdateManyWithWhereWithoutUsuarioInput>
-    deleteMany?: Enumerable<UsuariosServidoresScalarWhereInput>
+  export type ServidoresUpdateManyWithoutUsuariosInput = {
+    create?: XOR<Enumerable<ServidoresCreateWithoutUsuariosInput>, Enumerable<ServidoresUncheckedCreateWithoutUsuariosInput>>
+    connectOrCreate?: Enumerable<ServidoresCreateOrConnectWithoutUsuariosInput>
+    upsert?: Enumerable<ServidoresUpsertWithWhereUniqueWithoutUsuariosInput>
+    createMany?: ServidoresCreateManyUsuariosInputEnvelope
+    set?: Enumerable<ServidoresWhereUniqueInput>
+    disconnect?: Enumerable<ServidoresWhereUniqueInput>
+    delete?: Enumerable<ServidoresWhereUniqueInput>
+    connect?: Enumerable<ServidoresWhereUniqueInput>
+    update?: Enumerable<ServidoresUpdateWithWhereUniqueWithoutUsuariosInput>
+    updateMany?: Enumerable<ServidoresUpdateManyWithWhereWithoutUsuariosInput>
+    deleteMany?: Enumerable<ServidoresScalarWhereInput>
   }
 
-  export type UsuariosServidoresUncheckedUpdateManyWithoutUsuarioInput = {
-    create?: XOR<Enumerable<UsuariosServidoresCreateWithoutUsuarioInput>, Enumerable<UsuariosServidoresUncheckedCreateWithoutUsuarioInput>>
-    connectOrCreate?: Enumerable<UsuariosServidoresCreateOrConnectWithoutUsuarioInput>
-    upsert?: Enumerable<UsuariosServidoresUpsertWithWhereUniqueWithoutUsuarioInput>
-    createMany?: UsuariosServidoresCreateManyUsuarioInputEnvelope
-    set?: Enumerable<UsuariosServidoresWhereUniqueInput>
-    disconnect?: Enumerable<UsuariosServidoresWhereUniqueInput>
-    delete?: Enumerable<UsuariosServidoresWhereUniqueInput>
-    connect?: Enumerable<UsuariosServidoresWhereUniqueInput>
-    update?: Enumerable<UsuariosServidoresUpdateWithWhereUniqueWithoutUsuarioInput>
-    updateMany?: Enumerable<UsuariosServidoresUpdateManyWithWhereWithoutUsuarioInput>
-    deleteMany?: Enumerable<UsuariosServidoresScalarWhereInput>
-  }
-
-  export type UsuariosCreateNestedOneWithoutUsuariosServidoresInput = {
-    create?: XOR<UsuariosCreateWithoutUsuariosServidoresInput, UsuariosUncheckedCreateWithoutUsuariosServidoresInput>
-    connectOrCreate?: UsuariosCreateOrConnectWithoutUsuariosServidoresInput
-    connect?: UsuariosWhereUniqueInput
-  }
-
-  export type ServidoresCreateNestedOneWithoutUsuariosServidoresInput = {
-    create?: XOR<ServidoresCreateWithoutUsuariosServidoresInput, ServidoresUncheckedCreateWithoutUsuariosServidoresInput>
-    connectOrCreate?: ServidoresCreateOrConnectWithoutUsuariosServidoresInput
-    connect?: ServidoresWhereUniqueInput
-  }
-
-  export type UsuariosUpdateOneRequiredWithoutUsuariosServidoresInput = {
-    create?: XOR<UsuariosCreateWithoutUsuariosServidoresInput, UsuariosUncheckedCreateWithoutUsuariosServidoresInput>
-    connectOrCreate?: UsuariosCreateOrConnectWithoutUsuariosServidoresInput
-    upsert?: UsuariosUpsertWithoutUsuariosServidoresInput
-    connect?: UsuariosWhereUniqueInput
-    update?: XOR<UsuariosUpdateWithoutUsuariosServidoresInput, UsuariosUncheckedUpdateWithoutUsuariosServidoresInput>
-  }
-
-  export type ServidoresUpdateOneRequiredWithoutUsuariosServidoresInput = {
-    create?: XOR<ServidoresCreateWithoutUsuariosServidoresInput, ServidoresUncheckedCreateWithoutUsuariosServidoresInput>
-    connectOrCreate?: ServidoresCreateOrConnectWithoutUsuariosServidoresInput
-    upsert?: ServidoresUpsertWithoutUsuariosServidoresInput
-    connect?: ServidoresWhereUniqueInput
-    update?: XOR<ServidoresUpdateWithoutUsuariosServidoresInput, ServidoresUncheckedUpdateWithoutUsuariosServidoresInput>
+  export type ServidoresUncheckedUpdateManyWithoutUsuariosInput = {
+    create?: XOR<Enumerable<ServidoresCreateWithoutUsuariosInput>, Enumerable<ServidoresUncheckedCreateWithoutUsuariosInput>>
+    connectOrCreate?: Enumerable<ServidoresCreateOrConnectWithoutUsuariosInput>
+    upsert?: Enumerable<ServidoresUpsertWithWhereUniqueWithoutUsuariosInput>
+    createMany?: ServidoresCreateManyUsuariosInputEnvelope
+    set?: Enumerable<ServidoresWhereUniqueInput>
+    disconnect?: Enumerable<ServidoresWhereUniqueInput>
+    delete?: Enumerable<ServidoresWhereUniqueInput>
+    connect?: Enumerable<ServidoresWhereUniqueInput>
+    update?: Enumerable<ServidoresUpdateWithWhereUniqueWithoutUsuariosInput>
+    updateMany?: Enumerable<ServidoresUpdateManyWithWhereWithoutUsuariosInput>
+    deleteMany?: Enumerable<ServidoresScalarWhereInput>
   }
 
   export type NestedIntFilter = {
@@ -9841,6 +8815,22 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter
   }
 
+  export type NestedIntNullableWithAggregatesFilter = {
+    equals?: number | null
+    in?: Enumerable<number> | null
+    notIn?: Enumerable<number> | null
+    lt?: number
+    lte?: number
+    gt?: number
+    gte?: number
+    not?: NestedIntNullableWithAggregatesFilter | number | null
+    _count?: NestedIntNullableFilter
+    _avg?: NestedFloatNullableFilter
+    _sum?: NestedIntNullableFilter
+    _min?: NestedIntNullableFilter
+    _max?: NestedIntNullableFilter
+  }
+
   export type NestedEnumTasksEstatusNullableFilter = {
     equals?: TasksEstatus | null
     in?: Enumerable<TasksEstatus> | null
@@ -9864,9 +8854,11 @@ export namespace Prisma {
     ip?: string | null
     fechaCreacion?: Date | string
     fechaActualizacion?: Date | string | null
+    descripcion?: string | null
+    nombre: string
+    Usuarios?: UsuariosCreateNestedOneWithoutServidoresInput
     PingServidores?: PingServidoresCreateNestedManyWithoutServidoresInput
     Tasks?: TasksCreateNestedManyWithoutServidoresInput
-    UsuariosServidores?: UsuariosServidoresCreateNestedManyWithoutServidorInput
   }
 
   export type ServidoresUncheckedCreateWithoutEstatusServidoresInput = {
@@ -9876,9 +8868,11 @@ export namespace Prisma {
     ip?: string | null
     fechaCreacion?: Date | string
     fechaActualizacion?: Date | string | null
+    descripcion?: string | null
+    idUsuario?: number | null
+    nombre: string
     PingServidores?: PingServidoresUncheckedCreateNestedManyWithoutServidoresInput
     Tasks?: TasksUncheckedCreateNestedManyWithoutServidoresInput
-    UsuariosServidores?: UsuariosServidoresUncheckedCreateNestedManyWithoutServidorInput
   }
 
   export type ServidoresCreateOrConnectWithoutEstatusServidoresInput = {
@@ -9918,6 +8912,9 @@ export namespace Prisma {
     ip?: StringNullableFilter | string | null
     fechaCreacion?: DateTimeFilter | Date | string
     fechaActualizacion?: DateTimeNullableFilter | Date | string | null
+    descripcion?: StringNullableFilter | string | null
+    idUsuario?: IntNullableFilter | number | null
+    nombre?: StringFilter | string
   }
 
   export type UsuariosCreateWithoutEstatusUsuariosInput = {
@@ -9928,7 +8925,7 @@ export namespace Prisma {
     password: string
     fechaCreacion?: Date | string
     fechaActualizacion?: Date | string | null
-    UsuariosServidores?: UsuariosServidoresCreateNestedManyWithoutUsuarioInput
+    Servidores?: ServidoresCreateNestedManyWithoutUsuariosInput
   }
 
   export type UsuariosUncheckedCreateWithoutEstatusUsuariosInput = {
@@ -9940,7 +8937,7 @@ export namespace Prisma {
     password: string
     fechaCreacion?: Date | string
     fechaActualizacion?: Date | string | null
-    UsuariosServidores?: UsuariosServidoresUncheckedCreateNestedManyWithoutUsuarioInput
+    Servidores?: ServidoresUncheckedCreateNestedManyWithoutUsuariosInput
   }
 
   export type UsuariosCreateOrConnectWithoutEstatusUsuariosInput = {
@@ -9990,9 +8987,11 @@ export namespace Prisma {
     ip?: string | null
     fechaCreacion?: Date | string
     fechaActualizacion?: Date | string | null
+    descripcion?: string | null
+    nombre: string
     EstatusServidores: EstatusServidoresCreateNestedOneWithoutServidoresInput
+    Usuarios?: UsuariosCreateNestedOneWithoutServidoresInput
     Tasks?: TasksCreateNestedManyWithoutServidoresInput
-    UsuariosServidores?: UsuariosServidoresCreateNestedManyWithoutServidorInput
   }
 
   export type ServidoresUncheckedCreateWithoutPingServidoresInput = {
@@ -10003,8 +9002,10 @@ export namespace Prisma {
     ip?: string | null
     fechaCreacion?: Date | string
     fechaActualizacion?: Date | string | null
+    descripcion?: string | null
+    idUsuario?: number | null
+    nombre: string
     Tasks?: TasksUncheckedCreateNestedManyWithoutServidoresInput
-    UsuariosServidores?: UsuariosServidoresUncheckedCreateNestedManyWithoutServidorInput
   }
 
   export type ServidoresCreateOrConnectWithoutPingServidoresInput = {
@@ -10023,9 +9024,11 @@ export namespace Prisma {
     ip?: NullableStringFieldUpdateOperationsInput | string | null
     fechaCreacion?: DateTimeFieldUpdateOperationsInput | Date | string
     fechaActualizacion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    descripcion?: NullableStringFieldUpdateOperationsInput | string | null
+    nombre?: StringFieldUpdateOperationsInput | string
     EstatusServidores?: EstatusServidoresUpdateOneRequiredWithoutServidoresInput
+    Usuarios?: UsuariosUpdateOneWithoutServidoresInput
     Tasks?: TasksUpdateManyWithoutServidoresInput
-    UsuariosServidores?: UsuariosServidoresUpdateManyWithoutServidorInput
   }
 
   export type ServidoresUncheckedUpdateWithoutPingServidoresInput = {
@@ -10036,8 +9039,10 @@ export namespace Prisma {
     ip?: NullableStringFieldUpdateOperationsInput | string | null
     fechaCreacion?: DateTimeFieldUpdateOperationsInput | Date | string
     fechaActualizacion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    descripcion?: NullableStringFieldUpdateOperationsInput | string | null
+    idUsuario?: NullableIntFieldUpdateOperationsInput | number | null
+    nombre?: StringFieldUpdateOperationsInput | string
     Tasks?: TasksUncheckedUpdateManyWithoutServidoresInput
-    UsuariosServidores?: UsuariosServidoresUncheckedUpdateManyWithoutServidorInput
   }
 
   export type EstatusServidoresCreateWithoutServidoresInput = {
@@ -10058,6 +9063,34 @@ export namespace Prisma {
     create: XOR<EstatusServidoresCreateWithoutServidoresInput, EstatusServidoresUncheckedCreateWithoutServidoresInput>
   }
 
+  export type UsuariosCreateWithoutServidoresInput = {
+    publicId: string
+    nombre: string
+    apellido: string
+    email?: string | null
+    password: string
+    fechaCreacion?: Date | string
+    fechaActualizacion?: Date | string | null
+    EstatusUsuarios?: EstatusUsuariosCreateNestedOneWithoutUsuariosInput
+  }
+
+  export type UsuariosUncheckedCreateWithoutServidoresInput = {
+    publicId: string
+    idUsuario?: number
+    estatus?: number
+    nombre: string
+    apellido: string
+    email?: string | null
+    password: string
+    fechaCreacion?: Date | string
+    fechaActualizacion?: Date | string | null
+  }
+
+  export type UsuariosCreateOrConnectWithoutServidoresInput = {
+    where: UsuariosWhereUniqueInput
+    create: XOR<UsuariosCreateWithoutServidoresInput, UsuariosUncheckedCreateWithoutServidoresInput>
+  }
+
   export type PingServidoresCreateWithoutServidoresInput = {
     times?: number | null
     packetLoss?: number | null
@@ -10067,7 +9100,7 @@ export namespace Prisma {
     log?: string | null
     isAlive?: boolean | null
     numericHost?: string | null
-    fechaPing: Date | string
+    fechaPing?: Date | string
   }
 
   export type PingServidoresUncheckedCreateWithoutServidoresInput = {
@@ -10080,7 +9113,7 @@ export namespace Prisma {
     log?: string | null
     isAlive?: boolean | null
     numericHost?: string | null
-    fechaPing: Date | string
+    fechaPing?: Date | string
   }
 
   export type PingServidoresCreateOrConnectWithoutServidoresInput = {
@@ -10097,7 +9130,9 @@ export namespace Prisma {
     idTask: string
     estatus?: TasksEstatus | null
     fechaCreacion?: Date | string
-    fechaActualizacion?: Date | string | null
+    interval: number
+    error?: string | null
+    ultimaEjecucion?: Date | string | null
   }
 
   export type TasksUncheckedCreateWithoutServidoresInput = {
@@ -10105,7 +9140,9 @@ export namespace Prisma {
     idTask: string
     estatus?: TasksEstatus | null
     fechaCreacion?: Date | string
-    fechaActualizacion?: Date | string | null
+    interval: number
+    error?: string | null
+    ultimaEjecucion?: Date | string | null
   }
 
   export type TasksCreateOrConnectWithoutServidoresInput = {
@@ -10115,32 +9152,6 @@ export namespace Prisma {
 
   export type TasksCreateManyServidoresInputEnvelope = {
     data: Enumerable<TasksCreateManyServidoresInput>
-    skipDuplicates?: boolean
-  }
-
-  export type UsuariosServidoresCreateWithoutServidorInput = {
-    usuario: UsuariosCreateNestedOneWithoutUsuariosServidoresInput
-    nombre: string
-    descripcion?: string | null
-    fechaCreacion?: Date | string
-    fechaActualizacion?: Date | string | null
-  }
-
-  export type UsuariosServidoresUncheckedCreateWithoutServidorInput = {
-    idUsuario: number
-    nombre: string
-    descripcion?: string | null
-    fechaCreacion?: Date | string
-    fechaActualizacion?: Date | string | null
-  }
-
-  export type UsuariosServidoresCreateOrConnectWithoutServidorInput = {
-    where: UsuariosServidoresWhereUniqueInput
-    create: XOR<UsuariosServidoresCreateWithoutServidorInput, UsuariosServidoresUncheckedCreateWithoutServidorInput>
-  }
-
-  export type UsuariosServidoresCreateManyServidorInputEnvelope = {
-    data: Enumerable<UsuariosServidoresCreateManyServidorInput>
     skipDuplicates?: boolean
   }
 
@@ -10160,6 +9171,34 @@ export namespace Prisma {
     tipo?: IntFieldUpdateOperationsInput | number
     descripcion?: NullableStringFieldUpdateOperationsInput | string | null
     titulo?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type UsuariosUpsertWithoutServidoresInput = {
+    update: XOR<UsuariosUpdateWithoutServidoresInput, UsuariosUncheckedUpdateWithoutServidoresInput>
+    create: XOR<UsuariosCreateWithoutServidoresInput, UsuariosUncheckedCreateWithoutServidoresInput>
+  }
+
+  export type UsuariosUpdateWithoutServidoresInput = {
+    publicId?: StringFieldUpdateOperationsInput | string
+    nombre?: StringFieldUpdateOperationsInput | string
+    apellido?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: StringFieldUpdateOperationsInput | string
+    fechaCreacion?: DateTimeFieldUpdateOperationsInput | Date | string
+    fechaActualizacion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    EstatusUsuarios?: EstatusUsuariosUpdateOneRequiredWithoutUsuariosInput
+  }
+
+  export type UsuariosUncheckedUpdateWithoutServidoresInput = {
+    publicId?: StringFieldUpdateOperationsInput | string
+    idUsuario?: IntFieldUpdateOperationsInput | number
+    estatus?: IntFieldUpdateOperationsInput | number
+    nombre?: StringFieldUpdateOperationsInput | string
+    apellido?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    password?: StringFieldUpdateOperationsInput | string
+    fechaCreacion?: DateTimeFieldUpdateOperationsInput | Date | string
+    fechaActualizacion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type PingServidoresUpsertWithWhereUniqueWithoutServidoresInput = {
@@ -10220,35 +9259,9 @@ export namespace Prisma {
     idServidor?: IntFilter | number
     estatus?: EnumTasksEstatusNullableFilter | TasksEstatus | null
     fechaCreacion?: DateTimeFilter | Date | string
-    fechaActualizacion?: DateTimeNullableFilter | Date | string | null
-  }
-
-  export type UsuariosServidoresUpsertWithWhereUniqueWithoutServidorInput = {
-    where: UsuariosServidoresWhereUniqueInput
-    update: XOR<UsuariosServidoresUpdateWithoutServidorInput, UsuariosServidoresUncheckedUpdateWithoutServidorInput>
-    create: XOR<UsuariosServidoresCreateWithoutServidorInput, UsuariosServidoresUncheckedCreateWithoutServidorInput>
-  }
-
-  export type UsuariosServidoresUpdateWithWhereUniqueWithoutServidorInput = {
-    where: UsuariosServidoresWhereUniqueInput
-    data: XOR<UsuariosServidoresUpdateWithoutServidorInput, UsuariosServidoresUncheckedUpdateWithoutServidorInput>
-  }
-
-  export type UsuariosServidoresUpdateManyWithWhereWithoutServidorInput = {
-    where: UsuariosServidoresScalarWhereInput
-    data: XOR<UsuariosServidoresUpdateManyMutationInput, UsuariosServidoresUncheckedUpdateManyWithoutUsuariosServidoresInput>
-  }
-
-  export type UsuariosServidoresScalarWhereInput = {
-    AND?: Enumerable<UsuariosServidoresScalarWhereInput>
-    OR?: Enumerable<UsuariosServidoresScalarWhereInput>
-    NOT?: Enumerable<UsuariosServidoresScalarWhereInput>
-    idUsuario?: IntFilter | number
-    idServidor?: IntFilter | number
-    nombre?: StringFilter | string
-    descripcion?: StringNullableFilter | string | null
-    fechaCreacion?: DateTimeFilter | Date | string
-    fechaActualizacion?: DateTimeNullableFilter | Date | string | null
+    interval?: IntFilter | number
+    error?: StringNullableFilter | string | null
+    ultimaEjecucion?: DateTimeNullableFilter | Date | string | null
   }
 
   export type ServidoresCreateWithoutTasksInput = {
@@ -10257,9 +9270,11 @@ export namespace Prisma {
     ip?: string | null
     fechaCreacion?: Date | string
     fechaActualizacion?: Date | string | null
+    descripcion?: string | null
+    nombre: string
     EstatusServidores: EstatusServidoresCreateNestedOneWithoutServidoresInput
+    Usuarios?: UsuariosCreateNestedOneWithoutServidoresInput
     PingServidores?: PingServidoresCreateNestedManyWithoutServidoresInput
-    UsuariosServidores?: UsuariosServidoresCreateNestedManyWithoutServidorInput
   }
 
   export type ServidoresUncheckedCreateWithoutTasksInput = {
@@ -10270,8 +9285,10 @@ export namespace Prisma {
     ip?: string | null
     fechaCreacion?: Date | string
     fechaActualizacion?: Date | string | null
+    descripcion?: string | null
+    idUsuario?: number | null
+    nombre: string
     PingServidores?: PingServidoresUncheckedCreateNestedManyWithoutServidoresInput
-    UsuariosServidores?: UsuariosServidoresUncheckedCreateNestedManyWithoutServidorInput
   }
 
   export type ServidoresCreateOrConnectWithoutTasksInput = {
@@ -10290,9 +9307,11 @@ export namespace Prisma {
     ip?: NullableStringFieldUpdateOperationsInput | string | null
     fechaCreacion?: DateTimeFieldUpdateOperationsInput | Date | string
     fechaActualizacion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    descripcion?: NullableStringFieldUpdateOperationsInput | string | null
+    nombre?: StringFieldUpdateOperationsInput | string
     EstatusServidores?: EstatusServidoresUpdateOneRequiredWithoutServidoresInput
+    Usuarios?: UsuariosUpdateOneWithoutServidoresInput
     PingServidores?: PingServidoresUpdateManyWithoutServidoresInput
-    UsuariosServidores?: UsuariosServidoresUpdateManyWithoutServidorInput
   }
 
   export type ServidoresUncheckedUpdateWithoutTasksInput = {
@@ -10303,8 +9322,10 @@ export namespace Prisma {
     ip?: NullableStringFieldUpdateOperationsInput | string | null
     fechaCreacion?: DateTimeFieldUpdateOperationsInput | Date | string
     fechaActualizacion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    descripcion?: NullableStringFieldUpdateOperationsInput | string | null
+    idUsuario?: NullableIntFieldUpdateOperationsInput | number | null
+    nombre?: StringFieldUpdateOperationsInput | string
     PingServidores?: PingServidoresUncheckedUpdateManyWithoutServidoresInput
-    UsuariosServidores?: UsuariosServidoresUncheckedUpdateManyWithoutServidorInput
   }
 
   export type EstatusUsuariosCreateWithoutUsuariosInput = {
@@ -10325,29 +9346,40 @@ export namespace Prisma {
     create: XOR<EstatusUsuariosCreateWithoutUsuariosInput, EstatusUsuariosUncheckedCreateWithoutUsuariosInput>
   }
 
-  export type UsuariosServidoresCreateWithoutUsuarioInput = {
-    servidor: ServidoresCreateNestedOneWithoutUsuariosServidoresInput
-    nombre: string
-    descripcion?: string | null
+  export type ServidoresCreateWithoutUsuariosInput = {
+    publicId?: string | null
+    dominio: string
+    ip?: string | null
     fechaCreacion?: Date | string
     fechaActualizacion?: Date | string | null
+    descripcion?: string | null
+    nombre: string
+    EstatusServidores: EstatusServidoresCreateNestedOneWithoutServidoresInput
+    PingServidores?: PingServidoresCreateNestedManyWithoutServidoresInput
+    Tasks?: TasksCreateNestedManyWithoutServidoresInput
   }
 
-  export type UsuariosServidoresUncheckedCreateWithoutUsuarioInput = {
-    idServidor: number
-    nombre: string
-    descripcion?: string | null
+  export type ServidoresUncheckedCreateWithoutUsuariosInput = {
+    publicId?: string | null
+    idServidor?: number
+    estatus: number
+    dominio: string
+    ip?: string | null
     fechaCreacion?: Date | string
     fechaActualizacion?: Date | string | null
+    descripcion?: string | null
+    nombre: string
+    PingServidores?: PingServidoresUncheckedCreateNestedManyWithoutServidoresInput
+    Tasks?: TasksUncheckedCreateNestedManyWithoutServidoresInput
   }
 
-  export type UsuariosServidoresCreateOrConnectWithoutUsuarioInput = {
-    where: UsuariosServidoresWhereUniqueInput
-    create: XOR<UsuariosServidoresCreateWithoutUsuarioInput, UsuariosServidoresUncheckedCreateWithoutUsuarioInput>
+  export type ServidoresCreateOrConnectWithoutUsuariosInput = {
+    where: ServidoresWhereUniqueInput
+    create: XOR<ServidoresCreateWithoutUsuariosInput, ServidoresUncheckedCreateWithoutUsuariosInput>
   }
 
-  export type UsuariosServidoresCreateManyUsuarioInputEnvelope = {
-    data: Enumerable<UsuariosServidoresCreateManyUsuarioInput>
+  export type ServidoresCreateManyUsuariosInputEnvelope = {
+    data: Enumerable<ServidoresCreateManyUsuariosInput>
     skipDuplicates?: boolean
   }
 
@@ -10369,132 +9401,20 @@ export namespace Prisma {
     titulo?: StringFieldUpdateOperationsInput | string
   }
 
-  export type UsuariosServidoresUpsertWithWhereUniqueWithoutUsuarioInput = {
-    where: UsuariosServidoresWhereUniqueInput
-    update: XOR<UsuariosServidoresUpdateWithoutUsuarioInput, UsuariosServidoresUncheckedUpdateWithoutUsuarioInput>
-    create: XOR<UsuariosServidoresCreateWithoutUsuarioInput, UsuariosServidoresUncheckedCreateWithoutUsuarioInput>
-  }
-
-  export type UsuariosServidoresUpdateWithWhereUniqueWithoutUsuarioInput = {
-    where: UsuariosServidoresWhereUniqueInput
-    data: XOR<UsuariosServidoresUpdateWithoutUsuarioInput, UsuariosServidoresUncheckedUpdateWithoutUsuarioInput>
-  }
-
-  export type UsuariosServidoresUpdateManyWithWhereWithoutUsuarioInput = {
-    where: UsuariosServidoresScalarWhereInput
-    data: XOR<UsuariosServidoresUpdateManyMutationInput, UsuariosServidoresUncheckedUpdateManyWithoutUsuariosServidoresInput>
-  }
-
-  export type UsuariosCreateWithoutUsuariosServidoresInput = {
-    publicId: string
-    nombre: string
-    apellido: string
-    email?: string | null
-    password: string
-    fechaCreacion?: Date | string
-    fechaActualizacion?: Date | string | null
-    EstatusUsuarios: EstatusUsuariosCreateNestedOneWithoutUsuariosInput
-  }
-
-  export type UsuariosUncheckedCreateWithoutUsuariosServidoresInput = {
-    publicId: string
-    idUsuario?: number
-    estatus: number
-    nombre: string
-    apellido: string
-    email?: string | null
-    password: string
-    fechaCreacion?: Date | string
-    fechaActualizacion?: Date | string | null
-  }
-
-  export type UsuariosCreateOrConnectWithoutUsuariosServidoresInput = {
-    where: UsuariosWhereUniqueInput
-    create: XOR<UsuariosCreateWithoutUsuariosServidoresInput, UsuariosUncheckedCreateWithoutUsuariosServidoresInput>
-  }
-
-  export type ServidoresCreateWithoutUsuariosServidoresInput = {
-    publicId?: string | null
-    dominio: string
-    ip?: string | null
-    fechaCreacion?: Date | string
-    fechaActualizacion?: Date | string | null
-    EstatusServidores: EstatusServidoresCreateNestedOneWithoutServidoresInput
-    PingServidores?: PingServidoresCreateNestedManyWithoutServidoresInput
-    Tasks?: TasksCreateNestedManyWithoutServidoresInput
-  }
-
-  export type ServidoresUncheckedCreateWithoutUsuariosServidoresInput = {
-    publicId?: string | null
-    idServidor?: number
-    estatus: number
-    dominio: string
-    ip?: string | null
-    fechaCreacion?: Date | string
-    fechaActualizacion?: Date | string | null
-    PingServidores?: PingServidoresUncheckedCreateNestedManyWithoutServidoresInput
-    Tasks?: TasksUncheckedCreateNestedManyWithoutServidoresInput
-  }
-
-  export type ServidoresCreateOrConnectWithoutUsuariosServidoresInput = {
+  export type ServidoresUpsertWithWhereUniqueWithoutUsuariosInput = {
     where: ServidoresWhereUniqueInput
-    create: XOR<ServidoresCreateWithoutUsuariosServidoresInput, ServidoresUncheckedCreateWithoutUsuariosServidoresInput>
+    update: XOR<ServidoresUpdateWithoutUsuariosInput, ServidoresUncheckedUpdateWithoutUsuariosInput>
+    create: XOR<ServidoresCreateWithoutUsuariosInput, ServidoresUncheckedCreateWithoutUsuariosInput>
   }
 
-  export type UsuariosUpsertWithoutUsuariosServidoresInput = {
-    update: XOR<UsuariosUpdateWithoutUsuariosServidoresInput, UsuariosUncheckedUpdateWithoutUsuariosServidoresInput>
-    create: XOR<UsuariosCreateWithoutUsuariosServidoresInput, UsuariosUncheckedCreateWithoutUsuariosServidoresInput>
+  export type ServidoresUpdateWithWhereUniqueWithoutUsuariosInput = {
+    where: ServidoresWhereUniqueInput
+    data: XOR<ServidoresUpdateWithoutUsuariosInput, ServidoresUncheckedUpdateWithoutUsuariosInput>
   }
 
-  export type UsuariosUpdateWithoutUsuariosServidoresInput = {
-    publicId?: StringFieldUpdateOperationsInput | string
-    nombre?: StringFieldUpdateOperationsInput | string
-    apellido?: StringFieldUpdateOperationsInput | string
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    password?: StringFieldUpdateOperationsInput | string
-    fechaCreacion?: DateTimeFieldUpdateOperationsInput | Date | string
-    fechaActualizacion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    EstatusUsuarios?: EstatusUsuariosUpdateOneRequiredWithoutUsuariosInput
-  }
-
-  export type UsuariosUncheckedUpdateWithoutUsuariosServidoresInput = {
-    publicId?: StringFieldUpdateOperationsInput | string
-    idUsuario?: IntFieldUpdateOperationsInput | number
-    estatus?: IntFieldUpdateOperationsInput | number
-    nombre?: StringFieldUpdateOperationsInput | string
-    apellido?: StringFieldUpdateOperationsInput | string
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    password?: StringFieldUpdateOperationsInput | string
-    fechaCreacion?: DateTimeFieldUpdateOperationsInput | Date | string
-    fechaActualizacion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  }
-
-  export type ServidoresUpsertWithoutUsuariosServidoresInput = {
-    update: XOR<ServidoresUpdateWithoutUsuariosServidoresInput, ServidoresUncheckedUpdateWithoutUsuariosServidoresInput>
-    create: XOR<ServidoresCreateWithoutUsuariosServidoresInput, ServidoresUncheckedCreateWithoutUsuariosServidoresInput>
-  }
-
-  export type ServidoresUpdateWithoutUsuariosServidoresInput = {
-    publicId?: NullableStringFieldUpdateOperationsInput | string | null
-    dominio?: StringFieldUpdateOperationsInput | string
-    ip?: NullableStringFieldUpdateOperationsInput | string | null
-    fechaCreacion?: DateTimeFieldUpdateOperationsInput | Date | string
-    fechaActualizacion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    EstatusServidores?: EstatusServidoresUpdateOneRequiredWithoutServidoresInput
-    PingServidores?: PingServidoresUpdateManyWithoutServidoresInput
-    Tasks?: TasksUpdateManyWithoutServidoresInput
-  }
-
-  export type ServidoresUncheckedUpdateWithoutUsuariosServidoresInput = {
-    publicId?: NullableStringFieldUpdateOperationsInput | string | null
-    idServidor?: IntFieldUpdateOperationsInput | number
-    estatus?: IntFieldUpdateOperationsInput | number
-    dominio?: StringFieldUpdateOperationsInput | string
-    ip?: NullableStringFieldUpdateOperationsInput | string | null
-    fechaCreacion?: DateTimeFieldUpdateOperationsInput | Date | string
-    fechaActualizacion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    PingServidores?: PingServidoresUncheckedUpdateManyWithoutServidoresInput
-    Tasks?: TasksUncheckedUpdateManyWithoutServidoresInput
+  export type ServidoresUpdateManyWithWhereWithoutUsuariosInput = {
+    where: ServidoresScalarWhereInput
+    data: XOR<ServidoresUpdateManyMutationInput, ServidoresUncheckedUpdateManyWithoutServidoresInput>
   }
 
   export type ServidoresCreateManyEstatusServidoresInput = {
@@ -10504,6 +9424,9 @@ export namespace Prisma {
     ip?: string | null
     fechaCreacion?: Date | string
     fechaActualizacion?: Date | string | null
+    descripcion?: string | null
+    idUsuario?: number | null
+    nombre: string
   }
 
   export type ServidoresUpdateWithoutEstatusServidoresInput = {
@@ -10512,9 +9435,11 @@ export namespace Prisma {
     ip?: NullableStringFieldUpdateOperationsInput | string | null
     fechaCreacion?: DateTimeFieldUpdateOperationsInput | Date | string
     fechaActualizacion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    descripcion?: NullableStringFieldUpdateOperationsInput | string | null
+    nombre?: StringFieldUpdateOperationsInput | string
+    Usuarios?: UsuariosUpdateOneWithoutServidoresInput
     PingServidores?: PingServidoresUpdateManyWithoutServidoresInput
     Tasks?: TasksUpdateManyWithoutServidoresInput
-    UsuariosServidores?: UsuariosServidoresUpdateManyWithoutServidorInput
   }
 
   export type ServidoresUncheckedUpdateWithoutEstatusServidoresInput = {
@@ -10524,9 +9449,11 @@ export namespace Prisma {
     ip?: NullableStringFieldUpdateOperationsInput | string | null
     fechaCreacion?: DateTimeFieldUpdateOperationsInput | Date | string
     fechaActualizacion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    descripcion?: NullableStringFieldUpdateOperationsInput | string | null
+    idUsuario?: NullableIntFieldUpdateOperationsInput | number | null
+    nombre?: StringFieldUpdateOperationsInput | string
     PingServidores?: PingServidoresUncheckedUpdateManyWithoutServidoresInput
     Tasks?: TasksUncheckedUpdateManyWithoutServidoresInput
-    UsuariosServidores?: UsuariosServidoresUncheckedUpdateManyWithoutServidorInput
   }
 
   export type ServidoresUncheckedUpdateManyWithoutServidoresInput = {
@@ -10536,6 +9463,9 @@ export namespace Prisma {
     ip?: NullableStringFieldUpdateOperationsInput | string | null
     fechaCreacion?: DateTimeFieldUpdateOperationsInput | Date | string
     fechaActualizacion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    descripcion?: NullableStringFieldUpdateOperationsInput | string | null
+    idUsuario?: NullableIntFieldUpdateOperationsInput | number | null
+    nombre?: StringFieldUpdateOperationsInput | string
   }
 
   export type UsuariosCreateManyEstatusUsuariosInput = {
@@ -10557,7 +9487,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     fechaCreacion?: DateTimeFieldUpdateOperationsInput | Date | string
     fechaActualizacion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    UsuariosServidores?: UsuariosServidoresUpdateManyWithoutUsuarioInput
+    Servidores?: ServidoresUpdateManyWithoutUsuariosInput
   }
 
   export type UsuariosUncheckedUpdateWithoutEstatusUsuariosInput = {
@@ -10569,7 +9499,7 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     fechaCreacion?: DateTimeFieldUpdateOperationsInput | Date | string
     fechaActualizacion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    UsuariosServidores?: UsuariosServidoresUncheckedUpdateManyWithoutUsuarioInput
+    Servidores?: ServidoresUncheckedUpdateManyWithoutUsuariosInput
   }
 
   export type UsuariosUncheckedUpdateManyWithoutUsuariosInput = {
@@ -10593,7 +9523,7 @@ export namespace Prisma {
     log?: string | null
     isAlive?: boolean | null
     numericHost?: string | null
-    fechaPing: Date | string
+    fechaPing?: Date | string
   }
 
   export type TasksCreateManyServidoresInput = {
@@ -10601,15 +9531,9 @@ export namespace Prisma {
     idTask: string
     estatus?: TasksEstatus | null
     fechaCreacion?: Date | string
-    fechaActualizacion?: Date | string | null
-  }
-
-  export type UsuariosServidoresCreateManyServidorInput = {
-    idUsuario: number
-    nombre: string
-    descripcion?: string | null
-    fechaCreacion?: Date | string
-    fechaActualizacion?: Date | string | null
+    interval: number
+    error?: string | null
+    ultimaEjecucion?: Date | string | null
   }
 
   export type PingServidoresUpdateWithoutServidoresInput = {
@@ -10654,7 +9578,9 @@ export namespace Prisma {
     idTask?: StringFieldUpdateOperationsInput | string
     estatus?: NullableEnumTasksEstatusFieldUpdateOperationsInput | TasksEstatus | null
     fechaCreacion?: DateTimeFieldUpdateOperationsInput | Date | string
-    fechaActualizacion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    interval?: IntFieldUpdateOperationsInput | number
+    error?: NullableStringFieldUpdateOperationsInput | string | null
+    ultimaEjecucion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type TasksUncheckedUpdateWithoutServidoresInput = {
@@ -10662,7 +9588,9 @@ export namespace Prisma {
     idTask?: StringFieldUpdateOperationsInput | string
     estatus?: NullableEnumTasksEstatusFieldUpdateOperationsInput | TasksEstatus | null
     fechaCreacion?: DateTimeFieldUpdateOperationsInput | Date | string
-    fechaActualizacion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    interval?: IntFieldUpdateOperationsInput | number
+    error?: NullableStringFieldUpdateOperationsInput | string | null
+    ultimaEjecucion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type TasksUncheckedUpdateManyWithoutTasksInput = {
@@ -10670,55 +9598,48 @@ export namespace Prisma {
     idTask?: StringFieldUpdateOperationsInput | string
     estatus?: NullableEnumTasksEstatusFieldUpdateOperationsInput | TasksEstatus | null
     fechaCreacion?: DateTimeFieldUpdateOperationsInput | Date | string
-    fechaActualizacion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    interval?: IntFieldUpdateOperationsInput | number
+    error?: NullableStringFieldUpdateOperationsInput | string | null
+    ultimaEjecucion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
-  export type UsuariosServidoresUpdateWithoutServidorInput = {
-    usuario?: UsuariosUpdateOneRequiredWithoutUsuariosServidoresInput
-    nombre?: StringFieldUpdateOperationsInput | string
-    descripcion?: NullableStringFieldUpdateOperationsInput | string | null
-    fechaCreacion?: DateTimeFieldUpdateOperationsInput | Date | string
-    fechaActualizacion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  }
-
-  export type UsuariosServidoresUncheckedUpdateWithoutServidorInput = {
-    idUsuario?: IntFieldUpdateOperationsInput | number
-    nombre?: StringFieldUpdateOperationsInput | string
-    descripcion?: NullableStringFieldUpdateOperationsInput | string | null
-    fechaCreacion?: DateTimeFieldUpdateOperationsInput | Date | string
-    fechaActualizacion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  }
-
-  export type UsuariosServidoresUncheckedUpdateManyWithoutUsuariosServidoresInput = {
-    idUsuario?: IntFieldUpdateOperationsInput | number
-    nombre?: StringFieldUpdateOperationsInput | string
-    descripcion?: NullableStringFieldUpdateOperationsInput | string | null
-    fechaCreacion?: DateTimeFieldUpdateOperationsInput | Date | string
-    fechaActualizacion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  }
-
-  export type UsuariosServidoresCreateManyUsuarioInput = {
-    idServidor: number
-    nombre: string
-    descripcion?: string | null
+  export type ServidoresCreateManyUsuariosInput = {
+    publicId?: string | null
+    idServidor?: number
+    estatus: number
+    dominio: string
+    ip?: string | null
     fechaCreacion?: Date | string
     fechaActualizacion?: Date | string | null
+    descripcion?: string | null
+    nombre: string
   }
 
-  export type UsuariosServidoresUpdateWithoutUsuarioInput = {
-    servidor?: ServidoresUpdateOneRequiredWithoutUsuariosServidoresInput
-    nombre?: StringFieldUpdateOperationsInput | string
-    descripcion?: NullableStringFieldUpdateOperationsInput | string | null
+  export type ServidoresUpdateWithoutUsuariosInput = {
+    publicId?: NullableStringFieldUpdateOperationsInput | string | null
+    dominio?: StringFieldUpdateOperationsInput | string
+    ip?: NullableStringFieldUpdateOperationsInput | string | null
     fechaCreacion?: DateTimeFieldUpdateOperationsInput | Date | string
     fechaActualizacion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    descripcion?: NullableStringFieldUpdateOperationsInput | string | null
+    nombre?: StringFieldUpdateOperationsInput | string
+    EstatusServidores?: EstatusServidoresUpdateOneRequiredWithoutServidoresInput
+    PingServidores?: PingServidoresUpdateManyWithoutServidoresInput
+    Tasks?: TasksUpdateManyWithoutServidoresInput
   }
 
-  export type UsuariosServidoresUncheckedUpdateWithoutUsuarioInput = {
+  export type ServidoresUncheckedUpdateWithoutUsuariosInput = {
+    publicId?: NullableStringFieldUpdateOperationsInput | string | null
     idServidor?: IntFieldUpdateOperationsInput | number
-    nombre?: StringFieldUpdateOperationsInput | string
-    descripcion?: NullableStringFieldUpdateOperationsInput | string | null
+    estatus?: IntFieldUpdateOperationsInput | number
+    dominio?: StringFieldUpdateOperationsInput | string
+    ip?: NullableStringFieldUpdateOperationsInput | string | null
     fechaCreacion?: DateTimeFieldUpdateOperationsInput | Date | string
     fechaActualizacion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    descripcion?: NullableStringFieldUpdateOperationsInput | string | null
+    nombre?: StringFieldUpdateOperationsInput | string
+    PingServidores?: PingServidoresUncheckedUpdateManyWithoutServidoresInput
+    Tasks?: TasksUncheckedUpdateManyWithoutServidoresInput
   }
 
 

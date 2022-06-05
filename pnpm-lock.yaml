@@ -2,7 +2,6 @@ lockfileVersion: 5.4
 
 specifiers:
   '@prisma/client': ^3.14.0
-  add: ^2.0.6
   ajv: ^8.11.0
   argon2: ^0.28.5
   bull: ^4.8.3
@@ -17,6 +16,7 @@ specifiers:
   http-errors: ^2.0.0
   i18n: ^0.15.0
   jsonwebtoken: ^8.5.1
+  luxon: ^2.4.0
   morgan: ^1.10.0
   mysql2: ^2.3.3
   nodemon: ^2.0.16
@@ -26,12 +26,10 @@ specifiers:
   sequelize: ^6.20.1
   sequelize-cli: ^6.4.1
   socket.io: ^4.5.1
-  tar: ^6.1.11
   uuid: ^8.3.2
 
 dependencies:
   '@prisma/client': 3.14.0_prisma@3.14.0
-  add: 2.0.6
   ajv: 8.11.0
   argon2: 0.28.5
   bull: 4.8.3
@@ -44,12 +42,12 @@ dependencies:
   http-errors: 2.0.0
   i18n: 0.15.0
   jsonwebtoken: 8.5.1
+  luxon: 2.4.0
   mysql2: 2.3.3
   ping: 0.4.2
   redis: 4.1.0
   sequelize: 6.20.1_mysql2@2.3.3
   socket.io: 4.5.1
-  tar: 6.1.11
   uuid: 8.3.2
 
 devDependencies:
@@ -334,10 +332,6 @@ packages:
     engines: {node: '>=0.4.0'}
     hasBin: true
     dev: true
-
-  /add/2.0.6:
-    resolution: {integrity: sha512-j5QzrmsokwWWp6kUcJQySpbG+xfOBqqKnup3OIk1pz+kB/80SLorZ9V8zHFLO92Lcd+hbvq8bT+zOGoPkmBV0Q==}
-    dev: false
 
   /agent-base/6.0.2:
     resolution: {integrity: sha512-RZNwNclF7+MS/8bDg70amg32dyeZGZxiDuQmZxKLAlQjr3jGyLx+4Kkk58UO7D2QdgFIQCovuSuZESne6RG6XQ==}
@@ -1791,6 +1785,11 @@ packages:
 
   /luxon/1.28.0:
     resolution: {integrity: sha512-TfTiyvZhwBYM/7QdAVDh+7dBTBA29v4ik0Ce9zda3Mnf8on1S5KJI8P2jKFZ8+5C0jhmr0KwJEO/Wdpm0VeWJQ==}
+    dev: false
+
+  /luxon/2.4.0:
+    resolution: {integrity: sha512-w+NAwWOUL5hO0SgwOHsMBAmZ15SoknmQXhSO0hIbJCAmPKSsGeK8MlmhYh2w6Iib38IxN2M+/ooXWLbeis7GuA==}
+    engines: {node: '>=12'}
     dev: false
 
   /make-dir/3.1.0:

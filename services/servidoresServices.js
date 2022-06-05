@@ -1,17 +1,21 @@
-const { Op } = require("sequelize");
-const Ajv = require("ajv");
+const uuid = require("uuid").v4;
 
 const { makePing } = require("../utils/pingServer");
 
 const PingServices = require("./pingServices");
 
-const { PrismaClient } = require("../prisma/generated/prisma-client-js");
+const { PrismaClient, TasksEstatus } = require("../prisma/generated/prisma-client-js");
 const monitorQueue = require("../tasks/monitorQueue");
-const { update } = require("tar");
 
 const prisma = new PrismaClient();
 
 const ServidoresServices = {};
+
+const ESTATUS_SERVIDORES = {
+  ACTIVO: 1,
+  VALIDADO: 2,
+  DESACTIVADO: 3,
+};
 
 ServidoresServices.getServerDetail = async function (idServidor) {
   let servidores = await prisma.servidores.findFirst({
@@ -26,50 +30,34 @@ ServidoresServices.getServerDetail = async function (idServidor) {
   return servidores;
 };
 
-ServidoresServices.getServers = async function (idUsuario) {
+ServidoresServices.getServers = async function (id) {
+  const search = {};
+  if (!isNaN(id)) search.idUsuario = id;
+  else search.publicId = id;
   const servidores = await prisma.servidores.findMany({
     where: {
-      UsuariosServidores: {
-        every: {
-          idUsuario: idUsuario,
-        },
+      Usuarios: {
+        ...search,
+      },
+    },
+    include: {
+      PingServidores: {
+        take: 1,
       },
     },
   });
-  // let servidores = await Servidores.findAll({
-  //   where: {},
-  //   order: [["fechaCreacion", "DESC"]],
-  //   attributes: { exclude: ["idUsuario"] },
-  //   include: [
-  //     {
-  //       model: Usuarios,
-  //       as: "usuario",
-  //       where: { publicId: idUsuario },
-  //       attributes: [],
-  //     },
-  //     {
-  //       model: PingServidores,
-  //       as: "pings",
-  //       attributes: { exclude: ["idPingServidor", "idServidor"] },
-  //       order: [["fechaPing", "DESC"]],
-  //       limit: 1,
-  //     },
-  //   ],
-  // });
 
   return servidores;
 };
 
 ServidoresServices.createServer = async function (bodyServer) {
   let taskCreated = null;
-  let serverUpdated = false;
   try {
     const data = await prisma.$transaction(async (prisma) => {
       const errors = [];
 
       const usuario = await prisma.usuarios.findFirst({
         where: { idUsuario: bodyServer.idUsuario },
-        // include: { model: Servidores, as: "servidor", where: { idUsuario: bodyServer.idUsuario } },
       });
 
       if (!usuario) return { errors: ["Usuario no encontrado"] };
@@ -77,14 +65,7 @@ ServidoresServices.createServer = async function (bodyServer) {
       const servidor = await prisma.servidores.findFirst({
         where: {
           dominio: bodyServer.dominio,
-          UsuariosServidores: {
-            every: {
-              idUsuario: usuario.idUsuario,
-            },
-          },
-        },
-        include: {
-          UsuariosServidores: true,
+          idUsuario: usuario.idUsuario,
         },
       });
 
@@ -95,82 +76,37 @@ ServidoresServices.createServer = async function (bodyServer) {
         bodyServer.ip = pingData.numericHost;
       }
 
-      let newServidor;
-
-      if (servidor) {
-        //actualización de servidor
-
-        newServidor = await prisma.usuarios.update({
-          where: {
-            idUsuario: usuario.idUsuario,
-          },
-          data: {
-            UsuariosServidores: {
-              create: {
-                descripcion: bodyServer.descripcion,
-                nombre: bodyServer.nombre,
-              },
-              connectOrCreate: {
-                idUsuario_idServidor: {
-                  idServidor: servidor.idServidor,
-                  idUsuario: usuario.idUsuario,
-                },
-              },
-            },
-          },
-        });
-
-        //servidor actualizado
-        serverUpdated = true;
-      } else {
-        //crear nuevo servidor
-        newServidor = await prisma.usuarios.update({
-          where: {
-            idUsuario: usuario.idUsuario,
-          },
-          data: {
-            UsuariosServidores: {
-              create: {
-                descripcion: bodyServer.descripcion ?? null,
-                nombre: bodyServer.nombre,
-                servidor: {
-                  create: {
-                    ip: bodyServer.ip,
-                    dominio: bodyServer.dominio,
-                  },
-                },
-              },
-            },
-          },
-        });
-      }
-
-      const newTask = prisma.servidores.update({
-        where: {
-          idServidor: server.idServidor,
-        },
+      if (servidor) return { errors: ["Servidor ya existe"] };
+      //crear nuevo servidor
+      const server = await prisma.servidores.create({
         data: {
-          Tasks: {
-            create: {
-              data: {
-                idUsuario: server.idUsuario,
-                idServidor: server.idServidor,
-                estatus: TasksEstatus.running,
-                taskId: taskId,
-              },
-            },
-          },
+          publicId: uuid(),
+          idUsuario: usuario.idUsuario,
+          descripcion: bodyServer.descripcion ?? null,
+          nombre: bodyServer.nombre,
+          ip: bodyServer.ip,
+          dominio: bodyServer.dominio,
+          estatus: ESTATUS_SERVIDORES.ACTIVO,
         },
       });
 
-      taskCreated = await monitorQueue.addPing(newServidor);
+      //creación de ping en cola
+      taskCreated = await monitorQueue.addPing(server);
 
-      return { servidor: newServidor, task: newTask };
+      const task = await prisma.tasks.create({
+        data: {
+          idServidor: server.idServidor,
+          estatus: TasksEstatus.running,
+          idTask: taskCreated,
+        },
+      });
+
+      return { servidor: server, task: task };
     });
 
     return data;
   } catch (error) {
-    if (taskCreated != null && serverUpdated == false) monitorQueue.removePingRepeatable(taskCreated);
+    if (taskCreated != null) monitorQueue.removePingRepeatable(taskCreated);
     console.log(error);
 
     throw new Error(error);
@@ -193,6 +129,13 @@ ServidoresServices.createUserServer = async function (bodyServer) {
               dominio: bodyServer.dominio,
             },
           },
+        },
+      },
+    },
+    include: {
+      UsuariosServidores: {
+        include: {
+          servidor: true,
         },
       },
     },

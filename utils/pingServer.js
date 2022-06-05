@@ -64,12 +64,67 @@ function removerCharacters(str) {
   return str.replace(/\+/g, "");
 }
 
+/** @function */
+/**
+ * @param {string} domain server domain www.example.com
+ */
+/** @returns */
+/**
+ * @typedef {Object} PingData Return ping Data
+ * @property {string} host - server domain
+ * @property {boolean} isAlive status of server
+ * @property {boolean} isAlive status of server
+ * @property {number} times cicles of pings
+ * @property {number} repeatedTimes status of server
+ * @property {number} min min speed ping
+ * @property {number} max max speed ping
+ * @property {number} avg avg speed ping
+ * @property {number} packetLoss packages loss
+ * @property {string} numericHost number host
+ * @property {string} log complete log of ping
+ */
 async function makePing(server) {
   if (!server) throw new Error("IP o Dominio Invalido");
   let log = await ping.promise.probe(server, { extra: ["-c", "2"] });
   const data = convertPingData(log);
   return data;
 }
+
+/*{
+
+  host: 'www.roderickromero.dev',
+
+  isAlive: true,
+
+  times: 88.1,
+
+  repeatedTimes: 2,
+
+  min: 88.106,
+
+  max: 137.165,
+
+  avg: 112.635,
+
+  packetLoss: 0,
+
+  numericHost: '104.21.88.116',
+
+  log: 'PING www.roderickromero.dev (104.21.88.116) 56(84) bytes of data.\n' +
+
+    '64 bytes from 104.21.88.116: icmp_seq=1 ttl=37 time=88.1 ms\n' +
+
+    '64 bytes from 104.21.88.116: icmp_seq=2 ttl=37 time=137 ms\n' +
+
+    '\n' +
+
+    '--- www.roderickromero.dev ping statistics ---\n' +
+
+    '2 packets transmitted, 2 received, 0% packet loss, time 2ms\n' +
+
+    'rtt min/avg/max/mdev = 88.106/112.635/137.165/24.531 ms\n'
+
+} */
 
 // makePing(`8.8.8.8`).then(console.info).then(console.error);
 
