@@ -1,6 +1,13 @@
 const { PrismaClient, Prisma } = require("../prisma/generated/prisma-client-js");
 const { DateTime } = require("luxon");
 
+const { PrismaClient, TasksEstatus } = require("../../providers/prismaProvider");
+const { makePing } = require("../../utils/pingServer");
+
+const prisma = new PrismaClient();
+
+const consumer = {};
+
 const queryAliveSummary = (server, date) => Prisma.sql`
       SELECT 
       ROUND(AVG(ps.max), 4)     AS max,
@@ -37,9 +44,9 @@ const queryDeleteDayBeforePing = (server, date) => Prisma.sql`
     FROM PingServidores ps
     where ps.idServidor = ${server} 
     AND ps.fechaPing < DATE(${date})`;
-async function test() {
-  const prisma = new PrismaClient();
 
+//consumer of daily job
+consumer.dailySummary = async (job, done) => {
   try {
     let completed = false;
     let skip = 0;
@@ -93,11 +100,65 @@ async function test() {
       /// sigue la iteración incrementando en 10
       skip += 10;
     }
+
+    return;
   } catch (e) {
     console.info(e);
-  } finally {
-    await prisma.$disconnect();
   }
-}
+};
 
-test();
+consumer.pingConsumer = async (job, done) => {
+  try {
+    if (job?.data?.idServidor) {
+      const server = job.data;
+      console.log(`Making ping to ${server.dominio}  ${DateTime.now().toISO()}`);
+      const dataPing = await makePing(server.dominio);
+      const findServer = await prisma.servidores.findFirst({
+        where: {
+          idServidor: server.idServidor,
+        },
+      });
+
+      //delete task if server doesn't exist
+      if (!findServer) {
+        await job.discard();
+        await prisma.tasks.update({
+          where: {
+            idServidor: server.idServidor,
+          },
+          data: {
+            estatus: TasksEstatus.deleted,
+          },
+        });
+        return;
+      }
+
+      await prisma.servidores.update({
+        where: {
+          idServidor: server.idServidor,
+        },
+        data: {
+          PingServidores: {
+            create: {
+              times: dataPing.times,
+              packetLoss: dataPing.packetLoss,
+              min: dataPing.min,
+              max: dataPing.max,
+              avg: dataPing.avg,
+              log: dataPing.log,
+              isAlive: dataPing.isAlive,
+              numericHost: dataPing.numericHost,
+            },
+          },
+        },
+      });
+    }
+    return done();
+  } catch (error) {
+    console.log(error.message);
+    //  await job.moveToFailed();
+    return done(error);
+  }
+};
+
+module.exports = consumer;

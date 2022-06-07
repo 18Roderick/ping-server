@@ -1,8 +1,8 @@
 const UUID = require("uuid").v4;
-const { DateTime } = require("luxon");
-const { makePing } = require("../utils/pingServer");
+
 const { queueManager, queueTypes, repeatCron, INTERVALS } = require("./QueueManager");
-const { PrismaClient } = require("../providers/prismaProvider");
+
+const monitorConsumer = require("./process").monitor;
 
 const JOB_TYPES = {
   DAILY: "DAILYSUMMARY",
@@ -11,58 +11,11 @@ const JOB_TYPES = {
 
 const monitorQueue = {};
 
-const prisma = new PrismaClient();
+//process the pings to the servers
+queueManager.pingMonitor.process(queueTypes.pingMonitor, monitorConsumer.pingConsumer);
 
-queueManager.pingMonitor.process(queueTypes.pingMonitor, async function (job, done) {
-  try {
-    if (job?.data?.idServidor) {
-      const server = job.data;
-      console.log(`Making ping to ${server.dominio}  ${DateTime.now().toISO()}`);
-      const dataPing = await makePing(server.dominio);
-      const task = await prisma.tasks.findFirst({
-        where: {
-          idServidor: server.idServidor,
-        },
-      });
-
-      await prisma.servidores.update({
-        where: {
-          idServidor: server.idServidor,
-        },
-        data: {
-          PingServidores: {
-            create: {
-              times: dataPing.times,
-              packetLoss: dataPing.packetLoss,
-              min: dataPing.min,
-              max: dataPing.max,
-              avg: dataPing.avg,
-              log: dataPing.log,
-              isAlive: dataPing.isAlive,
-              numericHost: dataPing.numericHost,
-            },
-          },
-        },
-      });
-    }
-    return done();
-  } catch (error) {
-    console.log(error.message);
-    await job.moveToFailed();
-    return done(error);
-  }
-});
-
-queueManager.pingMonitor.process(JOB_TYPES.DAILY, async (job, done) => {
-  try {
-    if (job?.data?.idUsuario) {
-    }
-
-    return done();
-  } catch (error) {
-    return done(error);
-  }
-});
+//process the daily summary of ping data
+queueManager.pingMonitor.process(JOB_TYPES.DAILY, monitorConsumer.dailySummary);
 
 //agregar worker de ping
 monitorQueue.addPing = async function (payload) {

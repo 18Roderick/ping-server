@@ -71,6 +71,7 @@ model Tasks {
   fechaCreacion   DateTime      @default(now())
   interval        Int
   error           String?       @db.Text
+  type            TasksTypes    @default(UNDEFINED)
   ultimaEjecucion DateTime?     @db.DateTime(0)
   Servidores      Servidores    @relation(fields: [idServidor], references: [idServidor], onDelete: NoAction, onUpdate: NoAction, map: "Tasks_ibfk_1")
 
@@ -98,4 +99,12 @@ enum TasksEstatus {
   running
   stopped
   deleted
+}
+
+enum TasksTypes {
+  UNDEFINED
+  SERVER
+  BACKGROUND
+  ADMIN
+  DAILY
 }

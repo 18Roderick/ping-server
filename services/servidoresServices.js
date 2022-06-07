@@ -4,7 +4,7 @@ const { makePing } = require("../utils/pingServer");
 
 const PingServices = require("./pingServices");
 
-const { PrismaClient, TasksEstatus } = require("../prisma/generated/prisma-client-js");
+const { PrismaClient, TasksEstatus, TasksTypes } = require("../prisma/generated/prisma-client-js");
 const monitorQueue = require("../tasks/monitorQueue");
 
 const prisma = new PrismaClient();
@@ -98,6 +98,7 @@ ServidoresServices.createServer = async function (bodyServer) {
           idServidor: server.idServidor,
           estatus: TasksEstatus.running,
           idTask: taskCreated,
+          type: TasksTypes.SERVER,
         },
       });
 

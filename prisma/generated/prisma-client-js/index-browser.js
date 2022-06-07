@@ -125,6 +125,7 @@ exports.Prisma.TasksScalarFieldEnum = makeEnum({
   fechaCreacion: 'fechaCreacion',
   interval: 'interval',
   error: 'error',
+  type: 'type',
   ultimaEjecucion: 'ultimaEjecucion'
 });
 
@@ -184,6 +185,14 @@ exports.TasksEstatus = makeEnum({
   running: 'running',
   stopped: 'stopped',
   deleted: 'deleted'
+});
+
+exports.TasksTypes = makeEnum({
+  UNDEFINED: 'UNDEFINED',
+  SERVER: 'SERVER',
+  BACKGROUND: 'BACKGROUND',
+  ADMIN: 'ADMIN',
+  DAILY: 'DAILY'
 });
 
 exports.Prisma.ModelName = makeEnum({
