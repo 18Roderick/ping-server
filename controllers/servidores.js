@@ -1,9 +1,10 @@
-"user strict";
-const { Usuarios, Servidores, Tasks, PingServidores } = require("../models");
+const { PrismaClient } = require("../prisma/generated/prisma-client-js");
 
 const ServidoresServices = require("../services/servidoresServices");
 const UsuariosServices = require("../services/usuariosServices");
 const { validationResult } = require("express-validator");
+
+const prisma = new PrismaClient();
 
 module.exports.getServidores = async (req, res) => {
   try {
@@ -34,20 +35,7 @@ module.exports.getServidoresByPage = async (req, res) => {
 
     let where = {};
 
-    let servidores = await Servidores.findAndCountAll({
-      limit,
-      offset,
-      where: where,
-      attributes: ["dominio", "ip", "idServidor", "nombre"],
-      include: [
-        {
-          model: Usuarios,
-          as: "usuario",
-          where: { publicId: datosToken.id },
-          attributes: [],
-        },
-      ],
-    });
+    let servidores = await prisma.servidores.findMany({ where });
 
     res.json({
       data: servidores,
@@ -66,7 +54,7 @@ module.exports.crearServidor = async (req, res) => {
     let errors = validationResult(req);
 
     if (errors.isEmpty()) {
-      let user = await Usuarios.findOne({
+      let user = await prisma.usuarios.findFirst({
         where: { publicId: datosToken.id },
       });
 

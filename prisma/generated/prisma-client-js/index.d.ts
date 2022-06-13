@@ -76,10 +76,10 @@ export type Servidores = {
 export type Tasks = {
   id: number
   idTask: string
-  idServidor: number
+  idServidor: number | null
   estatus: TasksEstatus | null
   fechaCreacion: Date
-  interval: number
+  interval: number | null
   error: string | null
   type: TasksTypes
   ultimaEjecucion: Date | null
@@ -122,6 +122,7 @@ export const TasksTypes: {
   UNDEFINED: 'UNDEFINED',
   SERVER: 'SERVER',
   BACKGROUND: 'BACKGROUND',
+  SUMMARY: 'SUMMARY',
   ADMIN: 'ADMIN',
   DAILY: 'DAILY'
 };
@@ -358,9 +359,11 @@ export namespace Prisma {
    */
   export import Decimal = runtime.Decimal
 
+  export type DecimalJsLike = runtime.DecimalJsLike
+
   /**
-   * Prisma Client JS version: 3.14.0
-   * Query Engine version: 2b0c12756921c891fec4f68d9444e18c7d5d4a6a
+   * Prisma Client JS version: 3.15.1
+   * Query Engine version: 461d6a05159055555eb7dfb337c9fb271cbd4d7e
    */
   export type PrismaVersion = {
     client: string
@@ -5056,10 +5059,10 @@ export namespace Prisma {
   export type TasksGroupByOutputType = {
     id: number
     idTask: string
-    idServidor: number
+    idServidor: number | null
     estatus: TasksEstatus | null
     fechaCreacion: Date
-    interval: number
+    interval: number | null
     error: string | null
     type: TasksTypes
     ultimaEjecucion: Date | null
@@ -5112,12 +5115,12 @@ export namespace Prisma {
     ?'include' extends U
     ? Tasks  & {
     [P in TrueKeys<S['include']>]:
-        P extends 'Servidores' ? ServidoresGetPayload<S['include'][P]> :  never
+        P extends 'Servidores' ? ServidoresGetPayload<S['include'][P]> | null :  never
   } 
     : 'select' extends U
     ? {
     [P in TrueKeys<S['select']>]:
-        P extends 'Servidores' ? ServidoresGetPayload<S['select'][P]> :  P extends keyof Tasks ? Tasks[P] : never
+        P extends 'Servidores' ? ServidoresGetPayload<S['select'][P]> | null :  P extends keyof Tasks ? Tasks[P] : never
   } 
     : Tasks
   : Tasks
@@ -7140,14 +7143,14 @@ export namespace Prisma {
     NOT?: Enumerable<TasksWhereInput>
     id?: IntFilter | number
     idTask?: StringFilter | string
-    idServidor?: IntFilter | number
+    idServidor?: IntNullableFilter | number | null
     estatus?: EnumTasksEstatusNullableFilter | TasksEstatus | null
     fechaCreacion?: DateTimeFilter | Date | string
-    interval?: IntFilter | number
+    interval?: IntNullableFilter | number | null
     error?: StringNullableFilter | string | null
     type?: EnumTasksTypesFilter | TasksTypes
     ultimaEjecucion?: DateTimeNullableFilter | Date | string | null
-    Servidores?: XOR<ServidoresRelationFilter, ServidoresWhereInput>
+    Servidores?: XOR<ServidoresRelationFilter, ServidoresWhereInput> | null
   }
 
   export type TasksOrderByWithRelationAndSearchRelevanceInput = {
@@ -7192,10 +7195,10 @@ export namespace Prisma {
     NOT?: Enumerable<TasksScalarWhereWithAggregatesInput>
     id?: IntWithAggregatesFilter | number
     idTask?: StringWithAggregatesFilter | string
-    idServidor?: IntWithAggregatesFilter | number
+    idServidor?: IntNullableWithAggregatesFilter | number | null
     estatus?: EnumTasksEstatusNullableWithAggregatesFilter | TasksEstatus | null
     fechaCreacion?: DateTimeWithAggregatesFilter | Date | string
-    interval?: IntWithAggregatesFilter | number
+    interval?: IntNullableWithAggregatesFilter | number | null
     error?: StringNullableWithAggregatesFilter | string | null
     type?: EnumTasksTypesWithAggregatesFilter | TasksTypes
     ultimaEjecucion?: DateTimeNullableWithAggregatesFilter | Date | string | null
@@ -7563,20 +7566,20 @@ export namespace Prisma {
     idTask: string
     estatus?: TasksEstatus | null
     fechaCreacion?: Date | string
-    interval: number
+    interval?: number | null
     error?: string | null
     type?: TasksTypes
     ultimaEjecucion?: Date | string | null
-    Servidores: ServidoresCreateNestedOneWithoutTasksInput
+    Servidores?: ServidoresCreateNestedOneWithoutTasksInput
   }
 
   export type TasksUncheckedCreateInput = {
     id?: number
     idTask: string
-    idServidor: number
+    idServidor?: number | null
     estatus?: TasksEstatus | null
     fechaCreacion?: Date | string
-    interval: number
+    interval?: number | null
     error?: string | null
     type?: TasksTypes
     ultimaEjecucion?: Date | string | null
@@ -7586,20 +7589,20 @@ export namespace Prisma {
     idTask?: StringFieldUpdateOperationsInput | string
     estatus?: NullableEnumTasksEstatusFieldUpdateOperationsInput | TasksEstatus | null
     fechaCreacion?: DateTimeFieldUpdateOperationsInput | Date | string
-    interval?: IntFieldUpdateOperationsInput | number
+    interval?: NullableIntFieldUpdateOperationsInput | number | null
     error?: NullableStringFieldUpdateOperationsInput | string | null
     type?: EnumTasksTypesFieldUpdateOperationsInput | TasksTypes
     ultimaEjecucion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    Servidores?: ServidoresUpdateOneRequiredWithoutTasksInput
+    Servidores?: ServidoresUpdateOneWithoutTasksInput
   }
 
   export type TasksUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
     idTask?: StringFieldUpdateOperationsInput | string
-    idServidor?: IntFieldUpdateOperationsInput | number
+    idServidor?: NullableIntFieldUpdateOperationsInput | number | null
     estatus?: NullableEnumTasksEstatusFieldUpdateOperationsInput | TasksEstatus | null
     fechaCreacion?: DateTimeFieldUpdateOperationsInput | Date | string
-    interval?: IntFieldUpdateOperationsInput | number
+    interval?: NullableIntFieldUpdateOperationsInput | number | null
     error?: NullableStringFieldUpdateOperationsInput | string | null
     type?: EnumTasksTypesFieldUpdateOperationsInput | TasksTypes
     ultimaEjecucion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -7608,10 +7611,10 @@ export namespace Prisma {
   export type TasksCreateManyInput = {
     id?: number
     idTask: string
-    idServidor: number
+    idServidor?: number | null
     estatus?: TasksEstatus | null
     fechaCreacion?: Date | string
-    interval: number
+    interval?: number | null
     error?: string | null
     type?: TasksTypes
     ultimaEjecucion?: Date | string | null
@@ -7621,7 +7624,7 @@ export namespace Prisma {
     idTask?: StringFieldUpdateOperationsInput | string
     estatus?: NullableEnumTasksEstatusFieldUpdateOperationsInput | TasksEstatus | null
     fechaCreacion?: DateTimeFieldUpdateOperationsInput | Date | string
-    interval?: IntFieldUpdateOperationsInput | number
+    interval?: NullableIntFieldUpdateOperationsInput | number | null
     error?: NullableStringFieldUpdateOperationsInput | string | null
     type?: EnumTasksTypesFieldUpdateOperationsInput | TasksTypes
     ultimaEjecucion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -7630,10 +7633,10 @@ export namespace Prisma {
   export type TasksUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     idTask?: StringFieldUpdateOperationsInput | string
-    idServidor?: IntFieldUpdateOperationsInput | number
+    idServidor?: NullableIntFieldUpdateOperationsInput | number | null
     estatus?: NullableEnumTasksEstatusFieldUpdateOperationsInput | TasksEstatus | null
     fechaCreacion?: DateTimeFieldUpdateOperationsInput | Date | string
-    interval?: IntFieldUpdateOperationsInput | number
+    interval?: NullableIntFieldUpdateOperationsInput | number | null
     error?: NullableStringFieldUpdateOperationsInput | string | null
     type?: EnumTasksTypesFieldUpdateOperationsInput | TasksTypes
     ultimaEjecucion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -8602,10 +8605,12 @@ export namespace Prisma {
     set?: TasksTypes
   }
 
-  export type ServidoresUpdateOneRequiredWithoutTasksInput = {
+  export type ServidoresUpdateOneWithoutTasksInput = {
     create?: XOR<ServidoresCreateWithoutTasksInput, ServidoresUncheckedCreateWithoutTasksInput>
     connectOrCreate?: ServidoresCreateOrConnectWithoutTasksInput
     upsert?: ServidoresUpsertWithoutTasksInput
+    disconnect?: boolean
+    delete?: boolean
     connect?: ServidoresWhereUniqueInput
     update?: XOR<ServidoresUpdateWithoutTasksInput, ServidoresUncheckedUpdateWithoutTasksInput>
   }
@@ -9203,7 +9208,7 @@ export namespace Prisma {
     idTask: string
     estatus?: TasksEstatus | null
     fechaCreacion?: Date | string
-    interval: number
+    interval?: number | null
     error?: string | null
     type?: TasksTypes
     ultimaEjecucion?: Date | string | null
@@ -9214,7 +9219,7 @@ export namespace Prisma {
     idTask: string
     estatus?: TasksEstatus | null
     fechaCreacion?: Date | string
-    interval: number
+    interval?: number | null
     error?: string | null
     type?: TasksTypes
     ultimaEjecucion?: Date | string | null
@@ -9331,10 +9336,10 @@ export namespace Prisma {
     NOT?: Enumerable<TasksScalarWhereInput>
     id?: IntFilter | number
     idTask?: StringFilter | string
-    idServidor?: IntFilter | number
+    idServidor?: IntNullableFilter | number | null
     estatus?: EnumTasksEstatusNullableFilter | TasksEstatus | null
     fechaCreacion?: DateTimeFilter | Date | string
-    interval?: IntFilter | number
+    interval?: IntNullableFilter | number | null
     error?: StringNullableFilter | string | null
     type?: EnumTasksTypesFilter | TasksTypes
     ultimaEjecucion?: DateTimeNullableFilter | Date | string | null
@@ -9607,7 +9612,7 @@ export namespace Prisma {
     idTask: string
     estatus?: TasksEstatus | null
     fechaCreacion?: Date | string
-    interval: number
+    interval?: number | null
     error?: string | null
     type?: TasksTypes
     ultimaEjecucion?: Date | string | null
@@ -9655,7 +9660,7 @@ export namespace Prisma {
     idTask?: StringFieldUpdateOperationsInput | string
     estatus?: NullableEnumTasksEstatusFieldUpdateOperationsInput | TasksEstatus | null
     fechaCreacion?: DateTimeFieldUpdateOperationsInput | Date | string
-    interval?: IntFieldUpdateOperationsInput | number
+    interval?: NullableIntFieldUpdateOperationsInput | number | null
     error?: NullableStringFieldUpdateOperationsInput | string | null
     type?: EnumTasksTypesFieldUpdateOperationsInput | TasksTypes
     ultimaEjecucion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -9666,7 +9671,7 @@ export namespace Prisma {
     idTask?: StringFieldUpdateOperationsInput | string
     estatus?: NullableEnumTasksEstatusFieldUpdateOperationsInput | TasksEstatus | null
     fechaCreacion?: DateTimeFieldUpdateOperationsInput | Date | string
-    interval?: IntFieldUpdateOperationsInput | number
+    interval?: NullableIntFieldUpdateOperationsInput | number | null
     error?: NullableStringFieldUpdateOperationsInput | string | null
     type?: EnumTasksTypesFieldUpdateOperationsInput | TasksTypes
     ultimaEjecucion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -9677,7 +9682,7 @@ export namespace Prisma {
     idTask?: StringFieldUpdateOperationsInput | string
     estatus?: NullableEnumTasksEstatusFieldUpdateOperationsInput | TasksEstatus | null
     fechaCreacion?: DateTimeFieldUpdateOperationsInput | Date | string
-    interval?: IntFieldUpdateOperationsInput | number
+    interval?: NullableIntFieldUpdateOperationsInput | number | null
     error?: NullableStringFieldUpdateOperationsInput | string | null
     type?: EnumTasksTypesFieldUpdateOperationsInput | TasksTypes
     ultimaEjecucion?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null

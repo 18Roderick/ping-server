@@ -10,6 +10,7 @@ const config = require("./config/configEnv");
 const httpServer = http.createServer(app);
 
 const serverTasks = require("./tasks/serverTasks");
+const monitorQueue = require("./tasks/monitorQueue");
 
 const options = {};
 
@@ -45,6 +46,7 @@ async function start() {
 
     //verificar lo parámetros de estatus de tablas
     const task = await serverTasks.verifyDatabaseData();
+    const daily = await monitorQueue.dailySummary();
     console.info("Verificación de parámetros de base de datos ejecutada ", task);
 
     //iniciar monitoreo

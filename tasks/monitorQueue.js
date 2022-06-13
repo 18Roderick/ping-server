@@ -1,6 +1,8 @@
 const UUID = require("uuid").v4;
 
-const { queueManager, queueTypes, repeatCron, INTERVALS } = require("./QueueManager");
+const { queueManager, queueTypes, INTERVALS } = require("./QueueManager");
+
+const { PrismaClient, TasksTypes, TasksEstatus } = require("../prisma/generated/prisma-client-js");
 
 const monitorConsumer = require("./process").monitor;
 
@@ -10,6 +12,17 @@ const JOB_TYPES = {
 };
 
 const monitorQueue = {};
+
+const prisma = new PrismaClient();
+
+//function find repeatable jobs
+async function findRepeatableJob(key) {
+  const listJobs = await queueManager.pingMonitor.getRepeatableJobs();
+  for (let job of listJobs) {
+    if (job.key === key) return job;
+  }
+  return null;
+}
 
 //process the pings to the servers
 queueManager.pingMonitor.process(queueTypes.pingMonitor, monitorConsumer.pingConsumer);
@@ -22,24 +35,60 @@ monitorQueue.addPing = async function (payload) {
   if (!payload) return false;
   const unique = UUID();
   const job = await queueManager.pingMonitor.add(queueTypes.pingMonitor, payload, {
-    ...repeatCron(),
+    repeat: {
+      every: INTERVALS.TWO_MINUTES,
+    },
     jobId: unique,
   });
   return job?.opts?.repeat?.key;
 };
 
 //agregar worker de ping
-monitorQueue.dailySummary = async function (payload) {
-  if (!payload) return false;
+monitorQueue.dailySummary = async function () {
   const unique = UUID();
   //add a job to summarize the daily data
-  const job = await queueManager.pingMonitor.add(JOB_TYPES.DAILY, payload, {
-    jobId: unique,
-    repeat: {
-      every: INTERVALS.EVERY_DAY,
+  let task = await prisma.tasks.findFirst({
+    where: {
+      type: TasksTypes.SUMMARY,
     },
   });
-  return job?.opts?.repeat?.key;
+
+  const newJob = () =>
+    queueManager.pingMonitor.add(
+      JOB_TYPES.DAILY,
+      {},
+      {
+        jobId: unique,
+        repeat: {
+          cron: INTERVALS.EVERY_DAY,
+        },
+      }
+    );
+
+  if (!task) {
+    const job = await newJob();
+
+    task = await prisma.tasks.create({
+      data: {
+        type: TasksTypes.SUMMARY,
+        idTask: job?.opts?.repeat?.key,
+        estatus: TasksEstatus.running,
+      },
+    });
+    return job?.opts?.repeat?.key;
+  } else {
+    const job = await findRepeatableJob(task.idTask);
+    if (job == null) {
+      const job = await newJob();
+      task = await prisma.tasks.update({
+        where: { id: task.id },
+        data: {
+          idTask: job?.opts?.repeat?.key,
+        },
+      });
+    }
+  }
+  return task?.idTask;
 };
 
 //stop repeatable job

@@ -1,5 +1,7 @@
-const { Usuarios } = require("../models");
+const { PrismaClient } = require("../prisma/generated/prisma-client-js");
 const { checkSchema } = require("express-validator");
+
+const prisma = new PrismaClient();
 
 const cipher = require("../utils/cipher");
 module.exports = checkSchema({
@@ -18,7 +20,7 @@ module.exports = checkSchema({
     custom: {
       options: async (value, { req }) => {
         try {
-          let user = await Usuarios.findOne({
+          let user = await prisma.usuarios.findFirst({
             where: { email: value },
           });
 

@@ -1,13 +1,14 @@
-const { PrismaClient, Prisma } = require("../prisma/generated/prisma-client-js");
+const { PrismaClient, Prisma, TasksEstatus } = require("../../prisma/generated/prisma-client-js");
 const { DateTime } = require("luxon");
 
-const { PrismaClient, TasksEstatus } = require("../../providers/prismaProvider");
 const { makePing } = require("../../utils/pingServer");
 
 const prisma = new PrismaClient();
 
 const consumer = {};
 
+/** @type {number} Número de filas para procesar */
+const SKIP_ROWS = 1000;
 const queryAliveSummary = (server, date) => Prisma.sql`
       SELECT 
       ROUND(AVG(ps.max), 4)     AS max,
@@ -45,12 +46,17 @@ const queryDeleteDayBeforePing = (server, date) => Prisma.sql`
     where ps.idServidor = ${server} 
     AND ps.fechaPing < DATE(${date})`;
 
+function dateNow() {
+  return DateTime.now().toFormat("MM-dd-yyyy HH:mm:ss");
+}
+
 //consumer of daily job
 consumer.dailySummary = async (job, done) => {
   try {
+    console.log(`start daily summary ${dateNow()}`);
     let completed = false;
     let skip = 0;
-    let take = 10;
+    let take = SKIP_ROWS;
     const tmpDate = DateTime.now();
     const date = DateTime.local(tmpDate.year, tmpDate.month, tmpDate.day).toISO();
 
@@ -87,10 +93,12 @@ consumer.dailySummary = async (job, done) => {
         }));
 
         if (summary.length > 0) {
+          //create new summary for data
           const transact = await prisma.$transaction([
             prisma.pingServidores.createMany({
               data: summary,
             }),
+            //deleting old data
             prisma.$queryRaw(queryDelete),
           ]);
           console.log("Transaction done ", transact);
@@ -98,7 +106,7 @@ consumer.dailySummary = async (job, done) => {
       }
 
       /// sigue la iteración incrementando en 10
-      skip += 10;
+      skip += SKIP_ROWS;
     }
 
     return;
@@ -111,7 +119,7 @@ consumer.pingConsumer = async (job, done) => {
   try {
     if (job?.data?.idServidor) {
       const server = job.data;
-      console.log(`Making ping to ${server.dominio}  ${DateTime.now().toISO()}`);
+      console.log(`Making ping to ${server.dominio}  ${dateNow()}`);
       const dataPing = await makePing(server.dominio);
       const findServer = await prisma.servidores.findFirst({
         where: {

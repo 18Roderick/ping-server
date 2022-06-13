@@ -66,16 +66,16 @@ model Servidores {
 model Tasks {
   id              Int           @id @default(autoincrement())
   idTask          String        @unique(map: "idTask") @db.VarChar(500)
-  idServidor      Int
+  idServidor      Int?
   estatus         TasksEstatus? @default(stopped)
   fechaCreacion   DateTime      @default(now())
-  interval        Int
+  interval        Int?
   error           String?       @db.Text
   type            TasksTypes    @default(UNDEFINED)
   ultimaEjecucion DateTime?     @db.DateTime(0)
-  Servidores      Servidores    @relation(fields: [idServidor], references: [idServidor], onDelete: NoAction, onUpdate: NoAction, map: "Tasks_ibfk_1")
+  Servidores      Servidores?   @relation(fields: [idServidor], references: [idServidor], onDelete: NoAction, onUpdate: NoAction, map: "Tasks_ibfk_1")
 
-  @@index([idServidor], map: "idServidor")
+  @@index([idServidor, idTask])
 }
 
 model Usuarios {
@@ -105,6 +105,7 @@ enum TasksTypes {
   UNDEFINED
   SERVER
   BACKGROUND
+  SUMMARY
   ADMIN
   DAILY
 }

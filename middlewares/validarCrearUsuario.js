@@ -1,5 +1,7 @@
-const { Usuarios } = require("../models");
+const { PrismaClient } = require("../prisma/generated/prisma-client-js");
 const { checkSchema } = require("express-validator");
+
+const prisma = new PrismaClient();
 
 module.exports = checkSchema({
   password: {
@@ -38,13 +40,15 @@ module.exports = checkSchema({
     normalizeEmail: true,
     custom: {
       options: (value) => {
-        return Usuarios.findOne({
-          where: { email: value },
-        }).then((user) => {
-          if (user) {
-            return Promise.reject("El email ingresado ya esta en uso");
-          }
-        });
+        return prisma.usuarios
+          .findFirst({
+            where: { email: value },
+          })
+          .then((user) => {
+            if (user) {
+              return Promise.reject("El email ingresado ya esta en uso");
+            }
+          });
       },
     },
   },
