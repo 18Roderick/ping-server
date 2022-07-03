@@ -40,11 +40,11 @@ const queryDownSummary = (server, date) => Prisma.sql`
         AND ps.numericHost IS NOT NULL
         GROUP BY  ps.numericHost`;
 
-const queryDeleteDayBeforePing = (server, date) => Prisma.sql`
+const queryDeleteDayBeforePing = (server, date, dateBefore) => Prisma.sql`
     DELETE
     FROM PingServidores ps
     where ps.idServidor = ${server} 
-    AND ps.fechaPing < DATE(${date})`;
+    AND ps.fechaPing < DATE(${date})   AND ps.fechaPing >= DATE(${dateBefore})`;
 
 function dateNow() {
   return DateTime.now().toFormat("MM-dd-yyyy HH:mm:ss");
@@ -59,7 +59,7 @@ consumer.dailySummary = async (job, done) => {
     let take = SKIP_ROWS;
     const tmpDate = DateTime.now();
     const date = DateTime.local(tmpDate.year, tmpDate.month, tmpDate.day).toISO();
-
+    const dateBefore = DateTime.local(tmpDate.year, tmpDate.month, tmpDate.day).minus({ days: 1 }).toISO();
     while (completed == false) {
       const servers = await prisma.servidores.findMany({
         where: {
@@ -79,7 +79,7 @@ consumer.dailySummary = async (job, done) => {
       for (const se of servers) {
         const query = queryAliveSummary(se.idServidor, date);
         const queryDown = queryDownSummary(se.idServidor, date);
-        const queryDelete = queryDeleteDayBeforePing(se.idServidor, date);
+        const queryDelete = queryDeleteDayBeforePing(se.idServidor, date, dateBefore);
 
         //summary of pings alive
         const pingAlive = await prisma.$queryRaw(query);

@@ -1,8 +1,6 @@
 const http = require("http");
 const socket = require("socket.io");
 
-const { sequelize } = require("./models/index");
-
 const app = require("./app");
 
 const config = require("./config/configEnv");
@@ -41,8 +39,6 @@ httpServer.on("error", (e) => {
 async function start() {
   try {
     //verificar acceso a la base de datos
-    await sequelize.authenticate();
-    console.log(`Acceso a base de Datos`);
 
     //verificar lo parámetros de estatus de tablas
     const task = await serverTasks.verifyDatabaseData();

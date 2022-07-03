@@ -1,4 +1,3 @@
-const { PingServidores, Tasks } = require("../models");
 const monitorQueue = require("../tasks/monitorQueue");
 const PingServices = {};
 
