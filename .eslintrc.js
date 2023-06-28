@@ -1,11 +1,17 @@
 module.exports = {
+  root: true,
   env: {
-    browser: true,
     commonjs: true,
     es6: true,
     node: true,
   },
-  extends: "eslint:recommended",
+  plugins: [
+    '@typescript-eslint',
+  ],
+  extends: [
+    'eslint:recommended',
+    'plugin:@typescript-eslint/recommended',
+  ],
   globals: {
     Atomics: "readonly",
     SharedArrayBuffer: "readonly",
@@ -15,7 +21,7 @@ module.exports = {
   },
   rules: {
     indent: ["error", 2],
-    "linebreak-style": ["error", "windows"],
+    "linebreak-style": ["error", "linux"],
     quotes: ["error", "double"],
     semi: ["error", "always"],
   },
