@@ -17,11 +17,10 @@ model EstatusServidores {
 }
 
 model EstatusUsuarios {
-  idEstatus   Int        @id @default(autoincrement())
-  tipo        Int        @unique(map: "tipo")
-  descripcion String?    @db.VarChar(255)
-  titulo      String     @unique(map: "titulo") @db.VarChar(255)
-  Usuarios    Usuarios[]
+  idEstatus   Int     @id @default(autoincrement())
+  tipo        Int     @unique(map: "tipo")
+  descripcion String? @db.VarChar(255)
+  titulo      String  @unique(map: "titulo") @db.VarChar(255)
 }
 
 model PingServidores {
@@ -78,20 +77,23 @@ model Tasks {
 }
 
 model Usuarios {
-  publicId           String          @unique(map: "publicId") @db.Char(36)
-  idUsuario          Int             @id @default(autoincrement())
-  estatus            Int             @default(1)
-  nombre             String          @db.VarChar(50)
-  apellido           String          @db.VarChar(50)
-  email              String?         @unique(map: "email") @db.VarChar(255)
-  password           String          @db.VarChar(255)
-  fechaCreacion      DateTime        @default(now())
-  fechaActualizacion DateTime?       @updatedAt
-  EstatusUsuarios    EstatusUsuarios @relation(fields: [estatus], references: [tipo], onDelete: NoAction, onUpdate: NoAction, map: "Usuarios_ibfk_1")
+  publicId           String         @unique(map: "publicId") @db.Char(36)
+  idUsuario          Int            @id @default(autoincrement())
+  nombre             String         @db.VarChar(50)
+  apellido           String         @db.VarChar(50)
+  email              String?        @unique(map: "email") @db.VarChar(255)
+  password           String         @db.VarChar(255)
+  fechaCreacion      DateTime       @default(now())
+  fechaActualizacion DateTime?      @updatedAt
+  estatus            EstatusUsuario @default(ACTIVE)
   Servidores         Servidores[]
 
   @@index([idUsuario, publicId])
-  @@index([estatus], map: "Usuarios_ibfk_1")
+}
+
+enum EstatusUsuario {
+  ACTIVE
+  INACTIVE
 }
 
 enum TasksEstatus {

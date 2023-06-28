@@ -1,10 +1,11 @@
-const router = require("express").Router();
+import { Router } from "express";
 
-const verifyAuth = require("../../middlewares/verifyAuth");
+import verifyAuth from "../../middlewares/verifyAuth";
 
-const validarCrearServidor = require("../../middlewares/validarCrearServidor");
+import validarCrearServidor from "../../middlewares/validarCrearServidor";
+import * as servidoresController from "../../controllers/servidores";
 
-const servidoresController = require("../../controllers/servidores");
+const router: Router = Router();
 
 router.use(verifyAuth);
 
@@ -15,4 +16,4 @@ router.post("/", validarCrearServidor, servidoresController.crearServidor);
 router.put("/", servidoresController.editarServidor);
 router.delete("/", servidoresController.borrarServidor);
 
-module.exports = router;
+export default router;

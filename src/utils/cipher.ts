@@ -1,4 +1,4 @@
-import argon from "argon2";
+import * as argon from "argon2";
 
 export const encrypt = function (str) {
   return argon.hash(str);

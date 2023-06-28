@@ -1,21 +1,22 @@
-require("dotenv").config();
+import * as dotenv from "dotenv";
+dotenv.config();
 
-const path = require("path");
-const express = require("express");
+import * as path from "path";
+import * as express from "express";
 
-const morgan = require("morgan");
-const cors = require("cors");
-const helmet = require("helmet");
-const compression = require("compression");
+import * as morgan from "morgan";
+import * as cors from "cors";
+import helmet from "helmet";
+import * as compression from "compression";
 
 //const io = require("./socketIo/index");
 //Archivo con las variables de configuración
 
 //error routes
-const errorController = require("./controllers/errors");
-const routes = require("./routes");
+import * as errorController from "./controllers/errors";
+import routes from "./routes";
 
-const app = express();
+const app: express.Express = express();
 
 //middleware
 
@@ -23,7 +24,7 @@ app.use(helmet());
 app.use(compression());
 app.use(cors());
 app.use(morgan("dev"));
-app.use(express.json({ limit: "100kb", parameterLimit: "1000" }));
+app.use(express.json({ limit: "200kb" }));
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/public", express.static(path.join(__dirname, "/public")));
@@ -34,4 +35,4 @@ app.use(routes);
 app.use(errorController.error404);
 app.use(errorController.catchError);
 
-module.exports = app;
+export default app;

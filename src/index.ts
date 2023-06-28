@@ -1,20 +1,20 @@
-const http = require("http");
-const socket = require("socket.io");
+import * as http from "node:http";
+import { Server, Socket } from "socket.io";
 
-const app = require("./app");
+import app from "./app";
 
-const config = require("./config/configEnv");
+import config from "./config/configEnv";
 
-const httpServer = http.createServer(app);
-
-const serverTasks = require("./tasks/serverTasks");
-const monitorQueue = require("./tasks/monitorQueue");
+import * as serverTasks from "./tasks/serverTasks";
+import * as monitorQueue from "./tasks/monitorQueue";
 
 const options = {};
 
 let retryCount = 0;
 
-const io = socket(httpServer, options);
+const httpServer = http.createServer(app);
+
+const io = new Server(httpServer, options);
 
 io.on("connection", (socket) => {
   console.log("a user connected");
@@ -25,7 +25,7 @@ io.on("connection", (socket) => {
 
 //retry server
 
-httpServer.on("error", (e) => {
+httpServer.on("error", (e: any) => {
   if (e.code === "EADDRINUSE" && retryCount < 3) {
     console.log(`Intentando iniciar la aplicación count ${retryCount}`);
     setTimeout(() => {
@@ -39,7 +39,7 @@ httpServer.on("error", (e) => {
 async function start() {
   try {
     //verificar acceso a la base de datos
-
+    console.log("Starting");
     //verificar lo parámetros de estatus de tablas
     const task = await serverTasks.verifyDatabaseData();
     const daily = await monitorQueue.dailySummary();
@@ -47,7 +47,7 @@ async function start() {
 
     //iniciar monitoreo
 
-    await httpServer.listen(config.PORT, () => {
+    httpServer.listen(config.PORT, () => {
       console.log(`Servidor corriendo en puerto ${config.PORT} `);
     });
   } catch (error) {

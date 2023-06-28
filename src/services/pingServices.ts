@@ -1,9 +1,10 @@
 import * as monitorQueue from "../tasks/monitorQueue";
+
 import { PrismaClient, TasksEstatus, TasksTypes, Prisma, Servidores } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export const addServerPing = async function (Servidores: Servidores, transaction = null) {
+export const addServerPing = async function (server: Servidores, transaction = null) {
   try {
     if (!server?.dominio && !server?.ip) throw new Error("Datos del servidor no fueron Proporcionados");
 

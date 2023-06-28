@@ -1,6 +1,6 @@
 import httpErrors from "http-errors";
 import { v4 as uuid } from "uuid";
-import { PrismaClient } from "@prisma/client";
+import { EstatusUsuario, PrismaClient } from "@prisma/client";
 
 const tokenCreator = require("../utils/token");
 
@@ -27,11 +27,7 @@ export const crearUsuario = async function (req, res) {
           publicId: uuid(),
           nombre: nombre,
           apellido: apellido,
-          EstatusUsuarios: {
-            connect: {
-              idEstatus: 1,
-            },
-          },
+          estatus: EstatusUsuario.ACTIVE,
           email: email,
           password: await cipher.encrypt(password),
         },

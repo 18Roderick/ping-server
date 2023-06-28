@@ -5,12 +5,9 @@ WORKDIR /home/app
 
 COPY package*.json .
 COPY . .
-RUN npm install 
+RUN npm install
 
 RUN npx prisma generate
-
-
-
 
 #RUN npm run run:seeds
 
@@ -18,9 +15,13 @@ RUN npx prisma generate
 #ENV user_docker $user
 #ADD add_user.sh /datos1
 #RUN /datos1/add_user.sh
-
-
-CMD ["npm","start"]
-
+# Copy the production dependencies from the deps stage and also
+# the built application from the build stage into the image.
+# COPY --from=deps /home/app/node_modules ./node_modules
+# COPY --from=build /home/app/src ./src
 
 EXPOSE 3000
+
+CMD npm run dev
+
+

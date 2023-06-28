@@ -1,5 +1,6 @@
 import { v4 as uuid } from "uuid";
-import { PrismaClient, TasksEstatus, TasksTypes } from "@prisma/client";
+
+import { PrismaClient, TasksEstatus, TasksTypes, Prisma } from "@prisma/client";
 
 import { makePing } from "../utils/pingServer";
 
@@ -8,7 +9,6 @@ import * as PingServices from "./pingServices";
 import * as monitorQueue from "../tasks/monitorQueue";
 
 import { updateServerSchema } from "./schemas";
-import { Prisma } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -139,7 +139,6 @@ export const createUserServer = async function (bodyServer) {
           ip: bodyServer.ip,
         },
       },
-      EstatusUsuarios: true,
     },
   });
   const taskPing = await PingServices.addServerPing(servidor.Servidores[0]);

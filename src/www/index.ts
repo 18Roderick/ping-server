@@ -1,11 +1,13 @@
-const http = require("http");
-const socket = require("socket.io");
+import * as dotenv from "dotenv";
+dotenv.config();
 
+import * as http from "node:http";
+import * as socketIo from "socket.io";
 //const { sequelize } = require("../models");
 
-const app = require("../app");
+import app from "../app";
 
-const config = require("../config/configEnv");
+import config from "../config/configEnv";
 
 //const pingWorker = require("../tasks/taskManager");
 
@@ -13,7 +15,7 @@ const httpServer = http.createServer(app);
 
 const options = {};
 
-const io = socket(httpServer, options);
+const io = new socketIo.Server(httpServer, options);
 
 //let eventHanlder = pingWorker.Event();
 

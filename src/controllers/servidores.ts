@@ -1,5 +1,9 @@
+import { PrismaClient } from "@prisma/client";
+
 import * as ServidoresServices from "../services/servidoresServices";
+
 import * as UsuariosServices from "../services/usuariosServices";
+
 import { validationResult } from "express-validator";
 
 const prisma = new PrismaClient();

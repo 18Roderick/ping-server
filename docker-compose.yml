@@ -23,22 +23,23 @@ services:
       dockerfile: "Dockerfile"
     #image: "node-ping"
     container_name: ping-server
-    user: "node"
     restart: unless-stopped
     working_dir: /home/app
+    env_file: ./.env
     depends_on:
       - database
+      - redis
     environment:
       - NODE_ENV=development
-      - ./.env
       - DATABASE_HOST=database
+      - REDIS_HOST=redis
     volumes:
       - ./:/home/app
     networks:
       - ping-net
     ports:
       - 3000:3000
-    command: " npm run dev"
+    command: "npm run dev"
     #  -"npm rebuild bcrypt --build-from-source"
   redis:
     image: redis:7.0-rc1-alpine

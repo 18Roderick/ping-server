@@ -1,6 +1,7 @@
-import "dotenv";
+import * as dotenv from "dotenv";
+dotenv.config();
 
-interface ServerConfig {
+export interface ServerConfig {
   PORT: number | string;
   tokenSecret: string | undefined;
   tokenAlgorithm: string | undefined;

@@ -10,8 +10,6 @@ import estatusUsuarios from "../data/estatusUsuarios.json";
 
 const taskVerifyDatabaseData = "taskVerifyDatabaseData" as const;
 
-const monitorTasks = {};
-
 const prisma = new PrismaClient();
 
 serverTasks.process(async function (job, done) {
@@ -80,5 +78,3 @@ export const verifyDatabaseData = async function () {
     return lastJob.id;
   }
 };
-
-module.exports = monitorTasks;

@@ -1,6 +1,8 @@
+import { v4 as uuid } from "uuid";
 import { queueTypes, INTERVALS, pingMonitor } from "./QueueManager";
 
-import { PrismaClient, TasksTypes, TasksEstatus } from "prisma";
+import { PrismaClient, TasksTypes, TasksEstatus } from "@prisma/client";
+
 import * as monitorConsumer from "./process/monitorProcess";
 
 const JOB_TYPES = {
@@ -30,7 +32,7 @@ pingMonitor.process(JOB_TYPES.DAILY, monitorConsumer.dailySummary);
 //agregar worker de ping
 export const addPing = async function (payload) {
   if (!payload) return false;
-  const unique = UUID();
+  const unique = uuid();
   const job = await pingMonitor.add(queueTypes.pingMonitor, payload, {
     repeat: {
       every: INTERVALS.TWO_MINUTES,
@@ -42,7 +44,7 @@ export const addPing = async function (payload) {
 
 //agregar worker de ping
 export const dailySummary = async function () {
-  const unique = UUID();
+  const unique = uuid();
   //add a job to summarize the daily data
   let task = await prisma.tasks.findFirst({
     where: {
@@ -68,7 +70,7 @@ export const dailySummary = async function () {
     task = await prisma.tasks.create({
       data: {
         type: TasksTypes.SUMMARY,
-        idTask: job?.id,
+        idTask: job?.id as string,
         estatus: TasksEstatus.running,
       },
     });
@@ -80,7 +82,7 @@ export const dailySummary = async function () {
       task = await prisma.tasks.update({
         where: { id: task.id },
         data: {
-          idTask: job?.id,
+          idTask: job?.id as string,
         },
       });
     }

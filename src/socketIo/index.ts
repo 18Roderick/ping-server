@@ -1,21 +1,17 @@
-require("dotenv").config();
+import * as dotenv from "dotenv";
+dotenv.config();
 
-const http = require("http");
-
-const socketIo = require("socket.io");
-
-
+import * as http from "node:http";
+import * as socketIo from "socket.io";
 
 const server = http.createServer();
 
 const SERVER_PORT = process.env.SERVER_PORT || 3000;
 const SOCKET_PORT = process.env.SERVER_PORT || 3030;
 
-const url = process.env.PRODUCTION
-  ? `http://localhost:${SERVER_PORT}`
-  : `http://localhost:${SERVER_PORT}`;
+const url = process.env.PRODUCTION ? `http://localhost:${SERVER_PORT}` : `http://localhost:${SERVER_PORT}`;
 
-const io = socketIo(server, {
+const io = new socketIo.Server(server, {
   cors: {
     origin: url,
   },

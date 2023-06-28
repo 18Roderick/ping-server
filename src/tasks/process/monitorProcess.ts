@@ -1,4 +1,4 @@
-import { PrismaClient, Prisma, TasksEstatus } from "prisma";
+import { PrismaClient, Prisma, TasksEstatus } from "@prisma/client";
 import { DateTime } from "luxon";
 
 import { makePing } from "../../utils/pingServer";
@@ -80,11 +80,11 @@ export const dailySummary = async (job, done) => {
         const queryDelete = queryDeleteDayBeforePing(se.idServidor, date, dateBefore);
 
         //summary of pings alive
-        const pingAlive = await prisma.$queryRaw(query);
+        const pingAlive = await prisma.$queryRaw<unknown[]>(query);
         //summary of pings down
-        const pingDown = await prisma.$queryRaw(queryDown);
+        const pingDown = await prisma.$queryRaw<unknown[]>(queryDown);
 
-        const summary = [...pingAlive, ...pingDown].map((ping) => ({
+        const summary = [...pingAlive, ...pingDown].map((ping: any) => ({
           ...ping,
           isAlive: ping.avg ? true : false,
           idServidor: se.idServidor,
@@ -123,6 +123,9 @@ export const pingConsumer = async (job, done) => {
         where: {
           idServidor: server.idServidor,
         },
+        include: {
+          Tasks: true,
+        },
       });
 
       //delete task if server doesn't exist
@@ -130,7 +133,7 @@ export const pingConsumer = async (job, done) => {
         await job.discard();
         await prisma.tasks.update({
           where: {
-            idServidor: server.idServidor,
+            idTask: findServer.Tasks[0].idTask,
           },
           data: {
             estatus: TasksEstatus.deleted,

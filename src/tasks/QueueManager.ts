@@ -1,7 +1,7 @@
-import Queue from "bull";
-import config from "../config/configEnv";
+import * as Queue from "bull";
+import config, { ServerConfig } from "../config/configEnv";
 
-const { redis } = config;
+const { redis } = config as ServerConfig;
 
 export const queueTypes = {
   webSocketMessage: "websocketMessage",
