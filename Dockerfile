@@ -5,9 +5,14 @@ WORKDIR /home/app
 
 COPY package*.json .
 COPY . .
-RUN npm install
 
-RUN npx prisma generate
+RUN npm install -g pnpm
+RUN npm install -g nodemon
+
+RUN pnpm install
+
+RUN pnpm run build
+RUN pnpm prisma generate
 
 #RUN npm run run:seeds
 
@@ -22,6 +27,6 @@ RUN npx prisma generate
 
 EXPOSE 3000
 
-CMD npm run dev
+CMD pnpm run dev
 
 
