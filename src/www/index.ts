@@ -20,12 +20,12 @@ const io = new socketIo.Server(httpServer, options);
 //let eventHanlder = pingWorker.Event();
 
 io.on("connection", (socket) => {
-  console.log("a user connected");
-  socket.on("disconnect", () => {
-    console.log("user disconnected");
-  });
+	console.log("a user connected");
+	socket.on("disconnect", () => {
+		console.log("user disconnected");
+	});
 
-  /*   eventHanlder.on("ping", (data) => {
+	/*   eventHanlder.on("ping", (data) => {
     socket.emit("serverPing", data);
   }); */
 });
@@ -34,7 +34,7 @@ io.on("connection", (socket) => {
 // 	.authenticate()
 // 	.then(() => {
 httpServer.listen(config.PORT, () => {
-  console.log(`servidor corriendo en puerto ${config.PORT}`);
+	console.log(`servidor corriendo en puerto ${config.PORT}`);
 });
 // })
 // .catch((err) => {
