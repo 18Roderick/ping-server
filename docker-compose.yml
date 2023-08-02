@@ -37,7 +37,7 @@ services:
       - ping-net
     ports:
       - 3000:3000
-    command: "npm run dev"
+    command: "npm run start:dev"
     #  -"npm rebuild bcrypt --build-from-source"
   redis:
     image: redis:7.0-rc1-alpine
