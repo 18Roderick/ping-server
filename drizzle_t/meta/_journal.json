@@ -1,0 +1,13 @@
+{
+  "version": "5",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1709339411297,
+      "tag": "0000_silly_mister_fear",
+      "breakpoints": true
+    }
+  ]
+}

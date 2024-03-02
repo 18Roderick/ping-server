@@ -22,9 +22,9 @@ model Users {
 
 model Servers {
   idServer     String         @id @default(uuid())
-  url          String
-  ip           String
-  description  String
+  url          String?
+  ip           String?
+  description  String?
   title        String
   status       SERVERSTATUS   @default(ACTIVE)
   workerType   WORKERTYPE
