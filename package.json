@@ -8,7 +8,7 @@
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "check:safe": "rome check --apply ./src ./test ",
+    "check:safe": "biome check --apply ./src ./test ",
     "start": "nest start -b swc --type-check",
     "start:dev": "nest start -b swc -w",
     "start:debug": "nest start --debug --watch",
@@ -30,7 +30,9 @@
     "@nestjs/mapped-types": "^2.0.5",
     "@nestjs/passport": "^10.0.3",
     "@nestjs/platform-express": "^10.3.3",
+    "@nestjs/platform-socket.io": "^10.3.3",
     "@nestjs/swagger": "^7.3.0",
+    "@nestjs/websockets": "^10.3.3",
     "@prisma/client": "^5.10.2",
     "@types/passport-jwt": "^4.0.1",
     "bcrypt": "^5.1.1",
@@ -44,7 +46,8 @@
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "reflect-metadata": "^0.2.1",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "socket.io": "^4.7.4"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.3.2",

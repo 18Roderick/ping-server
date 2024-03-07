@@ -1,8 +1,7 @@
 import { InjectQueue } from '@nestjs/bull';
 import { Injectable } from '@nestjs/common';
-import Bull, { CronRepeatOptions, Queue } from 'bull';
+import { Queue } from 'bull';
 import { CONSUMERS, CRON_TIME, PING_QUEUE } from './constants';
-import { searchRepeatable } from 'src/utils/queueHelpers';
 
 @Injectable()
 export class TaskService {
@@ -42,14 +41,12 @@ export class TaskService {
   }
   async deleteJob(id: string) {
     console.log('removing job ', id);
-    const jobs = await this.transcodeQueue.getRepeatableJobs();
-    const keys = (await this.transcodeQueue.getJob(id)).opts.repeat as {
+    const job = await this.transcodeQueue.getJob(id);
+    const keys = job.opts.repeat as {
       count: number;
       key: string;
       cron: string;
     };
-    const jobIndex = searchRepeatable(jobs, id);
-    console.log('indice', keys, jobs, jobIndex);
 
     return await this.transcodeQueue.removeRepeatableByKey(keys.key);
   }

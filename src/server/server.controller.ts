@@ -1,8 +1,8 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards';
 import { ApiTags } from '@nestjs/swagger';
 import { ServerService } from './server.service';
-import { CreateServerDto } from './dto/create-server.dto';
+import { CreateServerDto, UpdateServerDto } from './dto/create-server.dto';
 import { GetUser } from 'src/auth/decorators';
 import { Users } from '@prisma/client';
 
@@ -19,5 +19,15 @@ export class ServerController {
   @Post()
   createServer(@Body() serverDto: CreateServerDto, @GetUser() user: Users) {
     return this.serverService.create(serverDto, user.idUser);
+  }
+
+  @Put()
+  UpdateServer(serverDto: UpdateServerDto, @GetUser() user: Users) {
+    return this.serverService.updateUserServer(serverDto, user.idUser);
+  }
+
+  @Delete(':id')
+  removeTaskJob(@Param('id') idServer: string, @GetUser() user: Users) {
+    return this.serverService.deleteServer(idServer, user.idUser);
   }
 }

@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './services/prisma.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TaskModule } from './task/task.module';
+import { EventsModule } from './events/events.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { TaskModule } from './task/task.module';
     AuthModule,
     PrismaModule,
     TaskModule,
+    EventsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

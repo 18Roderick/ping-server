@@ -4,10 +4,14 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { PrismaService } from './services/prisma.service';
 import { DocumentBuilder, SwaggerDocumentOptions, SwaggerModule } from '@nestjs/swagger';
+import { IoAdapter } from '@nestjs/platform-socket.io';
+// import { SocketIoAdapter } from './adapters/SocketIoAdapter';
+// import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  //const configService = app.get(ConfigService);
   //habilitar shutdown hook de prisma
   const prismaService = app.get(PrismaService);
 
@@ -28,6 +32,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config, options);
   SwaggerModule.setup('docs', app, document);
 
+  app.use(helmet());
   app.enableCors();
 
   app.useGlobalPipes(
@@ -37,7 +42,12 @@ async function bootstrap() {
     }),
   );
 
-  app.use(helmet());
+  // app.useWebSocketAdapter(new SocketIoAdapter(app, configService));
+
+  app.useWebSocketAdapter(new IoAdapter(app));
+
   await app.listen(3000);
+
+  console.log(`Application is running on: ${await app.getUrl()}`);
 }
 bootstrap();

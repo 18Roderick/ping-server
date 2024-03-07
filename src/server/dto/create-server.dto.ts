@@ -1,4 +1,6 @@
-import { IsIP, IsOptional, IsUrl, IsNotEmpty } from 'class-validator';
+import { IsIP, IsOptional, IsUrl, IsNotEmpty, IsUUID } from 'class-validator';
+import { PartialType } from '@nestjs/mapped-types';
+
 export class CreateServerDto {
   @IsOptional()
   @IsUrl()
@@ -13,4 +15,9 @@ export class CreateServerDto {
 
   @IsNotEmpty()
   title: string;
+}
+
+export class UpdateServerDto extends PartialType(CreateServerDto) {
+  @IsUUID()
+  idServer: string;
 }
