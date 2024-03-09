@@ -21,37 +21,31 @@ model Users {
 }
 
 model Servers {
-  idServer     String         @id @default(uuid())
-  url          String?
-  ip           String?
-  description  String?
-  title        String
-  status       SERVERSTATUS   @default(ACTIVE)
-  workerType   WORKERTYPE
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  Users        Users?         @relation(fields: [idUser], references: [idUser])
-  idUser       String?
-  TasksServers TasksServers[]
-  Ping         Pings[]
+  idServer    String       @id @default(uuid())
+  url         String?
+  ip          String?
+  description String?
+  title       String
+  status      SERVERSTATUS @default(ACTIVE)
+  workerType  WORKERTYPE
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  Users       Users?       @relation(fields: [idUser], references: [idUser])
+  idUser      String?
+  Tasks       Tasks[]
+  Ping        Pings[]
 }
 
 model Tasks {
-  idTask       String         @id @default(uuid())
-  log          String
-  type         TASKTYPES      @default(UNDEFINED)
-  interval     BigInt
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  TasksServers TasksServers[]
-}
-
-model TasksServers {
-  id             String  @id @default(uuid())
-  idServer       Servers @relation(fields: [serverIdServer], references: [idServer])
-  idTask         Tasks   @relation(fields: [taskIdTask], references: [idTask])
-  taskIdTask     String
-  serverIdServer String
+  idTask          String    @id @default(uuid())
+  idJob           String
+  log             String
+  type            TASKTYPES @default(UNDEFINED)
+  cron            String
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  Servers         Servers?  @relation(fields: [serversIdServer], references: [idServer], onDelete: Cascade)
+  serversIdServer String?
 }
 
 model Pings {

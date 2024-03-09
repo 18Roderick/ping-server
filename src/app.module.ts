@@ -9,14 +9,15 @@ import { PrismaModule } from './services/prisma.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TaskModule } from './task/task.module';
 import { EventsModule } from './events/events.module';
+import { Config, config } from './config/config';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({ isGlobal: true, validate: config }),
     BullModule.forRootAsync({
-      useFactory: async (config: ConfigService) => {
-        const host: string = config.get('redis_host');
-        const port: number = config.get('redis_port');
+      useFactory: async (config: ConfigService<Config>) => {
+        const host: string = config.get('REDIS_HOST');
+        const port: number = config.get('REDIS_PORT');
         return { redis: { host, port } };
       },
       inject: [ConfigService],

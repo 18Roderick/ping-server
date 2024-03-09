@@ -9,4 +9,5 @@ export enum CRON_TIME {
 
 export enum CONSUMERS {
   PING_SERVER = 'PING_SERVER',
+  ADD_PING_TASK = 'ADD_PING_TASK',
 }

@@ -1,7 +1,7 @@
 import { Body, Controller, Post, HttpCode } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ITokenResponse } from './interfaces';
-import { CreateUserDto } from '../user/dto/create-user.dto';
+import { CreateUserDto } from '../user/dto/user.dto';
 import { AuthDto } from './dto/auth.dto';
 import { ApiTags } from '@nestjs/swagger';
 

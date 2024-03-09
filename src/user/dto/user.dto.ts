@@ -15,4 +15,15 @@ export class CreateUserDto {
   readonly name: string;
 }
 
-export class UpdateUser extends PartialType(OmitType(CreateUserDto, ['email'] as const)) {}
+export class UpdateUserDto extends PartialType(
+  OmitType(CreateUserDto, ['email', 'password'] as const),
+) {}
+
+export class UpdateUserPasswordDto {
+  @IsString()
+  oldPassword: string;
+
+  @IsString()
+  @IsStrongPassword()
+  newPassword: string;
+}

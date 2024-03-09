@@ -1,7 +1,7 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { AuthDto } from './dto/auth.dto';
-import { CreateUserDto } from '../user/dto/create-user.dto';
+import { CreateUserDto } from '../user/dto/user.dto';
 import { Prisma, Users } from '@prisma/client';
 import { PrismaService } from '../services/prisma.service';
 import { ConfigService } from '@nestjs/config';

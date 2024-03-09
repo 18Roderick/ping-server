@@ -23,6 +23,7 @@ specifiers:
   '@types/jest': 29.5.12
   '@types/node': 20.11.24
   '@types/passport-jwt': ^4.0.1
+  '@types/ping': ^0.4.4
   '@types/supertest': ^6.0.2
   '@typescript-eslint/eslint-plugin': ^7.1.0
   '@typescript-eslint/parser': ^7.1.0
@@ -41,6 +42,7 @@ specifiers:
   mysql2: ^3.9.2
   passport: ^0.7.0
   passport-jwt: ^4.0.1
+  ping: ^0.4.4
   prettier: ^3.2.5
   prisma: ^5.10.2
   reflect-metadata: ^0.2.1
@@ -53,6 +55,7 @@ specifiers:
   ts-node: ^10.9.2
   tsconfig-paths: 4.2.0
   typescript: ^5.3.3
+  zod: ^3.22.4
 
 dependencies:
   '@nestjs/bull': 10.1.0_jps7sfdzqhwqllyf4cw7txbcom
@@ -78,9 +81,11 @@ dependencies:
   mysql2: 3.9.2
   passport: 0.7.0
   passport-jwt: 4.0.1
+  ping: 0.4.4
   reflect-metadata: 0.2.1
   rxjs: 7.8.1
   socket.io: 4.7.4
+  zod: 3.22.4
 
 devDependencies:
   '@nestjs/cli': 10.3.2_tftarip7vo7twb6iovunlocheu
@@ -92,6 +97,7 @@ devDependencies:
   '@types/express': 4.17.21
   '@types/jest': 29.5.12
   '@types/node': 20.11.24
+  '@types/ping': 0.4.4
   '@types/supertest': 6.0.2
   '@typescript-eslint/eslint-plugin': 7.1.0_dvc3ospnkwz4tsyaoocmvwzvo4
   '@typescript-eslint/parser': 7.1.0_rszs4ssu3hjbruhzajramqeml4
@@ -2192,6 +2198,10 @@ packages:
     dependencies:
       '@types/express': 4.17.21
     dev: false
+
+  /@types/ping/0.4.4:
+    resolution: {integrity: sha512-ifvo6w2f5eJYlXm+HiVx67iJe8WZp87sfa683nlqED5Vnt9Z93onkokNoWqOG21EaE8fMxyKPobE+mkPEyxsdw==}
+    dev: true
 
   /@types/qs/6.9.12:
     resolution: {integrity: sha512-bZcOkJ6uWrL0Qb2NAWKa7TBU+mJHPzhx9jjLL1KHF+XpzEcR7EXHvjbHlGtR/IsP1vyPrehuS6XqkmaePy//mg==}
@@ -6225,6 +6235,11 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
+  /ping/0.4.4:
+    resolution: {integrity: sha512-56ZMC0j7SCsMMLdOoUg12VZCfj/+ZO+yfOSjaNCRrmZZr6GLbN2X/Ui56T15dI8NhiHckaw5X2pvyfAomanwqQ==}
+    engines: {node: '>=4.0.0'}
+    dev: false
+
   /pirates/4.0.6:
     resolution: {integrity: sha512-saLsH7WeYYPiD25LDuLRRY/i+6HaPYr6G1OUlN39otzkSTxKnubR9RTxS3/Kk50s1g2JTgFwWQDQyplC5/SHZg==}
     engines: {node: '>= 6'}
@@ -7518,4 +7533,3 @@ packages:
 
   /zod/3.22.4:
     resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==}
-    dev: true
