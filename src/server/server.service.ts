@@ -66,6 +66,23 @@ export class ServerService {
     });
   }
 
+  async getServer(serverId: string) {
+    return this.prismaService.servers.findFirst({
+      where: {
+        idServer: serverId,
+      },
+      include: {
+        Ping: {
+          orderBy: {
+            createdAt: 'desc',
+          },
+          take: 1,
+        },
+        Tasks: true,
+      },
+    });
+  }
+
   async updateUserServer(serverDto: UpdateServerDto, idUser: string) {
     const serverRequest: Prisma.ServersUpdateInput = {
       idServer: serverDto.idServer,

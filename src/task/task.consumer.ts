@@ -5,7 +5,9 @@ import { CONSUMERS, CRON_TIME, PING_QUEUE } from './constants';
 import { AddPingTask } from './dtos/task.dto';
 import { PrismaService } from '@/services/prisma.service';
 import { makePing } from '@/utils/ping/ping';
-import { TASKTYPES } from '@prisma/client';
+import { ErrorLevel, TASKTYPES } from '@prisma/client';
+import { randomUUID } from 'crypto';
+import { TaskService } from './task.service';
 
 @Processor(PING_QUEUE)
 export class TaskConsumer {
@@ -14,6 +16,7 @@ export class TaskConsumer {
   constructor(
     @InjectQueue(PING_QUEUE) private readonly taskQueue: Queue,
     private readonly prismaService: PrismaService,
+    private readonly taskService: TaskService,
   ) {}
 
   @Process(CONSUMERS.PING_SERVER)
@@ -25,12 +28,20 @@ export class TaskConsumer {
           idServer: job.data.idServer,
           AND: [{ idUser: job.data.idUser }],
         },
+        include: {
+          Tasks: {
+            take: 1,
+          },
+        },
       });
 
       if (!server) {
+        //remover tarea en caso de que el servidor ya no exista
         this.logger.error('SERVER NOT FOUND', job.data.idServer);
+        this.taskService.deleteJob(String(job.id));
         return job.moveToFailed({ message: 'SERVER NOT FOUND' });
       }
+      this.logger.debug('SERVER: ' + server.url, server.ip);
 
       let destination: string;
 
@@ -76,11 +87,39 @@ export class TaskConsumer {
         this.logger.log('adding ping to table');
       } else {
         this.logger.warn('PING DATA FAILED ', pingData);
+        const [task] = server.Tasks;
+        //update task to aument the counter retries
+        if (task) {
+          //demasiados intentos eliminar o supender tareas
+
+          if (task.retriesFailed > 3) {
+          } else {
+            //aumentar contador de tarea fallida
+            await this.prismaService.tasks.update({
+              data: {
+                retriesFailed: task.retriesFailed + 1,
+              },
+              where: {
+                serversIdServer: server.idServer,
+                idTask: task.idTask,
+              },
+            });
+          }
+        }
       }
 
       this.logger.debug('END PING');
-    } catch (err) {
+    } catch (err: unknown) {
       this.logger.fatal(err);
+      if (err instanceof Error) {
+        this.prismaService.logs.create({
+          data: {
+            description: err.message,
+            errorLevel: ErrorLevel.CRITICAL,
+            action: CONSUMERS.PING_SERVER,
+          },
+        });
+      }
     }
   }
 
@@ -111,6 +150,7 @@ export class TaskConsumer {
           cron: CRON_TIME.EVERY_MINUTE,
         },
         lifo: true,
+        jobId: randomUUID(),
       },
     );
 

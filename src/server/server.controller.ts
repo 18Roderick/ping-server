@@ -12,8 +12,13 @@ import { Users } from '@prisma/client';
 export class ServerController {
   constructor(private readonly serverService: ServerService) {}
   @Get()
-  getServer(@GetUser() user: Users) {
+  getServers(@GetUser() user: Users) {
     return this.serverService.getUserServers(user.idUser);
+  }
+
+  @Get(':id')
+  getServer(@Param('id') idServer: string) {
+    return this.serverService.getServer(idServer);
   }
 
   @Post()

@@ -37,15 +37,17 @@ model Servers {
 }
 
 model Tasks {
-  idTask          String    @id @default(uuid())
+  idTask          String      @id @default(uuid())
   idJob           String
   log             String
-  type            TASKTYPES @default(UNDEFINED)
+  type            TASKTYPES   @default(UNDEFINED)
   cron            String
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-  Servers         Servers?  @relation(fields: [serversIdServer], references: [idServer], onDelete: Cascade)
+  status          TASKSSTATUS @default(RUNNING)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  Servers         Servers?    @relation(fields: [serversIdServer], references: [idServer], onDelete: Cascade)
   serversIdServer String?
+  retriesFailed   Int         @default(0)
 }
 
 model Pings {
@@ -61,6 +63,27 @@ model Pings {
   createdAt       DateTime @default(now())
   Servers         Servers? @relation(fields: [serversIdServer], references: [idServer])
   serversIdServer String?
+}
+
+// Definición del modelo Log
+model Logs {
+  id             Int        @id @default(autoincrement())
+  idUser         String?
+  createdAt      DateTime   @default(now())
+  action         String
+  errorLevel     ErrorLevel
+  description    String
+  affectedEntity String?
+}
+
+enum ErrorLevel {
+  INFO
+  WARNING
+  ERROR
+  CRITICAL
+
+  // Agrega más niveles de error según sea necesario
+  @@map("NivelError")
 }
 
 enum SERVERSTATUS {

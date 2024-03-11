@@ -10,6 +10,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TaskModule } from './task/task.module';
 import { EventsModule } from './events/events.module';
 import { Config, config } from './config/config';
+import { LogsService } from './logs/logs.service';
+import { LogsModule } from './logs/logs.module';
 
 @Module({
   imports: [
@@ -28,8 +30,9 @@ import { Config, config } from './config/config';
     PrismaModule,
     TaskModule,
     EventsModule,
+    LogsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, LogsService],
 })
 export class AppModule {}
