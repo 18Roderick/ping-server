@@ -131,6 +131,8 @@ export class ServerService {
     if (!server) {
       throw new BadRequestException('Server not found');
     }
+    //TODO: stop pings
+    //chnage status of the task
 
     await this.prismaService.servers.delete({
       where: {

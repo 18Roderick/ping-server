@@ -12,6 +12,9 @@ import { EventsModule } from './events/events.module';
 import { Config, config } from './config/config';
 import { LogsService } from './logs/logs.service';
 import { LogsModule } from './logs/logs.module';
+import { Jobs } from './jobs/jobs';
+import { JobsModule } from './jobs/jobs.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -24,6 +27,7 @@ import { LogsModule } from './logs/logs.module';
       },
       inject: [ConfigService],
     }),
+    ScheduleModule.forRoot(),
     ServerModule,
     UserModule,
     AuthModule,
@@ -31,8 +35,9 @@ import { LogsModule } from './logs/logs.module';
     TaskModule,
     EventsModule,
     LogsModule,
+    JobsModule,
   ],
   controllers: [AppController],
-  providers: [AppService, LogsService],
+  providers: [AppService, LogsService, Jobs],
 })
 export class AppModule {}

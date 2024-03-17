@@ -1,0 +1,440 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "prevId": "",
+  "version": "5",
+  "dialect": "mysql",
+  "tables": {
+    "Logs": {
+      "name": "Logs",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "idUser": {
+          "autoincrement": false,
+          "name": "idUser",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdAt": {
+          "default": "'CURRENT_TIMESTAMP(3)'",
+          "autoincrement": false,
+          "name": "createdAt",
+          "type": "datetime(3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "action": {
+          "autoincrement": false,
+          "name": "action",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "errorLevel": {
+          "autoincrement": false,
+          "name": "errorLevel",
+          "type": "enum('INFO','WARNING','ERROR','CRITICAL')",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "autoincrement": false,
+          "name": "description",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "affectedEntity": {
+          "autoincrement": false,
+          "name": "affectedEntity",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {}
+    },
+    "Pings": {
+      "name": "Pings",
+      "columns": {
+        "idPing": {
+          "autoincrement": false,
+          "name": "idPing",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "times": {
+          "autoincrement": false,
+          "name": "times",
+          "type": "double",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "packetLoss": {
+          "autoincrement": false,
+          "name": "packetLoss",
+          "type": "double",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "min": {
+          "autoincrement": false,
+          "name": "min",
+          "type": "double",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "max": {
+          "autoincrement": false,
+          "name": "max",
+          "type": "double",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "avg": {
+          "autoincrement": false,
+          "name": "avg",
+          "type": "double",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "log": {
+          "autoincrement": false,
+          "name": "log",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "isAlive": {
+          "autoincrement": false,
+          "name": "isAlive",
+          "type": "tinyint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "numericHost": {
+          "autoincrement": false,
+          "name": "numericHost",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "default": "'CURRENT_TIMESTAMP(3)'",
+          "autoincrement": false,
+          "name": "createdAt",
+          "type": "datetime(3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "serversIdServer": {
+          "autoincrement": false,
+          "name": "serversIdServer",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "Pings_serversIdServer_fkey": {
+          "name": "Pings_serversIdServer_fkey",
+          "tableFrom": "Pings",
+          "tableTo": "Servers",
+          "columnsFrom": [
+            "serversIdServer"
+          ],
+          "columnsTo": [
+            "idServer"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "cascade"
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "Servers": {
+      "name": "Servers",
+      "columns": {
+        "idServer": {
+          "autoincrement": false,
+          "name": "idServer",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "url": {
+          "autoincrement": false,
+          "name": "url",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ip": {
+          "autoincrement": false,
+          "name": "ip",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "description": {
+          "autoincrement": false,
+          "name": "description",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "title": {
+          "autoincrement": false,
+          "name": "title",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "default": "'ACTIVE'",
+          "autoincrement": false,
+          "name": "status",
+          "type": "enum('ACTIVE','INACTIVE')",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "workerType": {
+          "autoincrement": false,
+          "name": "workerType",
+          "type": "enum('SERVER','URL')",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "default": "'CURRENT_TIMESTAMP(3)'",
+          "autoincrement": false,
+          "name": "createdAt",
+          "type": "datetime(3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updatedAt": {
+          "autoincrement": false,
+          "name": "updatedAt",
+          "type": "datetime(3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "idUser": {
+          "autoincrement": false,
+          "name": "idUser",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "Servers_idUser_fkey": {
+          "name": "Servers_idUser_fkey",
+          "tableFrom": "Servers",
+          "tableTo": "Users",
+          "columnsFrom": [
+            "idUser"
+          ],
+          "columnsTo": [
+            "idUser"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "cascade"
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "Tasks": {
+      "name": "Tasks",
+      "columns": {
+        "idTask": {
+          "autoincrement": false,
+          "name": "idTask",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "idJob": {
+          "autoincrement": false,
+          "name": "idJob",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "log": {
+          "autoincrement": false,
+          "name": "log",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "default": "'UNDEFINED'",
+          "autoincrement": false,
+          "name": "type",
+          "type": "enum('UNDEFINED','SERVER','BACKGROUND','SUMMARY','ADMIN','DAILY')",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cron": {
+          "autoincrement": false,
+          "name": "cron",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "default": "'RUNNING'",
+          "autoincrement": false,
+          "name": "status",
+          "type": "enum('RUNNING','STOPPED','DELETED','WAITING')",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "default": "'CURRENT_TIMESTAMP(3)'",
+          "autoincrement": false,
+          "name": "createdAt",
+          "type": "datetime(3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updatedAt": {
+          "autoincrement": false,
+          "name": "updatedAt",
+          "type": "datetime(3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "serversIdServer": {
+          "autoincrement": false,
+          "name": "serversIdServer",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "retriesFailed": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "retriesFailed",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "Tasks_serversIdServer_fkey": {
+          "name": "Tasks_serversIdServer_fkey",
+          "tableFrom": "Tasks",
+          "tableTo": "Servers",
+          "columnsFrom": [
+            "serversIdServer"
+          ],
+          "columnsTo": [
+            "idServer"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "Users": {
+      "name": "Users",
+      "columns": {
+        "idUser": {
+          "autoincrement": false,
+          "name": "idUser",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lastName": {
+          "autoincrement": false,
+          "name": "lastName",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "autoincrement": false,
+          "name": "email",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "password": {
+          "autoincrement": false,
+          "name": "password",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "default": "'CURRENT_TIMESTAMP(3)'",
+          "autoincrement": false,
+          "name": "createdAt",
+          "type": "datetime(3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updatedAt": {
+          "autoincrement": false,
+          "name": "updatedAt",
+          "type": "datetime(3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "default": "'ACTIVE'",
+          "autoincrement": false,
+          "name": "status",
+          "type": "enum('ACTIVE','INACTIVE')",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {
+        "Users_email_key": {
+          "name": "Users_email_key",
+          "columns": [
+            "email"
+          ]
+        }
+      }
+    }
+  },
+  "schemas": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  }
+}
