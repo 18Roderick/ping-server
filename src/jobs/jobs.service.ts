@@ -1,6 +1,5 @@
 import { DrizzleDb } from '@/db';
 import { servers } from '@/db/schemas';
-import { PrismaService } from '@/services/prisma.service';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { avg, count, eq, sql } from 'drizzle-orm';
@@ -12,7 +11,6 @@ export class JobsService {
   private readonly logger = new Logger(JobsService.name);
 
   constructor(
-    private readonly prismaService: PrismaService,
     @Inject('DB') private readonly db: DrizzleDb,
   ) {}
 

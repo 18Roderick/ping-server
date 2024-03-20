@@ -1,19 +1,18 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { PrismaService } from '@/services/prisma.service';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { eq } from 'drizzle-orm';
 import { UpdateUserDto } from './dto/user.dto';
+import { DrizzleDb } from '@/db';
+import { users } from '@/db/schemas';
 
-const PrismaUserSelect = {
-  name: true,
-  email: true,
-  idUser: true,
-};
 
 @Injectable()
 export class UserService {
   /**
    *
    */
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    @Inject('DB') private readonly db: DrizzleDb,
+  ) {}
 
   /**
    * @description method should  only be available for admins
@@ -23,36 +22,54 @@ export class UserService {
   }
 
   findOne(userId: string) {
-    return this.prismaService.users.findFirst({
-      where: {
-        idUser: userId,
-      },
-      select: PrismaUserSelect,
-    });
+    return this.db
+      .select({
+        email: users.email,
+        name: users.name,
+        lastName: users.lastName,
+        updatedAt: users.updatedAt,
+      })
+      .from(users)
+      .where(eq(users.idUser, userId));
   }
 
   async update(userId: string, updateUserDto: UpdateUserDto) {
-    const user = await this.prismaService.users.findFirst({ where: { idUser: userId } });
+    const userQuery = this.getUserQuery(userId);
 
-    if (!user) throw new BadRequestException('user not found');
+    const user = await userQuery.execute();
+    if (!user.length) throw new BadRequestException('user not found');
 
-    return this.prismaService.users.update({
-      data: {
+    const updated = await this.db
+      .update(users)
+      .set({
         ...updateUserDto,
-      },
-      where: { idUser: userId },
-      select: PrismaUserSelect,
-    });
+      })
+      .where(eq(users.idUser, userId));
+
+    return userQuery.execute();
   }
 
   async remove(userId: string) {
-    const user = await this.prismaService.users.findFirst({ where: { idUser: userId } });
+    const user = await this.getUserQuery(userId).execute();
 
     if (!user) throw new BadRequestException('user not found');
 
-    return this.prismaService.users.delete({
-      where: { idUser: userId },
-      select: PrismaUserSelect,
-    });
+    const deleted = await this.db.delete(users).where(eq(users.idUser, userId));
+    return {
+      affected: deleted[0].affectedRows,
+    };
+  }
+
+  private getUserQuery(userId: string) {
+    return this.db
+      .select({
+        email: users.email,
+        name: users.name,
+        lastName: users.lastName,
+        updatedAt: users.updatedAt,
+      })
+      .from(users)
+      .where(eq(users.idUser, userId))
+      .prepare();
   }
 }

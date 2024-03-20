@@ -1,11 +1,9 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
-import { PrismaService } from '../services/prisma.service';
+import { BadRequestException, Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateServerDto, UpdateServerDto } from './dto/server.dto';
-import { WORKERTYPE, Prisma, Servers } from '@prisma/client';
 import { TaskService } from '@/task/task.service';
 import { DrizzleDb } from '@/db';
 import { eq, or, and, SQL } from 'drizzle-orm';
-import { pings, servers, tasks, users } from '@/db/schemas';
+import { Server, pings, servers, tasks, users } from '@/db/schemas';
 
 /**
  TODO: Create validations for repeted urls and ips
@@ -15,24 +13,14 @@ import { pings, servers, tasks, users } from '@/db/schemas';
 @Injectable()
 export class ServerService {
   constructor(
-    private readonly prismaService: PrismaService,
     private readonly taskService: TaskService,
     @Inject('DB') private readonly db: DrizzleDb,
   ) {}
 
-  async create(serverDto: CreateServerDto, idUser: string): Promise<Servers> {
-    const serverRequest: Prisma.ServersCreateInput = {
-      url: serverDto.url,
-      title: serverDto.title,
-      description: serverDto.description,
-      ip: serverDto.ip,
-      workerType: serverDto.ip ? WORKERTYPE.SERVER : WORKERTYPE.URL,
-      Users: {
-        connect: { idUser: idUser },
-      },
-    };
+  async create(serverDto: CreateServerDto, idUser: string): Promise<Server> {
 
-    const serverExist = await this.db
+    try {
+      const serverExist = await this.db
       .select({
         idUser: users.idUser,
         idServer: servers.idServer,
@@ -49,25 +37,38 @@ export class ServerService {
 
     if (serverExist.length) throw new BadRequestException('Server already exists');
 
-    const created = await this.prismaService.servers.create({ data: serverRequest });
+    // const created = await this.prismaService.servers.create({ data: serverRequest });
 
-    await this.db.insert(servers).values({
+    const created = await this.db.insert(servers).values({
       url: serverDto.url,
       title: serverDto.title,
       description: serverDto.description,
       ip: serverDto.ip,
-      workerType: serverDto.ip ? WORKERTYPE.SERVER : WORKERTYPE.URL,
-      idUser: serverExist[0].idUser,
+      workerType: serverDto.ip ? 'SERVER' : 'URL',
+      idUser: idUser,
     });
 
-    if (created) {
+    if (created[0].affectedRows > 0) {
+
+      const serversFind = await this.db.query.servers.findFirst({
+        where: and(eq(servers.idUser, idUser), eq(servers.url,serverDto.url)),
+      })
+
       await this.taskService.addPingServerTask({
-        idServer: created.idServer,
-        idUser: created.idUser,
+        idServer: serversFind.idServer,
+        idUser: idUser,
       });
+
+      return serversFind
+    }else {
+      console.log(created)
     }
 
-    return created;
+    } catch (error) {
+      console.log(error instanceof Error ? error?.message: "")
+      throw new InternalServerErrorException(error)
+    }
+    
   }
 
   async getUserServers(userId: string) {
@@ -102,7 +103,7 @@ export class ServerService {
         title: serverDto.title,
         description: serverDto.description,
         ip: serverDto.ip,
-        workerType: serverDto.ip ? WORKERTYPE.SERVER : WORKERTYPE.URL,
+        workerType: serverDto.ip ? 'SERVER' : 'URL',
       })
       .where(equalWhere);
 

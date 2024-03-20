@@ -1,12 +1,15 @@
 import { InjectQueue } from '@nestjs/bull';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Queue } from 'bull';
 import { CONSUMERS, CRON_TIME, PING_QUEUE } from './constants';
 import { AddPingTask } from './dtos/task.dto';
+import { DrizzleDb } from '@/db';
 
 @Injectable()
 export class TaskService {
-  constructor(@InjectQueue(PING_QUEUE) private readonly taskQueue: Queue) {}
+  constructor(@InjectQueue(PING_QUEUE) private readonly taskQueue: Queue,
+  @Inject('DB') private readonly db: DrizzleDb
+  ) {}
 
   getHello(): string {
     return 'Hello World!';

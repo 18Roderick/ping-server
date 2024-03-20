@@ -2,7 +2,6 @@ import { NestFactory } from '@nestjs/core';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-import { PrismaService } from './services/prisma.service';
 import { DocumentBuilder, SwaggerDocumentOptions, SwaggerModule } from '@nestjs/swagger';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 // import { SocketIoAdapter } from './adapters/SocketIoAdapter';
@@ -13,9 +12,6 @@ async function bootstrap() {
 
   //const configService = app.get(ConfigService);
   //habilitar shutdown hook de prisma
-  const prismaService = app.get(PrismaService);
-
-  await prismaService.enableShutDownHooks(app);
 
   const options: SwaggerDocumentOptions = {
     operationIdFactory: (controllerKey: string, methodKey: string) => methodKey,

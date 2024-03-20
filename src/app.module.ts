@@ -5,18 +5,15 @@ import { AppService } from './app.service';
 import { ServerModule } from './server/server.module';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
-import { PrismaModule } from './services/prisma.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TaskModule } from './task/task.module';
 import { EventsModule } from './events/events.module';
 import { Config, config } from './config/config';
 import { JobsModule } from './jobs/jobs.module';
 import { ScheduleModule } from '@nestjs/schedule';
-import mysql from 'mysql2/promise';
 import { DrizzleMySqlModule } from '@knaadh/nestjs-drizzle-mysql2';
 
 import * as schema from '@/db/schemas';
-import { INQUIRER } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -47,7 +44,6 @@ import { INQUIRER } from '@nestjs/core';
     ServerModule,
     UserModule,
     AuthModule,
-    PrismaModule,
     TaskModule,
     EventsModule,
     JobsModule,

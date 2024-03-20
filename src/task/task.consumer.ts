@@ -1,13 +1,13 @@
 import { InjectQueue, Process, Processor } from '@nestjs/bull';
-import { Logger } from '@nestjs/common';
+import { Inject, Logger } from '@nestjs/common';
 import { Job, Queue } from 'bull';
 import { CONSUMERS, CRON_TIME, PING_QUEUE } from './constants';
 import { AddPingTask } from './dtos/task.dto';
-import { PrismaService } from '@/services/prisma.service';
 import { makePing } from '@/utils/ping/ping';
 import { ErrorLevel, TASKTYPES } from '@prisma/client';
 import { randomUUID } from 'crypto';
 import { TaskService } from './task.service';
+import { DrizzleDb } from '@/db';
 
 @Processor(PING_QUEUE)
 export class TaskConsumer {
@@ -15,7 +15,7 @@ export class TaskConsumer {
 
   constructor(
     @InjectQueue(PING_QUEUE) private readonly taskQueue: Queue,
-    private readonly prismaService: PrismaService,
+    @Inject("db") private readonly db: DrizzleDb,
     private readonly taskService: TaskService,
   ) {}
 

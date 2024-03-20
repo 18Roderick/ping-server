@@ -14,7 +14,7 @@ export const servers = mysqlTable('Servers', {
   title: varchar('title', { length: 191 }).notNull(),
   status: mysqlEnum('status', ['ACTIVE', 'INACTIVE']).default('ACTIVE').notNull(),
   workerType: mysqlEnum('workerType', ['SERVER', 'URL']).notNull(),
-  createdAt: timestamp('updated_at')
+  createdAt: timestamp('createdAt')
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
   updatedAt: timestamp('updated_at')
