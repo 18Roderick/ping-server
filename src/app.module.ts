@@ -10,11 +10,13 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TaskModule } from './task/task.module';
 import { EventsModule } from './events/events.module';
 import { Config, config } from './config/config';
-import { LogsService } from './logs/logs.service';
-import { LogsModule } from './logs/logs.module';
-import { Jobs } from './jobs/jobs';
 import { JobsModule } from './jobs/jobs.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import mysql from 'mysql2/promise';
+import { DrizzleMySqlModule } from '@knaadh/nestjs-drizzle-mysql2';
+
+import * as schema from '@/db/schemas';
+import { INQUIRER } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -27,6 +29,20 @@ import { ScheduleModule } from '@nestjs/schedule';
       },
       inject: [ConfigService],
     }),
+    DrizzleMySqlModule.registerAsync({
+      tag: 'DB',
+      useFactory() {
+        return {
+          mysql: {
+            connection: 'pool',
+            config: {
+              uri: process.env.DATABASE_URL,
+            },
+          },
+          config: { schema: { ...schema }, mode: 'default' },
+        };
+      },
+    }),
     ScheduleModule.forRoot(),
     ServerModule,
     UserModule,
@@ -34,10 +50,9 @@ import { ScheduleModule } from '@nestjs/schedule';
     PrismaModule,
     TaskModule,
     EventsModule,
-    LogsModule,
     JobsModule,
   ],
   controllers: [AppController],
-  providers: [AppService, LogsService, Jobs],
+  providers: [AppService],
 })
 export class AppModule {}

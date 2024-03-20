@@ -3,7 +3,7 @@ import { JwtAuthGuard } from '../auth/guards';
 import { ApiTags } from '@nestjs/swagger';
 import { ServerService } from './server.service';
 import { CreateServerDto, UpdateServerDto } from './dto/server.dto';
-import { GetUser } from 'src/auth/decorators';
+import { GetUser } from '@/auth/decorators';
 import { Users } from '@prisma/client';
 
 @ApiTags('servers')

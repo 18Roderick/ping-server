@@ -1,8 +1,11 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from '../services/prisma.service';
 import { CreateServerDto, UpdateServerDto } from './dto/server.dto';
 import { WORKERTYPE, Prisma, Servers } from '@prisma/client';
 import { TaskService } from '@/task/task.service';
+import { DrizzleDb } from '@/db';
+import { eq, or, and, SQL } from 'drizzle-orm';
+import { pings, servers, tasks, users } from '@/db/schemas';
 
 /**
  TODO: Create validations for repeted urls and ips
@@ -14,6 +17,7 @@ export class ServerService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly taskService: TaskService,
+    @Inject('DB') private readonly db: DrizzleDb,
   ) {}
 
   async create(serverDto: CreateServerDto, idUser: string): Promise<Servers> {
@@ -28,25 +32,33 @@ export class ServerService {
       },
     };
 
-    const serverExist = await this.prismaService.servers.findFirst({
-      where: {
-        idUser: idUser,
-        AND: [
-          {
-            OR: [
-              {
-                url: serverDto.url,
-              },
-              { ip: serverDto.ip },
-            ],
-          },
-        ],
-      },
-    });
+    const serverExist = await this.db
+      .select({
+        idUser: users.idUser,
+        idServer: servers.idServer,
+      })
+      .from(users)
+      .innerJoin(servers, eq(users.idUser, servers.idUser))
+      .where(
+        and(
+          or(eq(servers.ip, serverDto.ip), eq(servers.url, serverDto.url)),
+          eq(servers.idUser, idUser),
+        ),
+      )
+      .limit(1);
 
-    if (serverExist) throw new BadRequestException('Server already exists');
+    if (serverExist.length) throw new BadRequestException('Server already exists');
 
     const created = await this.prismaService.servers.create({ data: serverRequest });
+
+    await this.db.insert(servers).values({
+      url: serverDto.url,
+      title: serverDto.title,
+      description: serverDto.description,
+      ip: serverDto.ip,
+      workerType: serverDto.ip ? WORKERTYPE.SERVER : WORKERTYPE.URL,
+      idUser: serverExist[0].idUser,
+    });
 
     if (created) {
       await this.taskService.addPingServerTask({
@@ -59,94 +71,58 @@ export class ServerService {
   }
 
   async getUserServers(userId: string) {
-    return this.prismaService.servers.findMany({
-      where: {
-        idUser: userId,
-      },
+    return this.db.query.servers.findMany({
+      where: eq(servers.idUser, userId),
     });
   }
 
   async getServer(serverId: string) {
-    return this.prismaService.servers.findFirst({
-      where: {
-        idServer: serverId,
-      },
-      include: {
-        Ping: {
-          orderBy: {
-            createdAt: 'desc',
-          },
-          take: 1,
-        },
-        Tasks: true,
-      },
-    });
+    return this.db
+      .select()
+      .from(servers)
+      .leftJoin(tasks, eq(tasks.idServer, servers.idServer))
+      .leftJoin(pings, eq(pings.idServer, servers.idServer))
+      .where(eq(servers.idServer, serverId));
   }
 
   async updateUserServer(serverDto: UpdateServerDto, idUser: string) {
-    const serverRequest: Prisma.ServersUpdateInput = {
-      idServer: serverDto.idServer,
-      url: serverDto.url,
-      title: serverDto.title,
-      description: serverDto.description,
-      ip: serverDto.ip,
-      workerType: serverDto.ip ? WORKERTYPE.SERVER : WORKERTYPE.URL,
-      Users: {
-        connect: { idUser: idUser },
-      },
-    };
+    const equalWhere = and(eq(servers.idServer, serverDto.idServer), eq(servers.idUser, idUser));
 
-    const server = await this.prismaService.servers.findFirst({
-      where: {
-        idServer: serverDto.idServer,
-        idUser: idUser,
-      },
-    });
+    const server = await this.db.select().from(servers).where(equalWhere).limit(1);
 
-    if (!server) {
+    if (server.length < 1) {
       throw new BadRequestException('Server not found');
     }
 
-    return this.prismaService.servers.update({
-      data: serverRequest,
-      where: {
+    const updated = await this.db
+      .update(servers)
+      .set({
         idServer: serverDto.idServer,
-        AND: [
-          {
-            idUser: idUser,
-          },
-        ],
-      },
-    });
+        url: serverDto.url,
+        title: serverDto.title,
+        description: serverDto.description,
+        ip: serverDto.ip,
+        workerType: serverDto.ip ? WORKERTYPE.SERVER : WORKERTYPE.URL,
+      })
+      .where(equalWhere);
+
+    if (updated[0].affectedRows === 0) {
+      throw new BadRequestException('Server not found');
+    }
+
+    return this.db.select().from(servers).where(equalWhere);
   }
 
   async deleteServer(idServer: string, idUser: string) {
-    const server = await this.prismaService.servers.findFirst({
-      where: {
-        idServer: idServer,
-        idUser: idUser,
-      },
-    });
+    const equalWhere = and(eq(servers.idServer, idServer), eq(servers.idUser, idUser));
 
-    if (!server) {
-      throw new BadRequestException('Server not found');
-    }
     //TODO: stop pings
     //chnage status of the task
 
-    await this.prismaService.servers.delete({
-      where: {
-        idServer: idServer,
-        AND: [{ idUser: idUser }],
-      },
-    });
+    await this.db.delete(servers).where(equalWhere);
   }
 
   async pingServer(idServer: string) {
-    return this.prismaService.pings.findMany({
-      where: {
-        serversIdServer: idServer,
-      },
-    });
+    return this.db.select().from(pings).where(eq(pings.idServer, idServer));
   }
 }

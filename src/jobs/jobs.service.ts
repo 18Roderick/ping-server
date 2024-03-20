@@ -1,43 +1,48 @@
+import { DrizzleDb } from '@/db';
+import { servers } from '@/db/schemas';
 import { PrismaService } from '@/services/prisma.service';
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { avg, count, eq, sql } from 'drizzle-orm';
+import { pings } from '@/db/schemas';
 import { DateTime } from 'luxon';
 
 @Injectable()
 export class JobsService {
   private readonly logger = new Logger(JobsService.name);
 
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    @Inject('DB') private readonly db: DrizzleDb,
+  ) {}
 
   @Cron(CronExpression.EVERY_MINUTE)
-  async summarizePings() {
-    // TODO: summarize the pings for every day, should calculate  de deads pings and the seuccesfull ones
-    this.prismaService.servers.findMany({
-      include: {
-        Ping: true,
-      },
-    });
-    const startOfDay = DateTime.now()
-      .endOf('day')
-      .minus({
-        day: 1,
-      })
-      .endOf('day');
-    console.log(startOfDay.toJSDate());
-    const data = await this.prismaService.$transaction([
-      this.prismaService.pings.findMany({
-        where: {
-          createdAt: {
-            lt: startOfDay.toJSDate(),
-          },
-        },
-        take: 1,
-        orderBy: {
-          createdAt: 'desc',
-        },
-      }),
-    ]);
+  async test() {
+    const countSelect = this.db.$with('countsq').as(
+      this.db
+        .select({
+          idServer: pings.idServer,
+          avg: avg(pings.avg).as('avg'),
+          min: avg(pings.min).as('min'),
+          max: avg(pings.max).as('max'),
+          createdAt: sql`DATE(${pings.createdAt})`.as('createdAt'),
+        })
+        .from(pings)
+        .groupBy(pings.idServer, sql`DATE(${pings.createdAt})`),
+    );
 
-    console.log(startOfDay.toJSDate(), data);
+    // const data = await this.db.with(countSelect).select().from(countSelect);
+    // .innerJoin(countSelect, eq(countSelect.idServer, servers.idServer));
+    const data = await this.db
+      .select({
+        idServer: pings.idServer,
+        avg: sql<number>`avg(${pings.avg})`,
+        min: sql<number>`min(${pings.avg})`,
+        max: sql<number>`max(${pings.avg})`,
+        createdAt: sql<Date>`DATE(${pings.createdAt})`.as('createdAt'),
+      })
+      .from(pings)
+      .groupBy(pings.idServer, sql`DATE(${pings.createdAt})`);
+    console.log(data);
   }
 }
