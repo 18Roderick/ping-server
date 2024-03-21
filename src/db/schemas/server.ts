@@ -1,7 +1,8 @@
 import { datetime, mysqlEnum, mysqlTable, timestamp, varchar } from 'drizzle-orm/mysql-core';
 import { users } from './users';
 import { createId } from '@paralleldrive/cuid2';
-import { sql } from 'drizzle-orm';
+import { relations, sql } from 'drizzle-orm';
+import { tasks } from './tasks';
 
 export const servers = mysqlTable('Servers', {
   idServer: varchar('idServer', { length: 200 })
@@ -28,6 +29,10 @@ export const servers = mysqlTable('Servers', {
       onUpdate: 'cascade',
     }),
 });
+
+// export const serverTaskRelation = relations(servers, ({ one }) => ({
+//   task: one(tasks),
+// }));
 
 export type Server = typeof servers.$inferSelect;
 export type ServerInsert = typeof servers.$inferInsert;

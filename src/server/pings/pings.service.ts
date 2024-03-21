@@ -9,7 +9,7 @@ export class PingsService {
   /**
    *
    */
-  constructor(@Inject('db') private readonly db: DrizzleDb) {}
+  constructor(@Inject('DB') private readonly db: DrizzleDb) {}
 
   findAll(idServer: string, idUser: string) {
     return this.db.query.pings.findMany({

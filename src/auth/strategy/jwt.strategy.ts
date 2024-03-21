@@ -10,7 +10,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     private config: ConfigService,
-    @Inject('db') private readonly db: DrizzleDb,
+    @Inject('DB') private readonly  db: DrizzleDb,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),

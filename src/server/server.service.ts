@@ -1,8 +1,13 @@
-import { BadRequestException, Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { CreateServerDto, UpdateServerDto } from './dto/server.dto';
 import { TaskService } from '@/task/task.service';
 import { DrizzleDb } from '@/db';
-import { eq, or, and, SQL } from 'drizzle-orm';
+import { eq, or, and, SQL, sql, desc, count, max, avg } from 'drizzle-orm';
 import { Server, pings, servers, tasks, users } from '@/db/schemas';
 
 /**
@@ -18,63 +23,85 @@ export class ServerService {
   ) {}
 
   async create(serverDto: CreateServerDto, idUser: string): Promise<Server> {
-
     try {
       const serverExist = await this.db
-      .select({
-        idUser: users.idUser,
-        idServer: servers.idServer,
-      })
-      .from(users)
-      .innerJoin(servers, eq(users.idUser, servers.idUser))
-      .where(
-        and(
-          or(eq(servers.ip, serverDto.ip), eq(servers.url, serverDto.url)),
-          eq(servers.idUser, idUser),
-        ),
-      )
-      .limit(1);
+        .select({
+          idUser: users.idUser,
+          idServer: servers.idServer,
+        })
+        .from(users)
+        .innerJoin(servers, eq(users.idUser, servers.idUser))
+        .where(
+          and(
+            or(eq(servers.ip, serverDto.ip), eq(servers.url, serverDto.url)),
+            eq(servers.idUser, idUser),
+          ),
+        )
+        .limit(1);
+      console.log(serverExist);
+      if (serverExist.length) throw new BadRequestException('Server already exists');
 
-    if (serverExist.length) throw new BadRequestException('Server already exists');
+      // const created = await this.prismaService.servers.create({ data: serverRequest });
 
-    // const created = await this.prismaService.servers.create({ data: serverRequest });
-
-    const created = await this.db.insert(servers).values({
-      url: serverDto.url,
-      title: serverDto.title,
-      description: serverDto.description,
-      ip: serverDto.ip,
-      workerType: serverDto.ip ? 'SERVER' : 'URL',
-      idUser: idUser,
-    });
-
-    if (created[0].affectedRows > 0) {
-
-      const serversFind = await this.db.query.servers.findFirst({
-        where: and(eq(servers.idUser, idUser), eq(servers.url,serverDto.url)),
-      })
-
-      await this.taskService.addPingServerTask({
-        idServer: serversFind.idServer,
+      const created = await this.db.insert(servers).values({
+        url: serverDto.url,
+        title: serverDto.title,
+        description: serverDto.description,
+        ip: serverDto.ip,
+        workerType: serverDto.ip ? 'SERVER' : 'URL',
         idUser: idUser,
       });
 
-      return serversFind
-    }else {
-      console.log(created)
-    }
+      if (created[0].affectedRows > 0) {
+        const serversFind = await this.db.query.servers.findFirst({
+          where: and(eq(servers.idUser, idUser), eq(servers.url, serverDto.url)),
+        });
 
+        await this.taskService.addPingServerTask({
+          idServer: serversFind.idServer,
+          idUser: idUser,
+        });
+
+        return serversFind;
+      } else {
+        console.log(created);
+      }
     } catch (error) {
-      console.log(error instanceof Error ? error?.message: "")
-      throw new InternalServerErrorException(error)
+      console.log(error instanceof Error ? error?.message : '');
+      throw new InternalServerErrorException(error);
     }
-    
   }
 
   async getUserServers(userId: string) {
-    return this.db.query.servers.findMany({
-      where: eq(servers.idUser, userId),
-    });
+    const lastPing = this.db
+      .select({
+        count: count().as("count"),
+        idServer: servers.idServer,
+        createdAt: max(pings.createdAt).as("created_at"),
+        avg: avg(pings.avg)
+      })
+      .from(servers)
+      .innerJoin(pings, eq(pings.idServer, servers.idServer))
+      .where(eq(servers.idUser, userId))
+      .groupBy(servers.idServer)
+      .orderBy(desc(pings.createdAt))
+      .limit(1)
+      .as('count');
+
+    const query = this.db
+      .select({
+      //  servers:servers,
+      //  tasks:tasks,
+      //  pings: lastPing
+      })
+      .from(servers)
+      .leftJoin(tasks, eq(servers.idServer, tasks.idServer))
+      .leftJoin(lastPing, eq(lastPing.idServer, servers.idServer))
+      .where(eq(servers.idUser, userId));
+      console.log(query.getSQL())
+
+
+    return query;
   }
 
   async getServer(serverId: string) {

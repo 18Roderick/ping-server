@@ -6,6 +6,7 @@ export const configSchema = z.object({
   PORT: z.coerce.number().positive(),
   REDIS_PORT: z.coerce.number().positive(),
   REDIS_HOST: z.string().ip(),
+  JWT_SECRET: z.string()
 });
 
 export type Config = z.infer<typeof configSchema>;

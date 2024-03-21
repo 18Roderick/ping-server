@@ -36,7 +36,7 @@ import * as schema from '@/db/schemas';
               uri: process.env.DATABASE_URL,
             },
           },
-          config: { schema: { ...schema }, mode: 'default' },
+          config: { schema: { ...schema }, mode: 'default', logger: true },
         };
       },
     }),

@@ -4,7 +4,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { ServerService } from './server.service';
 import { CreateServerDto, UpdateServerDto } from './dto/server.dto';
 import { GetUser } from '@/auth/decorators';
-import { Users } from '@prisma/client';
+import { User } from '@/db/schemas';
 
 @ApiTags('servers')
 @UseGuards(JwtAuthGuard)
@@ -12,7 +12,7 @@ import { Users } from '@prisma/client';
 export class ServerController {
   constructor(private readonly serverService: ServerService) {}
   @Get()
-  getServers(@GetUser() user: Users) {
+  getServers(@GetUser() user: User) {
     return this.serverService.getUserServers(user.idUser);
   }
 
@@ -22,17 +22,17 @@ export class ServerController {
   }
 
   @Post()
-  createServer(@Body() serverDto: CreateServerDto, @GetUser() user: Users) {
+  createServer(@Body() serverDto: CreateServerDto, @GetUser() user: User) {
     return this.serverService.create(serverDto, user.idUser);
   }
 
   @Put()
-  UpdateServer(serverDto: UpdateServerDto, @GetUser() user: Users) {
+  UpdateServer(serverDto: UpdateServerDto, @GetUser() user: User) {
     return this.serverService.updateUserServer(serverDto, user.idUser);
   }
 
   @Delete(':id')
-  removeTaskJob(@Param('id') idServer: string, @GetUser() user: Users) {
+  removeTaskJob(@Param('id') idServer: string, @GetUser() user: User) {
     return this.serverService.deleteServer(idServer, user.idUser);
   }
 }

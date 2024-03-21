@@ -10,24 +10,21 @@ import { DateTime } from 'luxon';
 export class JobsService {
   private readonly logger = new Logger(JobsService.name);
 
-  constructor(
-    @Inject('DB') private readonly db: DrizzleDb,
-  ) {}
+  constructor(@Inject('DB') private readonly db: DrizzleDb) {}
 
   @Cron(CronExpression.EVERY_MINUTE)
   async test() {
-    const countSelect = this.db.$with('countsq').as(
-      this.db
-        .select({
-          idServer: pings.idServer,
-          avg: avg(pings.avg).as('avg'),
-          min: avg(pings.min).as('min'),
-          max: avg(pings.max).as('max'),
-          createdAt: sql`DATE(${pings.createdAt})`.as('createdAt'),
-        })
-        .from(pings)
-        .groupBy(pings.idServer, sql`DATE(${pings.createdAt})`),
-    );
+    const countSelect = this.db
+      .select({
+        idServer: pings.idServer,
+        avg: avg(pings.avg).as('avg'),
+        min: avg(pings.min).as('min'),
+        max: avg(pings.max).as('max'),
+        createdAt: sql`DATE(${pings.createdAt})`.as('createdAt'),
+      })
+      .from(pings)
+      .groupBy(pings.idServer, sql`DATE(${pings.createdAt})`)
+      .as('count');
 
     // const data = await this.db.with(countSelect).select().from(countSelect);
     // .innerJoin(countSelect, eq(countSelect.idServer, servers.idServer));

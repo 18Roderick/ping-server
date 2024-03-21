@@ -8,8 +8,8 @@ export const tasks = mysqlTable('Tasks', {
     .$defaultFn(() => createId())
     .primaryKey()
     .notNull(),
-  idJob: varchar('idJob', { length: 191 }).notNull(),
-  log: varchar('log', { length: 191 }).notNull(),
+  idJob: varchar('idJob', { length: 300 }).notNull(),
+  log: varchar('log', { length: 500 }).notNull(),
   type: mysqlEnum('type', ['UNDEFINED', 'SERVER', 'BACKGROUND', 'SUMMARY', 'ADMIN', 'DAILY'])
     .default('UNDEFINED')
     .notNull(),
@@ -17,7 +17,7 @@ export const tasks = mysqlTable('Tasks', {
   status: mysqlEnum('status', ['RUNNING', 'STOPPED', 'DELETED', 'WAITING'])
     .default('RUNNING')
     .notNull(),
-  createdAt: timestamp('updated_at')
+  createdAt: timestamp('created_at')
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
   updatedAt: timestamp('updated_at')

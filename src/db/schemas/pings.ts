@@ -16,7 +16,7 @@ export const pings = mysqlTable('Pings', {
   log: varchar('log', { length: 191 }).notNull(),
   isAlive: tinyint('isAlive').notNull(),
   numericHost: varchar('numericHost', { length: 191 }).notNull(),
-  createdAt: timestamp('updated_at')
+  createdAt: timestamp('created_at')
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
   idServer: varchar('idServer', { length: 200 })
