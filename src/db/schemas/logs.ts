@@ -7,7 +7,7 @@ export const logs = mysqlTable('Logs', {
   createdAt: timestamp('updated_at')
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
-  action: varchar('action', { length: 191 }).notNull(),
+  action: varchar('action', { length: 5000 }).notNull(),
   errorLevel: mysqlEnum('errorLevel', ['INFO', 'WARNING', 'ERROR', 'CRITICAL'])
     .notNull()
     .default('INFO'),

@@ -37,7 +37,6 @@ export class TaskConsumer {
         .leftJoin(tasks, eq(servers.idServer, tasks.idServer))
         .where(eq(servers.idServer, job.data.idServer));
 
-   
       if (server.length < 1) {
         //remover tarea en caso de que el servidor ya no exista
         this.logger.error('SERVER NOT FOUND', job.data.idServer);
@@ -144,7 +143,7 @@ export class TaskConsumer {
           cron: CRON_TIME.EVERY_MINUTE,
         },
         lifo: true,
-        // jobId: randomUUID(),
+        jobId: randomUUID(),
       },
     );
 
@@ -156,9 +155,8 @@ export class TaskConsumer {
         log: 'NO ISSUES',
         idServer: server.idServer,
       });
-    
     } catch (error) {
-     // console.log('ERROR IN CREATING TASK ', error);
+      // console.log('ERROR IN CREATING TASK ', error);
     }
 
     this.logger.debug('PING TASK ADDED', job.id);

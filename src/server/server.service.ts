@@ -7,7 +7,7 @@ import {
 import { CreateServerDto, UpdateServerDto } from './dto/server.dto';
 import { TaskService } from '@/task/task.service';
 import { DrizzleDb } from '@/db';
-import { eq, or, and, SQL, sql, desc, count, max, avg } from 'drizzle-orm';
+import { eq, or, and, SQL, sql, desc, count, max, avg, min } from 'drizzle-orm';
 import { Server, pings, servers, tasks, users } from '@/db/schemas';
 
 /**
@@ -63,9 +63,8 @@ export class ServerService {
         });
 
         return serversFind;
-      } else {
-        console.log(created);
       }
+      console.log(created);
     } catch (error) {
       console.log(error instanceof Error ? error?.message : '');
       throw new InternalServerErrorException(error);
@@ -73,33 +72,39 @@ export class ServerService {
   }
 
   async getUserServers(userId: string) {
+    //get the last ping of the server
     const lastPing = this.db
       .select({
-        count: count().as("count"),
+        count: count().as('count'),
         idServer: servers.idServer,
-        createdAt: max(pings.createdAt).as("created_at"),
-        avg: avg(pings.avg)
+        createdAt: max(pings.createdAt).as('created_at_custom'),
+        avg:  sql<number>`round(avg(${pings.avg}),4)`.as("avg"),  //, avg(pings.avg).as('avg'),
+        min: min(pings.avg).as('min'),
+        max: max(pings.max).as('max'),
       })
       .from(servers)
       .innerJoin(pings, eq(pings.idServer, servers.idServer))
       .where(eq(servers.idUser, userId))
       .groupBy(servers.idServer)
-      .orderBy(desc(pings.createdAt))
-      .limit(1)
-      .as('count');
+      // .orderBy(desc(pings.createdAt))
+      .as('lastping');
 
-    const query = this.db
+    const query = await this.db
       .select({
-      //  servers:servers,
-      //  tasks:tasks,
-      //  pings: lastPing
+        idServer: servers.idServer,
+        ip: servers.ip,
+        url: servers.url,
+        title: servers.title,
+        status: servers.status,
+        idTask: tasks.idTask,
+        ping_max: lastPing.max,
+        ping_min: lastPing.min,
+        ping_avg: lastPing.avg,
       })
       .from(servers)
       .leftJoin(tasks, eq(servers.idServer, tasks.idServer))
       .leftJoin(lastPing, eq(lastPing.idServer, servers.idServer))
       .where(eq(servers.idUser, userId));
-      console.log(query.getSQL())
-
 
     return query;
   }

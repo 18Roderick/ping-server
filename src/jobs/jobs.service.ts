@@ -1,10 +1,11 @@
 import { DrizzleDb } from '@/db';
-import { servers } from '@/db/schemas';
+import { logs, servers } from '@/db/schemas';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { avg, count, eq, sql } from 'drizzle-orm';
 import { pings } from '@/db/schemas';
 import { DateTime } from 'luxon';
+import { dailySummary } from '@/db/sql';
 
 @Injectable()
 export class JobsService {
@@ -14,30 +15,20 @@ export class JobsService {
 
   @Cron(CronExpression.EVERY_MINUTE)
   async test() {
-    const countSelect = this.db
-      .select({
-        idServer: pings.idServer,
-        avg: avg(pings.avg).as('avg'),
-        min: avg(pings.min).as('min'),
-        max: avg(pings.max).as('max'),
-        createdAt: sql`DATE(${pings.createdAt})`.as('createdAt'),
-      })
-      .from(pings)
-      .groupBy(pings.idServer, sql`DATE(${pings.createdAt})`)
-      .as('count');
+    try {
+      const script = await dailySummary();
 
-    // const data = await this.db.with(countSelect).select().from(countSelect);
-    // .innerJoin(countSelect, eq(countSelect.idServer, servers.idServer));
-    const data = await this.db
-      .select({
-        idServer: pings.idServer,
-        avg: sql<number>`avg(${pings.avg})`,
-        min: sql<number>`min(${pings.avg})`,
-        max: sql<number>`max(${pings.avg})`,
-        createdAt: sql<Date>`DATE(${pings.createdAt})`.as('createdAt'),
-      })
-      .from(pings)
-      .groupBy(pings.idServer, sql`DATE(${pings.createdAt})`);
-    console.log(data);
+      const data =[]// await this.db.execute(sql.raw(script));
+
+      console.log('SUMMARY ENDED', data);
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : 'error sumarry';
+      console.log("LONNGGGG ", msg.length, msg)
+      await this.db.insert(logs).values({
+        description: msg,
+        action: 'SUMMARY PROCESS',
+        affectedEntity: 'PINGS',
+      });
+    }
   }
 }
