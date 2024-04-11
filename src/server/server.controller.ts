@@ -17,8 +17,8 @@ export class ServerController {
   }
 
   @Get(':id')
-  getServer(@Param('id') idServer: string) {
-    return this.serverService.getServer(idServer);
+  getServer(@Param('id') idServer: string, @GetUser() user: User) {
+    return this.serverService.getServer(user.idUser, idServer);
   }
 
   @Post()

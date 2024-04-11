@@ -109,13 +109,42 @@ export class ServerService {
     return query;
   }
 
-  async getServer(serverId: string) {
-    return this.db
-      .select()
+  async getServer(userId: string, serverId:string) {
+    //get the last ping of the server
+    const lastPing = this.db
+      .select({
+        count: count().as('count'),
+        idServer: servers.idServer,
+        createdAt: max(pings.createdAt).as('created_at_custom'),
+        avg:  sql<number>`round(avg(${pings.avg}),4)`.as("avg"),  //, avg(pings.avg).as('avg'),
+        min: min(pings.avg).as('min'),
+        max: max(pings.max).as('max'),
+      })
       .from(servers)
-      .leftJoin(tasks, eq(tasks.idServer, servers.idServer))
-      .leftJoin(pings, eq(pings.idServer, servers.idServer))
-      .where(eq(servers.idServer, serverId));
+      .innerJoin(pings, eq(pings.idServer, servers.idServer))
+      .where(and(eq(servers.idUser, userId), eq(servers.idServer, serverId)))
+      .groupBy(servers.idServer)
+      // .orderBy(desc(pings.createdAt))
+      .as('lastping');
+
+    const query = await this.db
+      .select({
+        idServer: servers.idServer,
+        ip: servers.ip,
+        url: servers.url,
+        title: servers.title,
+        status: servers.status,
+        idTask: tasks.idTask,
+        ping_max: lastPing.max,
+        ping_min: lastPing.min,
+        ping_avg: lastPing.avg,
+      })
+      .from(servers)
+      .leftJoin(tasks, eq(servers.idServer, tasks.idServer))
+      .leftJoin(lastPing, eq(lastPing.idServer, servers.idServer))
+      .where(eq(servers.idUser, userId));
+
+    return query;
   }
 
   async updateUserServer(serverDto: UpdateServerDto, idUser: string) {

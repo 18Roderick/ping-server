@@ -26,3 +26,7 @@ export const pings = mysqlTable('Pings', {
       onUpdate: 'cascade',
     }),
 });
+
+
+export type PingInsert = typeof pings.$inferInsert;
+export type Ping = typeof pings.$inferSelect;
