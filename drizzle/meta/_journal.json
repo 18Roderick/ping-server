@@ -1,12 +1,26 @@
 {
-  "version": "5",
-  "dialect": "pg",
+  "version": "6",
+  "dialect": "postgresql",
   "entries": [
     {
       "idx": 0,
-      "version": "5",
-      "when": 1712627586640,
-      "tag": "0000_bumpy_celestials",
+      "version": "6",
+      "when": 1716423973063,
+      "tag": "0000_regular_omega_sentinel",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1716429925349,
+      "tag": "0001_exotic_mulholland_black",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1716430372417,
+      "tag": "0002_chief_storm",
       "breakpoints": true
     }
   ]

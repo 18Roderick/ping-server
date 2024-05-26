@@ -1,4 +1,4 @@
-import { DrizzleDb } from '@/db';
+import { DB } from '@/db';
 import { users } from '@/db/schemas';
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -10,7 +10,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     private config: ConfigService,
-    @Inject('DB') private readonly  db: DrizzleDb,
+    @Inject('DB') private readonly db: DB,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -22,12 +22,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     const user = await this.db
       .select({
         email: users.email,
-        idUser: users.idUser,
+        id_user: users.id_user,
         name: users.email,
       })
       .from(users)
       .where(eq(users.email, payload.email));
-
     return user[0];
   }
 }

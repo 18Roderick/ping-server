@@ -1,19 +1,19 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UpdatePingDto } from './dto/update-ping.dto';
-import { DrizzleDb } from '@/db';
 import { and, eq } from 'drizzle-orm';
 import { pings } from '@/db/schemas';
+import { DB } from '@/db';
 
 @Injectable()
 export class PingsService {
   /**
    *
    */
-  constructor(@Inject('DB') private readonly db: DrizzleDb) {}
+  constructor(@Inject('DB') private readonly db: DB) {}
 
   findAll(idServer: string, idUser: string) {
     return this.db.query.pings.findMany({
-      where: and(eq(pings.idServer, idServer)),
+      where: and(eq(pings.id_server, idServer)),
       with: {
         idUser: idUser,
       },

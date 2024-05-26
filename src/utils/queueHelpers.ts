@@ -1,10 +1,10 @@
-import Bull from 'bull';
+import Bull from "bullmq"
 
-export function searchRepeatable(jobs: Bull.JobInformation[], jobId: string) {
+export function searchRepeatable<T extends { id: string }>(jobs: T[], jobId: string) {
   return busquedaBinaria(jobs, jobId);
 }
 
-function busquedaBinaria(arr: Bull.JobInformation[], elemento: string): number {
+function busquedaBinaria<T extends { id: string }>(arr: T[], elemento: string): number {
   let inicio = 0;
   let fin = arr.length - 1;
 

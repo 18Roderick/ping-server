@@ -15,7 +15,7 @@ export class PingsController {
 
   @Get(':id')
   findAll(@Param('id') id: string, @GetUser() user: User) {
-    return this.pingsService.findAll(id, user.idUser);
+    return this.pingsService.findAll(id, user.id_user);
   }
 
   // @Get(':id')

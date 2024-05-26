@@ -1,38 +1,29 @@
-import { datetime, mysqlEnum, mysqlTable, timestamp, varchar } from 'drizzle-orm/mysql-core';
 import { users } from './users';
 import { createId } from '@paralleldrive/cuid2';
-import { relations, sql } from 'drizzle-orm';
-import { tasks } from './tasks';
+import { text, timestamp, varchar } from 'drizzle-orm/pg-core';
+import { tableCreator } from '../table-creator';
 
-export const servers = mysqlTable('Servers', {
-  idServer: varchar('idServer', { length: 200 })
-    .$defaultFn(() => createId())
+export const servers = tableCreator('servers', {
+  id_server: varchar('id_server', { length: 200 })
     .primaryKey()
-    .notNull(),
+    .$defaultFn(() => createId()),
   url: varchar('url', { length: 191 }),
   ip: varchar('ip', { length: 191 }),
   description: varchar('description', { length: 191 }),
   title: varchar('title', { length: 191 }).notNull(),
-  status: mysqlEnum('status', ['ACTIVE', 'INACTIVE']).default('ACTIVE').notNull(),
-  workerType: mysqlEnum('workerType', ['SERVER', 'URL']).notNull(),
-  createdAt: timestamp('createdAt')
-    .default(sql`CURRENT_TIMESTAMP`)
+  status: text('status', { enum: ['active', 'inactive'] })
+    .default('active')
     .notNull(),
-  updatedAt: timestamp('updated_at')
-    .default(sql`CURRENT_TIMESTAMP`)
-    .onUpdateNow()
-    .notNull(),
-  idUser: varchar('idUser', { length: 200 })
-    .notNull()
-    .references(() => users.idUser, {
+  worker_type: text('worker_type', { enum: ['server', 'url'] }).notNull(),
+  created_at: timestamp('created_at').defaultNow().notNull(),
+  updated_at: timestamp('updated_at').defaultNow().notNull(),
+  id_user: varchar('id_user', { length: 200 })
+    .references(() => users.id_user, {
       onDelete: 'cascade',
       onUpdate: 'cascade',
-    }),
+    })
+    .notNull(),
 });
-
-// export const serverTaskRelation = relations(servers, ({ one }) => ({
-//   task: one(tasks),
-// }));
 
 export type Server = typeof servers.$inferSelect;
 export type ServerInsert = typeof servers.$inferInsert;

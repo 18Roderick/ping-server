@@ -1,18 +1,15 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { UpdateUserDto } from './dto/user.dto';
-import { DrizzleDb } from '@/db';
+import { DB } from '@/db';
 import { users } from '@/db/schemas';
-
 
 @Injectable()
 export class UserService {
   /**
    *
    */
-  constructor(
-    @Inject('DB') private readonly db: DrizzleDb,
-  ) {}
+  constructor(@Inject('DB') private readonly db: DB) {}
 
   /**
    * @description method should  only be available for admins
@@ -26,11 +23,11 @@ export class UserService {
       .select({
         email: users.email,
         name: users.name,
-        lastName: users.lastName,
-        updatedAt: users.updatedAt,
+        lastName: users.last_name,
+        updatedAt: users.updated_at,
       })
       .from(users)
-      .where(eq(users.idUser, userId));
+      .where(eq(users.id_user, userId));
   }
 
   async update(userId: string, updateUserDto: UpdateUserDto) {
@@ -44,7 +41,7 @@ export class UserService {
       .set({
         ...updateUserDto,
       })
-      .where(eq(users.idUser, userId));
+      .where(eq(users.id_user, userId));
 
     return userQuery.execute();
   }
@@ -54,9 +51,9 @@ export class UserService {
 
     if (!user) throw new BadRequestException('user not found');
 
-    const deleted = await this.db.delete(users).where(eq(users.idUser, userId));
+    const deleted = await this.db.delete(users).where(eq(users.id_user, userId));
     return {
-      affected: deleted[0].affectedRows,
+      affected: deleted[0],
     };
   }
 
@@ -65,11 +62,11 @@ export class UserService {
       .select({
         email: users.email,
         name: users.name,
-        lastName: users.lastName,
-        updatedAt: users.updatedAt,
+        lastName: users.last_name,
+        updatedAt: users.updated_at,
       })
       .from(users)
-      .where(eq(users.idUser, userId))
-      .prepare();
+      .where(eq(users.id_user, userId))
+      .prepare("queryuser");
   }
 }

@@ -1,30 +1,35 @@
-import { InjectQueue } from '@nestjs/bull';
 import { Inject, Injectable } from '@nestjs/common';
-import { Queue } from 'bull';
-import { CONSUMERS, CRON_TIME, PING_QUEUE } from './constants';
+import { FlowProducer, Queue } from 'bullmq';
+import { CONSUMERS, CRON_TIME, PING_PRODUCER, PING_QUEUE } from './constants';
 import { AddPingTask } from './dtos/task.dto';
-import { DrizzleDb } from '@/db';
+import { DB } from '@/db';
+import { InjectQueue, InjectFlowProducer } from '@nestjs/bullmq';
+import cronParser from 'cron-parser';
+import { InjectQueueManager, QueueManagerService } from './qeue-manager';
 
 @Injectable()
 export class TaskService {
-  constructor(@InjectQueue(PING_QUEUE) private readonly taskQueue: Queue,
-  @Inject('DB') private readonly db: DrizzleDb
+  constructor(
+    // @InjectFlowProducer(PING_PRODUCER) private flowProducer: FlowProducer,
+    @InjectQueueManager() private readonly taskQueue: Queue,
+    private readonly _queueManagerService: QueueManagerService,
+    @Inject('DB') private readonly db: DB,
   ) {}
 
-  getHello(): string {
-    return 'Hello World!';
+  getTasks() {
+    return this.taskQueue.getRepeatableJobs();
   }
 
   async transcode() {
-    await this.taskQueue.add({
-      fileName: './file.mp3',
+    //return this.taskQueue.add('demo', { foo: 'bar' });
+    return this._queueManagerService.AddServerPing({
+      idUser: 'wssoim3j98983js',
+      idServer: 'siossnois',
     });
   }
 
   async addPingServerTask(taskDto: AddPingTask) {
-    return this.taskQueue.add(CONSUMERS.ADD_PING_TASK, taskDto, {
-      removeOnComplete: true,
-    });
+    return this._queueManagerService.AddServerPing(taskDto);
   }
 
   async serverPing(id: string) {
@@ -38,7 +43,7 @@ export class TaskService {
       },
       {
         repeat: {
-          cron: CRON_TIME.EVERY_FIVE_MINUTES,
+          pattern: CRON_TIME.EVERY_FIVE_MINUTES,
         },
       },
     );

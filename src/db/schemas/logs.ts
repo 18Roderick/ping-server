@@ -1,16 +1,20 @@
-import { sql } from 'drizzle-orm';
-import { int, mysqlEnum, mysqlTable, timestamp, varchar } from 'drizzle-orm/mysql-core';
+import { createId } from '@paralleldrive/cuid2';
+import { text, timestamp, varchar } from 'drizzle-orm/pg-core';
+import { tableCreator } from '../table-creator';
 
-export const logs = mysqlTable('Logs', {
-  id: int('id').autoincrement().primaryKey().notNull(),
-  idUser: varchar('idUser', { length: 191 }),
-  createdAt: timestamp('updated_at')
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
+export const logs = tableCreator('logs', {
+  id: varchar('id', { length: 200 })
+    .primaryKey()
+    .$defaultFn(() => createId()),
+  id_user: varchar('id_user', { length: 191 }),
+  updated_at: timestamp('updated_at').defaultNow().notNull(),
   action: varchar('action', { length: 5000 }).notNull(),
-  errorLevel: mysqlEnum('errorLevel', ['INFO', 'WARNING', 'ERROR', 'CRITICAL'])
-    .notNull()
-    .default('INFO'),
+  error_level: text('error_level', { enum: ['info', 'warning', 'error', 'critical'] })
+    .default('info')
+    .notNull(),
   description: varchar('description', { length: 5000 }).notNull(),
-  affectedEntity: varchar('affectedEntity', { length: 191 }),
+  affected_entity: varchar('affected_entity', { length: 191 }),
 });
+
+export type Log = typeof logs.$inferSelect;
+export type InsertLog = typeof logs.$inferInsert;

@@ -1,32 +1,25 @@
-import { datetime, double, mysqlTable, timestamp, tinyint, varchar } from 'drizzle-orm/mysql-core';
 import { servers } from './server';
-import { sql } from 'drizzle-orm';
 import { createId } from '@paralleldrive/cuid2';
+import { doublePrecision, pgTable, smallint, timestamp, varchar } from 'drizzle-orm/pg-core';
+import { tableCreator } from '../table-creator';
 
-export const pings = mysqlTable('Pings', {
-  idPing: varchar('idPing', { length: 200 })
-    .$defaultFn(() => createId())
+export const pings = tableCreator('pings', {
+  id_ping: varchar('id_ping', { length: 200 })
     .primaryKey()
-    .notNull(),
-  times: double('times').notNull(),
-  packetLoss: double('packetLoss').notNull(),
-  min: double('min').notNull(),
-  max: double('max').notNull(),
-  avg: double('avg').notNull(),
+    .$defaultFn(() => createId()),
+  times: doublePrecision('times').notNull(),
+  packet_loss: doublePrecision('packet_loss').notNull(),
+  min: doublePrecision('min').notNull(),
+  max: doublePrecision('max').notNull(),
+  avg: doublePrecision('avg').notNull(),
   log: varchar('log', { length: 191 }).notNull(),
-  isAlive: tinyint('isAlive').notNull(),
-  numericHost: varchar('numericHost', { length: 191 }).notNull(),
-  createdAt: timestamp('created_at')
-    .default(sql`CURRENT_TIMESTAMP`)
+  is_alive: smallint('is_alive').notNull(),
+  numeric_host: varchar('numeric_host', { length: 191 }).notNull(),
+  created_at: timestamp('created_at').defaultNow().notNull(),
+  id_server: varchar('id_server', { length: 200 })
+    .references(() => servers.id_server, { onDelete: 'cascade', onUpdate: 'cascade' })
     .notNull(),
-  idServer: varchar('idServer', { length: 200 })
-    .notNull()
-    .references(() => servers.idServer, {
-      onDelete: 'cascade',
-      onUpdate: 'cascade',
-    }),
 });
-
 
 export type PingInsert = typeof pings.$inferInsert;
 export type Ping = typeof pings.$inferSelect;

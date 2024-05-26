@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { BullModule } from '@nestjs/bull';
+import { BullModule } from '@nestjs/bullmq';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ServerModule } from './server/server.module';
@@ -11,9 +11,13 @@ import { EventsModule } from './events/events.module';
 import { Config, config } from './config/config';
 import { JobsModule } from './jobs/jobs.module';
 import { ScheduleModule } from '@nestjs/schedule';
-import { DrizzleMySqlModule } from '@knaadh/nestjs-drizzle-mysql2';
+import { DrizzlePostgresModule } from '@knaadh/nestjs-drizzle-postgres';
+import { DemoModule } from './demo/demo.module';
 
 import * as schema from '@/db/schemas';
+import { BullMqProviderQeue } from './providers/qeue-provider';
+import { QeueManagerModule } from './task/qeue-manager';
+import { QueuePingModule } from './task/qeue-ping/queueping.module';
 
 @Module({
   imports: [
@@ -22,21 +26,25 @@ import * as schema from '@/db/schemas';
       useFactory: async (config: ConfigService<Config>) => {
         const host: string = config.get('REDIS_HOST');
         const port: number = config.get('REDIS_PORT');
-        return { redis: { host, port } };
+        return {
+          // prefix: options?.prefix ?? '{#MONITOR}',
+          connection: {
+            host,
+            port,
+          },
+        };
       },
       inject: [ConfigService],
     }),
-    DrizzleMySqlModule.registerAsync({
+    DrizzlePostgresModule.registerAsync({
       tag: 'DB',
       useFactory() {
         return {
-          mysql: {
-            connection: 'pool',
-            config: {
-              uri: process.env.DATABASE_URL,
-            },
+          postgres: {
+            url: process.env.DATABASE_URL,
+            ssl: true,
           },
-          config: { schema: { ...schema }, mode: 'default', logger: false },
+          config: { schema: { ...schema }, logger: false },
         };
       },
     }),
@@ -44,9 +52,12 @@ import * as schema from '@/db/schemas';
     ServerModule,
     UserModule,
     AuthModule,
+    QeueManagerModule,
+    QueuePingModule,
     TaskModule,
     EventsModule,
     JobsModule,
+    DemoModule,
   ],
   controllers: [AppController],
   providers: [AppService],

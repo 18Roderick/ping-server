@@ -1,37 +1,20 @@
 import { createId } from '@paralleldrive/cuid2';
-import { sql } from 'drizzle-orm';
-import {
-  datetime,
-  mysqlEnum,
-  mysqlTable,
-  timestamp,
-  unique,
-  varchar,
-} from 'drizzle-orm/mysql-core';
+import { pgTable, text, timestamp, varchar } from 'drizzle-orm/pg-core';
+import { tableCreator } from '../table-creator';
 
-export const users = mysqlTable(
-  'Users',
-  {
-    idUser: varchar('idUser', { length: 200 })
-      .$defaultFn(() => createId())
-      .primaryKey()
-      .notNull(),
-    name: varchar('name', { length: 191 }).notNull(),
-    lastName: varchar('lastName', { length: 191 }).notNull(),
-    email: varchar('email', { length: 191 }).notNull(),
-    password: varchar('password', { length: 191 }).notNull(),
-    updatedAt: timestamp('updated_at')
-      .default(sql`CURRENT_TIMESTAMP`)
-      .onUpdateNow()
-      .notNull(),
-    status: mysqlEnum('status', ['ACTIVE', 'INACTIVE']).default('ACTIVE').notNull(),
-  },
-  (table) => {
-    return {
-      usersEmailKey: unique('Users_email_key').on(table.email),
-    };
-  },
-);
+export const users = tableCreator('users', {
+  id_user: varchar('id_user', { length: 200 })
+    .primaryKey()
+    .$defaultFn(() => createId()),
+  name: varchar('name', { length: 191 }).notNull(),
+  last_name: varchar('last_name', { length: 191 }).notNull(),
+  email: varchar('email', { length: 191 }).notNull().unique(),
+  password: varchar('password', { length: 191 }).notNull(),
+  updated_at: timestamp('updated_at').defaultNow().notNull(),
+  status: text('status', { enum: ['active', 'inactive'] })
+    .default('active')
+    .notNull(),
+});
 
 export type User = typeof users.$inferSelect;
 export type UserInsert = typeof users.$inferInsert;

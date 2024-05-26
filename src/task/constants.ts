@@ -1,4 +1,12 @@
-export const PING_QUEUE = 'PING_QUEUE';
+export const PING_QUEUE = '#PING_QUEUE';
+export const PING_PRODUCER = '#PING_PRODUCER';
+export const PING_CONSUMER = '#PING_CONSUMER';
+
+export const PING_SERVER_QUEUE = '#PING_SERVER_QUEUE';
+export const PING_SERVER_PRODUCER = '#PING_SERVER_PRODUCER';
+export const PING_SERVER_CONSUMER = '#PING_SERVER_CONSUMER';
+
+
 
 export enum CRON_TIME {
   EVERY_MINUTE = '* * * * *',
@@ -8,6 +16,6 @@ export enum CRON_TIME {
 }
 
 export enum CONSUMERS {
-  PING_SERVER = 'PING_SERVER',
-  ADD_PING_TASK = 'ADD_PING_TASK',
+  PING_SERVER = '#PING_SERVER',
+  ADD_PING_TASK = '#ADD_PING_TASK',
 }

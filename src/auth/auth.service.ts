@@ -6,9 +6,9 @@ import { ConfigService } from '@nestjs/config';
 import { ITokenResponse } from './interfaces';
 import { JwtService } from '@nestjs/jwt';
 
-import { DrizzleDb } from '@/db';
 import { User, users } from '@/db/schemas';
 import { eq } from 'drizzle-orm';
+import { DB } from '@/db';
 
 const ROUNDS = 10;
 
@@ -17,7 +17,7 @@ export class AuthService {
   constructor(
     private jwt: JwtService,
     private config: ConfigService,
-    @Inject('DB') private readonly db: DrizzleDb,
+    @Inject('DB') private readonly db: DB,
   ) {}
   async signUp(dto: CreateUserDto): Promise<ITokenResponse> {
     const hash = await bcrypt.hash(dto.password, ROUNDS);
@@ -29,10 +29,11 @@ export class AuthService {
       name: dto.name,
       email: dto.email,
       password: hash,
-      lastName: '',
+      last_name: '',
+      status: 'active',
     });
 
-    const user = await this.db.query.users.findFirst({ where: eq(users.email, dto.email)})
+    const user = await this.db.query.users.findFirst({ where: eq(users.email, dto.email) });
     return this.signToken(user);
   }
 
@@ -49,7 +50,7 @@ export class AuthService {
 
   async signToken(user: User): Promise<ITokenResponse> {
     const payload = {
-      sub: user.idUser,
+      sub: user.id_user,
       email: user.email,
     };
     const token = await this.jwt.signAsync(payload, {

@@ -1,32 +1,23 @@
 import { createId } from '@paralleldrive/cuid2';
-import { datetime, int, mysqlEnum, mysqlTable, timestamp, varchar } from 'drizzle-orm/mysql-core';
 import { servers } from './server';
-import { sql } from 'drizzle-orm';
+import { integer, pgTable, text, timestamp, varchar } from 'drizzle-orm/pg-core';
+import { tableCreator } from '../table-creator';
 
-export const tasks = mysqlTable('Tasks', {
-  idTask: varchar('idTask', { length: 200 })
-    .$defaultFn(() => createId())
+export const tasks = tableCreator('tasks', {
+  id_task: varchar('id_task', { length: 200 })
     .primaryKey()
-    .notNull(),
-  idJob: varchar('idJob', { length: 300 }).notNull(),
+    .$defaultFn(() => createId()),
+  id_job: varchar('id_job', { length: 300 }).notNull(),
   log: varchar('log', { length: 500 }).notNull(),
-  type: mysqlEnum('type', ['UNDEFINED', 'SERVER', 'BACKGROUND', 'SUMMARY', 'ADMIN', 'DAILY'])
-    .default('UNDEFINED')
+  type: text('type', { enum: ['undefined', 'server', 'background', 'summary', 'admin', 'daily'] })
+    .default('undefined')
     .notNull(),
   cron: varchar('cron', { length: 191 }).notNull(),
-  status: mysqlEnum('status', ['RUNNING', 'STOPPED', 'DELETED', 'WAITING'])
-    .default('RUNNING')
+  status: text('status', { enum: ['running', 'stopped', 'deleted', 'waiting'] })
+    .default('running')
     .notNull(),
-  createdAt: timestamp('created_at')
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
-  updatedAt: timestamp('updated_at')
-    .default(sql`CURRENT_TIMESTAMP`)
-    .onUpdateNow()
-    .notNull(),
-  idServer: varchar('idServer', { length: 200 }).references(() => servers.idServer, {
-    onDelete: 'cascade',
-    onUpdate: 'cascade',
-  }),
-  retriesFailed: int('retriesFailed').default(0).notNull(),
+  created_at: timestamp('created_at').defaultNow().notNull(),
+  updated_at: timestamp('updated_at').defaultNow().notNull(),
+  id_server: varchar('id_server', { length: 200 }).references(() => servers.id_server),
+  retries_failed: integer('retries_failed').default(0).notNull(),
 });

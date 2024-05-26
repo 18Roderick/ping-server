@@ -7,12 +7,17 @@ import { randomUUID } from 'node:crypto';
 @Controller('task')
 export class TaskController {
   constructor(private readonly taskService: TaskService) {}
+  @Get('demo')
+  demo() {
+    console.log('demo');
+    return this.taskService.transcode();
+  }
 
   @Get()
-  createTask() {
-    this.taskService.transcode();
-    return 'creado';
+  getTasks() {
+    return this.taskService.getTasks();
   }
+
   @Get('interval')
   taskInterval() {
     return this.taskService.serverPing(randomUUID());
