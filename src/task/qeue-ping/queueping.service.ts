@@ -17,4 +17,21 @@ export class QueuePingService {
       jobId: randomUUID(),
     });
   }
+
+  async getRepeatableBykey(key: string) {
+    console.log('Buscando ', key, await this.queue.getRepeatableJobs());
+    return (await this.queue.getRepeatableJobs()).find((job) => job.key === key);
+  }
+
+  getRepeatableTasks() {
+    return this.queue.getRepeatableJobs();
+  }
+
+  resumeStaledPings() {
+    return this.queue.resume();
+  }
+
+  pauseStaledPings() {
+    return this.queue.pause();
+  }
 }

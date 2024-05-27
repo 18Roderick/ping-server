@@ -6,6 +6,7 @@ import { DB } from '@/db';
 import { InjectQueue, InjectFlowProducer } from '@nestjs/bullmq';
 import cronParser from 'cron-parser';
 import { InjectQueueManager, QueueManagerService } from './qeue-manager';
+import { QueuePingService } from './qeue-ping/queueping.service';
 
 @Injectable()
 export class TaskService {
@@ -13,6 +14,7 @@ export class TaskService {
     // @InjectFlowProducer(PING_PRODUCER) private flowProducer: FlowProducer,
     @InjectQueueManager() private readonly taskQueue: Queue,
     private readonly _queueManagerService: QueueManagerService,
+    private readonly _queuePingService: QueuePingService,
     @Inject('DB') private readonly db: DB,
   ) {}
 
@@ -20,12 +22,18 @@ export class TaskService {
     return this.taskQueue.getRepeatableJobs();
   }
 
+  getRepeatableTasks(id: string) {
+    return this._queuePingService.getRepeatableBykey(id);
+  }
+
   async transcode() {
     //return this.taskQueue.add('demo', { foo: 'bar' });
-    return this._queueManagerService.AddServerPing({
-      idUser: 'wssoim3j98983js',
-      idServer: 'siossnois',
-    });
+    // return this._queueManagerService.AddServerPing({
+    //   idUser: 'wssoim3j98983js',
+    //   idServer: 'siossnois',
+    // });
+
+    return this._queuePingService.getRepeatableTasks();
   }
 
   async addPingServerTask(taskDto: AddPingTask) {
@@ -56,6 +64,11 @@ export class TaskService {
   async deleteJob(id: string) {
     console.log('removing job ', id);
     const job = await this.taskQueue.getJob(id);
+
+    if (!job) {
+      return false;
+    }
+
     const keys = job.opts.repeat as {
       count: number;
       key: string;

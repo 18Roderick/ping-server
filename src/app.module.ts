@@ -24,8 +24,8 @@ import { QueuePingModule } from './task/qeue-ping/queueping.module';
     ConfigModule.forRoot({ isGlobal: true, validate: config }),
     BullModule.forRootAsync({
       useFactory: async (config: ConfigService<Config>) => {
-        const host: string = config.get('REDIS_HOST');
-        const port: number = config.get('REDIS_PORT');
+        const host: string = config.get<string>('REDIS_HOST') as string;
+        const port: number = config.get<number>('REDIS_PORT') as number;
         return {
           // prefix: options?.prefix ?? '{#MONITOR}',
           connection: {
@@ -41,7 +41,7 @@ import { QueuePingModule } from './task/qeue-ping/queueping.module';
       useFactory() {
         return {
           postgres: {
-            url: process.env.DATABASE_URL,
+            url: process.env.DATABASE_URL as string,
             ssl: true,
           },
           config: { schema: { ...schema }, logger: false },

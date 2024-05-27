@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { TaskService } from './task.service';
 import { randomUUID } from 'node:crypto';
@@ -11,6 +11,11 @@ export class TaskController {
   demo() {
     console.log('demo');
     return this.taskService.transcode();
+  }
+
+  @Get(':id')
+  getTaskByKey(@Param('id') id: string) {
+    return this.taskService.getRepeatableTasks(id);
   }
 
   @Get()

@@ -1,17 +1,16 @@
-version: '3.8'
+version: '3.7'
 services:
-  dragonfly:
-    image: 'docker.dragonflydb.io/dragonflydb/dragonfly'
-    ulimits:
-      memlock: -1
-    ports:
-      - "6379:6379"
-    # For better performance, consider `host` mode instead `port` to avoid docker NAT.
-    # `host` mode is NOT currently supported in Swarm Mode.
-    # https://docs.docker.com/compose/compose-file/compose-file-v3/#network_mode
-    #network_mode: "host"
+  keydb:
+    image: eqalpha/keydb:alpine
+    container_name: keydb
+    # command: keydb-server /etc/keydb/redis.conf --server-threads 2 --active-replica yes --replicaof 192.168.1.1 6379
+    # command: keydb-server /etc/keydb/redis.conf --server-threads 2 --active-replica yes --replicaof 192.168.1.2 6379
+    command: keydb-server /etc/keydb/redis.conf --server-threads 2
     volumes:
-      - dragonflydata:/data
-    command: ["--cluster_mode=emulated", "--lock_on_hashtags"]
+      - store:/data
+    ports:
+      - 6379:6379
+    restart: unless-stopped
+
 volumes:
-  dragonflydata:
+  store:
