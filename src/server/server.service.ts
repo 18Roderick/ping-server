@@ -56,19 +56,16 @@ export class ServerService {
         })
         .returning();
 
-      if (created.length > 0) {
-        const serversFind = await this.db.query.servers.findFirst({
-          where: and(eq(servers.id_user, idUser), eq(servers.url, serverDto.url)),
-        });
-
+      if (created.length > 0 && created[0]) {
         await this.taskService.AddServerPing({
-          idServer: serversFind.id_server,
+          idServer: created[0].id_server,
           idUser: idUser,
         });
 
-        return serversFind;
+        return created[0];
+      } else {
+        throw new BadRequestException('Server not created');
       }
-      console.log(created);
     } catch (error) {
       console.log(error instanceof Error ? error?.message : '');
       throw new InternalServerErrorException(error);
@@ -77,13 +74,12 @@ export class ServerService {
 
   async getUserServers(userId: string) {
     //get the last ping of the server
-    console.log('it got to service');
     const lastPing = this.db
       .select({
         count: count().as('count'),
         idServer: servers.id_server,
         createdAt: max(pings.created_at).as('created_at_custom'),
-        avg: sql<number>`round(avg(${pings.avg})::numeric, 4)`.as('avg'), //, avg(pings.avg).as('avg'),
+        avg: sql<number>`round(avg(${pings.avg})::numeric, 4)::numeric`.as('avg'), //, avg(pings.avg).as('avg'),
         min: min(pings.min).as('min'),
         max: max(pings.max).as('max'),
       })
