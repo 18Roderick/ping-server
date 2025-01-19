@@ -8,7 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TaskModule } from './task/task.module';
 import { EventsModule } from './events/events.module';
-import { Config, config } from './config/config';
+import { type Config, config } from './config/config';
 import { JobsModule } from './jobs/jobs.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { DrizzlePostgresModule } from '@knaadh/nestjs-drizzle-postgres';

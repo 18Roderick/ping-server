@@ -1,6 +1,6 @@
-import { Config } from '@/config/config';
-import { RegisterQueueOptions } from '@nestjs/bullmq';
-import { ConfigService } from '@nestjs/config';
+import type { Config } from '@/config/config';
+import type { RegisterQueueOptions } from '@nestjs/bullmq';
+import type { ConfigService } from '@nestjs/config';
 
 interface ConfigQeue {
   prefix?: string;
