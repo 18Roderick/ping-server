@@ -1,0 +1,42 @@
+version: '3.7'
+
+services:
+  keydb:
+    image: eqalpha/keydb:alpine
+    container_name: keydb
+    command: keydb-server /etc/keydb/redis.conf --server-threads 2
+    volumes:
+      - store:/data
+    ports:
+      - 6379:6379
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:alpine
+    container_name: postgres_container
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+    restart: unless-stopped
+  # pgadmin:
+  #   image: elestio/pgadmin:latest
+  #   container_name: pgadmin_container
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+  #     PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+  #     PGADMIN_LISTEN_PORT: 8080
+  #   ports:
+  #     - '8080:8080'
+  #   depends_on:
+  #     - postgres
+  #   restart: unless-stopped
+volumes:
+  store:
+  postgres_data:
+    driver: local

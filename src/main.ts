@@ -1,21 +1,19 @@
 import { NestFactory } from '@nestjs/core';
-import helmet from 'helmet';
+import helmet from '@fastify/helmet';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-import { PrismaService } from './services/prisma.service';
 import { DocumentBuilder, SwaggerDocumentOptions, SwaggerModule } from '@nestjs/swagger';
 import { IoAdapter } from '@nestjs/platform-socket.io';
+import { FastifyAdapter } from '@nestjs/platform-fastify';
+import type { NestFastifyApplication } from '@nestjs/platform-fastify';
+
 // import { SocketIoAdapter } from './adapters/SocketIoAdapter';
 // import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  // const app = await NestFactory.create(AppModule);
 
-  //const configService = app.get(ConfigService);
-  //habilitar shutdown hook de prisma
-  const prismaService = app.get(PrismaService);
-
-  await prismaService.enableShutDownHooks(app);
+  const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter());
 
   const options: SwaggerDocumentOptions = {
     operationIdFactory: (controllerKey: string, methodKey: string) => methodKey,
@@ -32,7 +30,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config, options);
   SwaggerModule.setup('docs', app, document);
 
-  app.use(helmet());
+  await app.register(helmet);
   app.enableCors();
 
   app.useGlobalPipes(

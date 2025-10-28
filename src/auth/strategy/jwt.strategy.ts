@@ -1,14 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { DB } from '@/db';
+import { users } from '@/db/schemas';
+import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
+import { eq } from 'drizzle-orm';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { PrismaService } from '../../services/prisma.service';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     private config: ConfigService,
-    private prisma: PrismaService,
+    @Inject('DB') private readonly db: DB,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -17,16 +19,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: { email: string; sub: string }) {
-    const user = await this.prisma.users.findUnique({
-      where: {
-        idUser: payload.sub,
-      },
-      select: {
-        email: true,
-        idUser: true,
-        name: true,
-      },
-    });
-    return user;
+    const user = await this.db
+      .select({
+        email: users.email,
+        id_user: users.id_user,
+        name: users.email,
+      })
+      .from(users)
+      .where(eq(users.email, payload.email));
+    return user[0];
   }
 }

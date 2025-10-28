@@ -1,27 +1,43 @@
-import { InjectQueue } from '@nestjs/bull';
-import { Injectable } from '@nestjs/common';
-import { Queue } from 'bull';
-import { CONSUMERS, CRON_TIME, PING_QUEUE } from './constants';
+import { Inject, Injectable } from '@nestjs/common';
+import { FlowProducer, Queue } from 'bullmq';
+import { CONSUMERS, CRON_TIME, PING_PRODUCER, PING_QUEUE } from './constants';
 import { AddPingTask } from './dtos/task.dto';
+import { DB } from '@/db';
+import { InjectQueue, InjectFlowProducer } from '@nestjs/bullmq';
+import cronParser from 'cron-parser';
+import { InjectQueueManager, QueueManagerService } from './qeue-manager';
+import { QueuePingService } from './qeue-ping/queueping.service';
 
 @Injectable()
 export class TaskService {
-  constructor(@InjectQueue(PING_QUEUE) private readonly taskQueue: Queue) {}
+  constructor(
+    // @InjectFlowProducer(PING_PRODUCER) private flowProducer: FlowProducer,
+    @InjectQueueManager() private readonly taskQueue: Queue,
+    private readonly _queueManagerService: QueueManagerService,
+    private readonly _queuePingService: QueuePingService,
+    @Inject('DB') private readonly db: DB,
+  ) {}
 
-  getHello(): string {
-    return 'Hello World!';
+  getTasks() {
+    return this.taskQueue.getRepeatableJobs();
+  }
+
+  getRepeatableTasks(id: string) {
+    return this._queuePingService.getRepeatableBykey(id);
   }
 
   async transcode() {
-    await this.taskQueue.add({
-      fileName: './file.mp3',
-    });
+    //return this.taskQueue.add('demo', { foo: 'bar' });
+    // return this._queueManagerService.AddServerPing({
+    //   idUser: 'wssoim3j98983js',
+    //   idServer: 'siossnois',
+    // });
+
+    return this._queuePingService.getRepeatableTasks();
   }
 
   async addPingServerTask(taskDto: AddPingTask) {
-    return this.taskQueue.add(CONSUMERS.ADD_PING_TASK, taskDto, {
-      removeOnComplete: true,
-    });
+    return this._queueManagerService.AddServerPing(taskDto);
   }
 
   async serverPing(id: string) {
@@ -35,7 +51,7 @@ export class TaskService {
       },
       {
         repeat: {
-          cron: CRON_TIME.EVERY_FIVE_MINUTES,
+          pattern: CRON_TIME.EVERY_FIVE_MINUTES,
         },
       },
     );
@@ -48,6 +64,11 @@ export class TaskService {
   async deleteJob(id: string) {
     console.log('removing job ', id);
     const job = await this.taskQueue.getJob(id);
+
+    if (!job) {
+      return false;
+    }
+
     const keys = job.opts.repeat as {
       count: number;
       key: string;

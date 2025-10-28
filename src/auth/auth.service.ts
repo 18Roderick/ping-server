@@ -1,52 +1,44 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { AuthDto } from './dto/auth.dto';
 import { CreateUserDto } from '../user/dto/user.dto';
-import { Prisma, Users } from '@prisma/client';
-import { PrismaService } from '../services/prisma.service';
 import { ConfigService } from '@nestjs/config';
 import { ITokenResponse } from './interfaces';
 import { JwtService } from '@nestjs/jwt';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+
+import { User, users } from '@/db/schemas';
+import { eq } from 'drizzle-orm';
+import { DB } from '@/db';
 
 const ROUNDS = 10;
 
 @Injectable()
 export class AuthService {
   constructor(
-    private prisma: PrismaService,
     private jwt: JwtService,
     private config: ConfigService,
+    @Inject('DB') private readonly db: DB,
   ) {}
   async signUp(dto: CreateUserDto): Promise<ITokenResponse> {
-    try {
-      const hash = await bcrypt.hash(dto.password, ROUNDS);
-      const userData: Prisma.UsersCreateInput = {
-        name: dto.name,
-        email: dto.email,
-        password: hash,
-        lastName: '',
-      };
+    const hash = await bcrypt.hash(dto.password, ROUNDS);
+    const isUser = await this.db.query.users.findFirst({ where: eq(users.email, dto.email) });
 
-      const user = await this.prisma.users.create({
-        data: userData,
-      });
+    if (isUser) throw new ForbiddenException('Email already exists');
 
-      return this.signToken(user);
-    } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError) {
-        if (error.code === 'P2002') {
-          throw new ForbiddenException('Email already exists');
-        }
-      }
-      throw error;
-    }
+    await this.db.insert(users).values({
+      name: dto.name,
+      email: dto.email,
+      password: hash,
+      last_name: '',
+      status: 'active',
+    });
+
+    const user = await this.db.query.users.findFirst({ where: eq(users.email, dto.email) });
+    return this.signToken(user);
   }
 
   async signIn(dto: AuthDto): Promise<ITokenResponse> {
-    const user = await this.prisma.users.findUnique({
-      where: { email: dto.email },
-    });
+    const user = await this.db.query.users.findFirst({ where: eq(users.email, dto.email) });
 
     if (!user) throw new ForbiddenException('Email or password invalid');
 
@@ -56,9 +48,9 @@ export class AuthService {
     return this.signToken(user);
   }
 
-  async signToken(user: Users): Promise<ITokenResponse> {
+  async signToken(user: User): Promise<ITokenResponse> {
     const payload = {
-      sub: user.idUser,
+      sub: user.id_user,
       email: user.email,
     };
     const token = await this.jwt.signAsync(payload, {

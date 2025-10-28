@@ -4,8 +4,8 @@ import { PingsService } from './pings.service';
 import { UpdatePingDto } from './dto/update-ping.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { GetUser } from '@/auth/decorators';
-import { Users } from '@prisma/client';
 import { JwtAuthGuard } from '@/auth/guards';
+import { User } from '@/db/schemas';
 
 @ApiTags('servers')
 @UseGuards(JwtAuthGuard)
@@ -14,8 +14,8 @@ export class PingsController {
   constructor(private readonly pingsService: PingsService) {}
 
   @Get(':id')
-  findAll(@Param('id') id: string, @GetUser() user: Users) {
-    return this.pingsService.findAll(id, user.idUser);
+  findAll(@Param('id') id: string, @GetUser() user: User) {
+    return this.pingsService.findAll(id, user.id_user);
   }
 
   // @Get(':id')

@@ -3,8 +3,8 @@ import { JwtAuthGuard } from '../auth/guards';
 import { ApiTags } from '@nestjs/swagger';
 import { ServerService } from './server.service';
 import { CreateServerDto, UpdateServerDto } from './dto/server.dto';
-import { GetUser } from 'src/auth/decorators';
-import { Users } from '@prisma/client';
+import { GetUser } from '@/auth/decorators';
+import { User } from '@/db/schemas';
 
 @ApiTags('servers')
 @UseGuards(JwtAuthGuard)
@@ -12,27 +12,27 @@ import { Users } from '@prisma/client';
 export class ServerController {
   constructor(private readonly serverService: ServerService) {}
   @Get()
-  getServers(@GetUser() user: Users) {
-    return this.serverService.getUserServers(user.idUser);
+  getServers(@GetUser() user: User) {
+    return this.serverService.getUserServers(user.id_user);
   }
 
   @Get(':id')
-  getServer(@Param('id') idServer: string) {
-    return this.serverService.getServer(idServer);
+  getServer(@Param('id') idServer: string, @GetUser() user: User) {
+    return this.serverService.getServer(user.id_user, idServer);
   }
 
   @Post()
-  createServer(@Body() serverDto: CreateServerDto, @GetUser() user: Users) {
-    return this.serverService.create(serverDto, user.idUser);
+  createServer(@Body() serverDto: CreateServerDto, @GetUser() user: User) {
+    return this.serverService.create(serverDto, user.id_user);
   }
 
   @Put()
-  UpdateServer(serverDto: UpdateServerDto, @GetUser() user: Users) {
-    return this.serverService.updateUserServer(serverDto, user.idUser);
+  UpdateServer(serverDto: UpdateServerDto, @GetUser() user: User) {
+    return this.serverService.updateUserServer(serverDto, user.id_user);
   }
 
   @Delete(':id')
-  removeTaskJob(@Param('id') idServer: string, @GetUser() user: Users) {
-    return this.serverService.deleteServer(idServer, user.idUser);
+  removeTaskJob(@Param('id') idServer: string, @GetUser() user: User) {
+    return this.serverService.deleteServer(idServer, user.id_user);
   }
 }

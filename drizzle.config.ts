@@ -1,15 +1,13 @@
-import type { Config } from 'drizzle-kit';
+import { defineConfig } from 'drizzle-kit';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
-export default {
+export default defineConfig({
   schema: './src/db/*',
-  out: './drizzle',
-  driver: 'mysql2',
-  // schemaFilter: ['ecotria'],
+  dialect: 'postgresql',
   dbCredentials: {
-    uri: process.env.DATABASE_URL,
+    url: process.env.DATABASE_URL as string,
   },
   verbose: true,
   strict: true,
-} satisfies Config;
+});

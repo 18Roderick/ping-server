@@ -1,0 +1,16 @@
+version: '3.7'
+services:
+  keydb:
+    image: eqalpha/keydb:alpine
+    container_name: keydb
+    # command: keydb-server /etc/keydb/redis.conf --server-threads 2 --active-replica yes --replicaof 192.168.1.1 6379
+    # command: keydb-server /etc/keydb/redis.conf --server-threads 2 --active-replica yes --replicaof 192.168.1.2 6379
+    command: keydb-server /etc/keydb/redis.conf --server-threads 2
+    volumes:
+      - store:/data
+    ports:
+      - 6379:6379
+    restart: unless-stopped
+
+volumes:
+  store:

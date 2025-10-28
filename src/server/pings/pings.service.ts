@@ -1,26 +1,22 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { UpdatePingDto } from './dto/update-ping.dto';
-import { PrismaService } from '@/services/prisma.service';
+import { and, eq } from 'drizzle-orm';
+import { pings } from '@/db/schemas';
+import { DB } from '@/db';
 
 @Injectable()
 export class PingsService {
   /**
    *
    */
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(@Inject('DB') private readonly db: DB) {}
 
   findAll(idServer: string, idUser: string) {
-    return this.prismaService.pings.findMany({
-      where: {
-        Servers: {
-          idUser: idUser,
-        },
-        serversIdServer: idServer,
+    return this.db.query.pings.findMany({
+      where: and(eq(pings.id_server, idServer)),
+      with: {
+        idUser: idUser,
       },
-      orderBy: {
-        createdAt: 'desc',
-      },
-      take: 5,
     });
   }
 

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { TaskService } from './task.service';
 import { randomUUID } from 'node:crypto';
@@ -7,12 +7,22 @@ import { randomUUID } from 'node:crypto';
 @Controller('task')
 export class TaskController {
   constructor(private readonly taskService: TaskService) {}
+  @Get('demo')
+  demo() {
+    console.log('demo');
+    return this.taskService.transcode();
+  }
+
+  @Get(':id')
+  getTaskByKey(@Param('id') id: string) {
+    return this.taskService.getRepeatableTasks(id);
+  }
 
   @Get()
-  createTask() {
-    this.taskService.transcode();
-    return 'creado';
+  getTasks() {
+    return this.taskService.getTasks();
   }
+
   @Get('interval')
   taskInterval() {
     return this.taskService.serverPing(randomUUID());

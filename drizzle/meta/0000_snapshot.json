@@ -1,429 +1,398 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "prevId": "",
-  "version": "5",
-  "dialect": "mysql",
+  "id": "bb79bcab-a974-498b-b98d-cef8e0a953c3",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "6",
+  "dialect": "postgresql",
   "tables": {
-    "Logs": {
-      "name": "Logs",
+    "public.pingdom_logs": {
+      "name": "pingdom_logs",
+      "schema": "",
       "columns": {
         "id": {
-          "autoincrement": true,
           "name": "id",
-          "type": "int(11)",
-          "primaryKey": false,
+          "type": "varchar(200)",
+          "primaryKey": true,
           "notNull": true
         },
-        "idUser": {
-          "autoincrement": false,
-          "name": "idUser",
+        "id_user": {
+          "name": "id_user",
           "type": "varchar(191)",
           "primaryKey": false,
           "notNull": false
         },
-        "createdAt": {
-          "default": "'CURRENT_TIMESTAMP(3)'",
-          "autoincrement": false,
-          "name": "createdAt",
-          "type": "datetime(3)",
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "now()"
         },
         "action": {
-          "autoincrement": false,
           "name": "action",
-          "type": "varchar(191)",
+          "type": "varchar(5000)",
           "primaryKey": false,
           "notNull": true
         },
-        "errorLevel": {
-          "autoincrement": false,
-          "name": "errorLevel",
-          "type": "enum('INFO','WARNING','ERROR','CRITICAL')",
+        "error_level": {
+          "name": "error_level",
+          "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "'info'"
         },
         "description": {
-          "autoincrement": false,
           "name": "description",
-          "type": "varchar(191)",
+          "type": "varchar(5000)",
           "primaryKey": false,
           "notNull": true
         },
-        "affectedEntity": {
-          "autoincrement": false,
-          "name": "affectedEntity",
+        "affected_entity": {
+          "name": "affected_entity",
           "type": "varchar(191)",
           "primaryKey": false,
           "notNull": false
         }
       },
-      "compositePrimaryKeys": {},
       "indexes": {},
       "foreignKeys": {},
+      "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "Pings": {
-      "name": "Pings",
+    "public.pingdom_pings": {
+      "name": "pingdom_pings",
+      "schema": "",
       "columns": {
-        "idPing": {
-          "autoincrement": false,
-          "name": "idPing",
-          "type": "varchar(191)",
-          "primaryKey": false,
+        "id_ping": {
+          "name": "id_ping",
+          "type": "varchar(200)",
+          "primaryKey": true,
           "notNull": true
         },
         "times": {
-          "autoincrement": false,
           "name": "times",
-          "type": "double",
+          "type": "double precision",
           "primaryKey": false,
           "notNull": true
         },
-        "packetLoss": {
-          "autoincrement": false,
-          "name": "packetLoss",
-          "type": "double",
+        "packet_loss": {
+          "name": "packet_loss",
+          "type": "double precision",
           "primaryKey": false,
           "notNull": true
         },
         "min": {
-          "autoincrement": false,
           "name": "min",
-          "type": "double",
+          "type": "double precision",
           "primaryKey": false,
           "notNull": true
         },
         "max": {
-          "autoincrement": false,
           "name": "max",
-          "type": "double",
+          "type": "double precision",
           "primaryKey": false,
           "notNull": true
         },
         "avg": {
-          "autoincrement": false,
           "name": "avg",
-          "type": "double",
+          "type": "double precision",
           "primaryKey": false,
           "notNull": true
         },
         "log": {
-          "autoincrement": false,
           "name": "log",
           "type": "varchar(191)",
           "primaryKey": false,
           "notNull": true
         },
-        "isAlive": {
-          "autoincrement": false,
-          "name": "isAlive",
-          "type": "tinyint",
+        "is_alive": {
+          "name": "is_alive",
+          "type": "smallint",
           "primaryKey": false,
           "notNull": true
         },
-        "numericHost": {
-          "autoincrement": false,
-          "name": "numericHost",
+        "numeric_host": {
+          "name": "numeric_host",
           "type": "varchar(191)",
           "primaryKey": false,
           "notNull": true
         },
-        "createdAt": {
-          "default": "'CURRENT_TIMESTAMP(3)'",
-          "autoincrement": false,
-          "name": "createdAt",
-          "type": "datetime(3)",
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "id_server": {
+          "name": "id_server",
+          "type": "varchar(200)",
           "primaryKey": false,
           "notNull": true
-        },
-        "serversIdServer": {
-          "autoincrement": false,
-          "name": "serversIdServer",
-          "type": "varchar(191)",
-          "primaryKey": false,
-          "notNull": false
         }
       },
-      "compositePrimaryKeys": {},
       "indexes": {},
       "foreignKeys": {
-        "Pings_serversIdServer_fkey": {
-          "name": "Pings_serversIdServer_fkey",
-          "tableFrom": "Pings",
-          "tableTo": "Servers",
+        "pingdom_pings_id_server_pingdom_servers_id_server_fk": {
+          "name": "pingdom_pings_id_server_pingdom_servers_id_server_fk",
+          "tableFrom": "pingdom_pings",
+          "tableTo": "pingdom_servers",
           "columnsFrom": [
-            "serversIdServer"
+            "id_server"
           ],
           "columnsTo": [
-            "idServer"
+            "id_server"
           ],
-          "onDelete": "set null",
+          "onDelete": "cascade",
           "onUpdate": "cascade"
         }
       },
+      "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "Servers": {
-      "name": "Servers",
+    "public.pingdom_servers": {
+      "name": "pingdom_servers",
+      "schema": "",
       "columns": {
-        "idServer": {
-          "autoincrement": false,
-          "name": "idServer",
+        "id_server": {
+          "name": "id_server",
+          "type": "varchar(200)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
           "type": "varchar(191)",
           "primaryKey": false,
           "notNull": true
         },
         "url": {
-          "autoincrement": false,
           "name": "url",
           "type": "varchar(191)",
           "primaryKey": false,
           "notNull": false
         },
         "ip": {
-          "autoincrement": false,
           "name": "ip",
           "type": "varchar(191)",
           "primaryKey": false,
           "notNull": false
         },
         "description": {
-          "autoincrement": false,
           "name": "description",
           "type": "varchar(191)",
           "primaryKey": false,
           "notNull": false
         },
         "title": {
-          "autoincrement": false,
           "name": "title",
           "type": "varchar(191)",
           "primaryKey": false,
           "notNull": true
         },
         "status": {
-          "default": "'ACTIVE'",
-          "autoincrement": false,
           "name": "status",
-          "type": "enum('ACTIVE','INACTIVE')",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'active'"
+        },
+        "worker_type": {
+          "name": "worker_type",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
-        "workerType": {
-          "autoincrement": false,
-          "name": "workerType",
-          "type": "enum('SERVER','URL')",
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "id_user": {
+          "name": "id_user",
+          "type": "varchar(200)",
           "primaryKey": false,
           "notNull": true
-        },
-        "createdAt": {
-          "default": "'CURRENT_TIMESTAMP(3)'",
-          "autoincrement": false,
-          "name": "createdAt",
-          "type": "datetime(3)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "updatedAt": {
-          "autoincrement": false,
-          "name": "updatedAt",
-          "type": "datetime(3)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "idUser": {
-          "autoincrement": false,
-          "name": "idUser",
-          "type": "varchar(191)",
-          "primaryKey": false,
-          "notNull": false
         }
       },
-      "compositePrimaryKeys": {},
       "indexes": {},
       "foreignKeys": {
-        "Servers_idUser_fkey": {
-          "name": "Servers_idUser_fkey",
-          "tableFrom": "Servers",
-          "tableTo": "Users",
+        "pingdom_servers_id_user_pingdom_users_id_user_fk": {
+          "name": "pingdom_servers_id_user_pingdom_users_id_user_fk",
+          "tableFrom": "pingdom_servers",
+          "tableTo": "pingdom_users",
           "columnsFrom": [
-            "idUser"
+            "id_user"
           ],
           "columnsTo": [
-            "idUser"
+            "id_user"
           ],
-          "onDelete": "set null",
+          "onDelete": "cascade",
           "onUpdate": "cascade"
         }
       },
+      "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "Tasks": {
-      "name": "Tasks",
+    "public.pingdom_tasks": {
+      "name": "pingdom_tasks",
+      "schema": "",
       "columns": {
-        "idTask": {
-          "autoincrement": false,
-          "name": "idTask",
-          "type": "varchar(191)",
+        "id_task": {
+          "name": "id_task",
+          "type": "varchar(200)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(200)",
           "primaryKey": false,
           "notNull": true
         },
-        "idJob": {
-          "autoincrement": false,
-          "name": "idJob",
-          "type": "varchar(191)",
+        "id_job": {
+          "name": "id_job",
+          "type": "varchar(300)",
           "primaryKey": false,
           "notNull": true
         },
         "log": {
-          "autoincrement": false,
           "name": "log",
-          "type": "varchar(191)",
+          "type": "varchar(500)",
           "primaryKey": false,
           "notNull": true
         },
         "type": {
-          "default": "'UNDEFINED'",
-          "autoincrement": false,
           "name": "type",
-          "type": "enum('UNDEFINED','SERVER','BACKGROUND','SUMMARY','ADMIN','DAILY')",
+          "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "'undefined'"
         },
         "cron": {
-          "autoincrement": false,
           "name": "cron",
           "type": "varchar(191)",
           "primaryKey": false,
           "notNull": true
         },
         "status": {
-          "default": "'RUNNING'",
-          "autoincrement": false,
           "name": "status",
-          "type": "enum('RUNNING','STOPPED','DELETED','WAITING')",
+          "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "'running'"
         },
-        "createdAt": {
-          "default": "'CURRENT_TIMESTAMP(3)'",
-          "autoincrement": false,
-          "name": "createdAt",
-          "type": "datetime(3)",
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "now()"
         },
-        "updatedAt": {
-          "autoincrement": false,
-          "name": "updatedAt",
-          "type": "datetime(3)",
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "now()"
         },
-        "serversIdServer": {
-          "autoincrement": false,
-          "name": "serversIdServer",
-          "type": "varchar(191)",
+        "id_server": {
+          "name": "id_server",
+          "type": "varchar(200)",
           "primaryKey": false,
           "notNull": false
         },
-        "retriesFailed": {
-          "default": 0,
-          "autoincrement": false,
-          "name": "retriesFailed",
-          "type": "int(11)",
+        "retries_failed": {
+          "name": "retries_failed",
+          "type": "integer",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": 0
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "pingdom_tasks_id_server_pingdom_servers_id_server_fk": {
+          "name": "pingdom_tasks_id_server_pingdom_servers_id_server_fk",
+          "tableFrom": "pingdom_tasks",
+          "tableTo": "pingdom_servers",
+          "columnsFrom": [
+            "id_server"
+          ],
+          "columnsTo": [
+            "id_server"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
-      "indexes": {},
-      "foreignKeys": {
-        "Tasks_serversIdServer_fkey": {
-          "name": "Tasks_serversIdServer_fkey",
-          "tableFrom": "Tasks",
-          "tableTo": "Servers",
-          "columnsFrom": [
-            "serversIdServer"
-          ],
-          "columnsTo": [
-            "idServer"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "cascade"
-        }
-      },
       "uniqueConstraints": {}
     },
-    "Users": {
-      "name": "Users",
+    "public.pingdom_users": {
+      "name": "pingdom_users",
+      "schema": "",
       "columns": {
-        "idUser": {
-          "autoincrement": false,
-          "name": "idUser",
-          "type": "varchar(191)",
-          "primaryKey": false,
+        "id_user": {
+          "name": "id_user",
+          "type": "varchar(200)",
+          "primaryKey": true,
           "notNull": true
         },
         "name": {
-          "autoincrement": false,
           "name": "name",
           "type": "varchar(191)",
           "primaryKey": false,
           "notNull": true
         },
-        "lastName": {
-          "autoincrement": false,
-          "name": "lastName",
+        "last_name": {
+          "name": "last_name",
           "type": "varchar(191)",
           "primaryKey": false,
           "notNull": true
         },
         "email": {
-          "autoincrement": false,
           "name": "email",
           "type": "varchar(191)",
           "primaryKey": false,
           "notNull": true
         },
         "password": {
-          "autoincrement": false,
           "name": "password",
           "type": "varchar(191)",
           "primaryKey": false,
           "notNull": true
         },
-        "createdAt": {
-          "default": "'CURRENT_TIMESTAMP(3)'",
-          "autoincrement": false,
-          "name": "createdAt",
-          "type": "datetime(3)",
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
-        },
-        "updatedAt": {
-          "autoincrement": false,
-          "name": "updatedAt",
-          "type": "datetime(3)",
-          "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "now()"
         },
         "status": {
-          "default": "'ACTIVE'",
-          "autoincrement": false,
           "name": "status",
-          "type": "enum('ACTIVE','INACTIVE')",
+          "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "'active'"
         }
       },
-      "compositePrimaryKeys": {},
       "indexes": {},
       "foreignKeys": {},
+      "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "Users_email_key": {
-          "name": "Users_email_key",
+        "pingdom_users_email_unique": {
+          "name": "pingdom_users_email_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "email"
           ]
@@ -431,10 +400,11 @@
       }
     }
   },
+  "enums": {},
   "schemas": {},
   "_meta": {
+    "columns": {},
     "schemas": {},
-    "tables": {},
-    "columns": {}
+    "tables": {}
   }
 }
