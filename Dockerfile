@@ -1,3 +1,11 @@
+FROM node:20-slim AS development
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+EXPOSE 3000
+CMD ["npm", "run", "dev"]
+
 FROM node:20-slim AS build
 WORKDIR /app
 COPY package*.json ./

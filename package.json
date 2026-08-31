@@ -9,7 +9,7 @@
     "build": "tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "node dist/Main.js",
-    "dev": "tsx watch src/Main.ts",
+    "dev": "tsx watch --env-file-if-exists=.env src/Main.ts",
     "db:generate": "npx drizzle-kit generate",
     "db:push": "npx drizzle-kit push",
     "db:migrate": "npx tsx ./src/Migrate.ts",

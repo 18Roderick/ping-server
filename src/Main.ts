@@ -5,7 +5,6 @@ import { AppConfigLive } from '@/Config';
 import { DbLive } from '@/Db/Db';
 import { RedisConnectionLive } from '@/Queue/Connection';
 import { JwtLive } from '@/Auth/Jwt';
-import { CurrentUserLive } from '@/Auth/CurrentUser';
 import { AuthServiceLive } from '@/Auth/Auth.service';
 import { UsersServiceLive } from '@/Users/Users.service';
 import { PingsServiceLive } from '@/Pings/Pings.service';
@@ -20,7 +19,6 @@ const InfraLive = Layer.mergeAll(DbLive, RedisConnectionLive, JwtLive).pipe(
 );
 
 const Level2Live = Layer.mergeAll(
-  CurrentUserLive,
   QueuePingServiceLive,
   UsersServiceLive,
   PingsServiceLive,

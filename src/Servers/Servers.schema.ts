@@ -23,3 +23,32 @@ export class UpdateServerInput extends Schema.Class<UpdateServerInput>('UpdateSe
   description: Schema.optional(Schema.String),
   title: Schema.optional(Schema.String.pipe(Schema.minLength(1))),
 }) {}
+
+export class ServerEntity extends Schema.Class<ServerEntity>('ServerEntity')({
+  id_server: Schema.String,
+  url: Schema.NullOr(Schema.String),
+  ip: Schema.NullOr(Schema.String),
+  description: Schema.NullOr(Schema.String),
+  title: Schema.String,
+  status: Schema.Literal('active', 'inactive'),
+  worker_type: Schema.Literal('server', 'url'),
+  created_at: Schema.Date,
+  updated_at: Schema.Date,
+  id_user: Schema.String,
+}) {}
+
+export class ServerSummary extends Schema.Class<ServerSummary>('ServerSummary')({
+  idServer: Schema.String,
+  ip: Schema.NullOr(Schema.String),
+  url: Schema.NullOr(Schema.String),
+  title: Schema.String,
+  status: Schema.Literal('active', 'inactive'),
+  idTask: Schema.NullOr(Schema.String),
+  ping_max: Schema.NullOr(Schema.Number),
+  ping_min: Schema.NullOr(Schema.Number),
+  ping_avg: Schema.NullOr(Schema.Number),
+}) {}
+
+export class DeletedResponse extends Schema.Class<DeletedResponse>('DeletedResponse')({
+  deleted: Schema.Literal(true),
+}) {}
