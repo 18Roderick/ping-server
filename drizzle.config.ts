@@ -3,7 +3,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 export default defineConfig({
-  schema: './src/db/*',
+  schema: './src/Db/schemas/*',
   dialect: 'postgresql',
   dbCredentials: {
     url: process.env.DATABASE_URL as string,

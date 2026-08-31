@@ -2,13 +2,13 @@
   "compilerOptions": {
     "strict": true,
     "module": "commonjs",
-    "noUncheckedIndexedAccess": true,    
+    "moduleResolution": "node",
+    "noUncheckedIndexedAccess": true,
     "declaration": true,
     "removeComments": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
-    "target": "es2017",
+    "esModuleInterop": true,
+    "target": "es2020",
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": ".",
@@ -19,7 +19,7 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "noImplicitAny": true,
-    "paths": {      
+    "paths": {
       "@/*": ["./src/*"]
     }
   }
